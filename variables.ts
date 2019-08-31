@@ -7,7 +7,7 @@
 import { App } from "./index"
 
 // @ts-ignore
-export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div')}
+export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{domProps:{"innerHTML":_vm._s(_vm.renderResult)}})])}
 // @ts-ignore
 export var indexTemplateHtmlStatic = [  ]
 /* eslint-enable */
