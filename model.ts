@@ -5,12 +5,14 @@ export interface StyleGuide {
 
 export interface Template {
   id: string
+  x: number
+  y: number
   width: number
   height: number
   contents: TemplateContent[]
 }
 
-type TemplateContent = TemplateTextContent | TemplateImageContent | TemplateReferenceContent
+type TemplateContent = TemplateTextContent | TemplateImageContent | TemplateReferenceContent | TemplateSnapshotContent
 
 interface TemplateTextContent extends TemplateBaseContent {
   kind: 'text'
@@ -32,6 +34,11 @@ interface TemplateImageContent extends TemplateBaseContent {
 interface TemplateReferenceContent extends TemplateBaseContent {
   kind: 'reference'
   id: string
+}
+
+interface TemplateSnapshotContent extends TemplateBaseContent {
+  kind: 'snapshot'
+  snapshot: Template
 }
 
 interface TemplateBaseContent {

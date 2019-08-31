@@ -1,3 +1,11 @@
 <div>
-  <div v-html="renderResult"></div>
+  <div :style="canvasStyle" @wheel="canvasWheel">
+    <div :style="styleGuideStyle">
+      <div v-for="r in renderResults">
+        <div :style="{ left: r.x + 'px', top: r.y + 'px', position: 'absolute' }">
+          <div v-html="r.html"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
