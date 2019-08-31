@@ -7,7 +7,7 @@
 import { App } from "./index"
 
 // @ts-ignore
-export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{domProps:{"innerHTML":_vm._s(_vm.renderResult)}})])}
+export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{style:(_vm.canvasStyle),on:{"wheel":_vm.canvasWheel}},[_c('div',{style:(_vm.styleGuideStyle)},_vm._l((_vm.renderResults),function(r){return _c('div',[_c('div',{style:({ left: r.x + 'px', top: r.y + 'px', position: 'absolute' })},[_c('div',{domProps:{"innerHTML":_vm._s(r.html)}})])])}),0)])])}
 // @ts-ignore
 export var indexTemplateHtmlStatic = [  ]
 /* eslint-enable */
