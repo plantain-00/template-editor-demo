@@ -12,14 +12,28 @@ export const styleGuide: StyleGuide = {
       contents: [
         {
           kind: 'text',
-          text: 'test text',
+          text: 'test',
           fontFamily: 'serif',
-          fontSize: 20,
+          fontSize: 50,
           color: 'red',
           width: 100,
           height: 100,
           x: 10,
           y: 10,
+          characters: [
+            {
+              text: 't'
+            },
+            {
+              text: 'e'
+            },
+            {
+              text: 's'
+            },
+            {
+              text: 't'
+            },
+          ]
         },
         {
           kind: 'image',

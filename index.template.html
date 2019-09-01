@@ -1,11 +1,22 @@
 <div>
-  <div :style="canvasStyle" @wheel="canvasWheel">
-    <div :style="styleGuideStyle">
-      <div v-for="r in renderResults">
-        <div :style="{ left: r.x + 'px', top: r.y + 'px', position: 'absolute' }">
-          <div v-html="r.html"></div>
+  <div style="margin-left: 210px; margin-top: 10px">
+    <div :style="canvasStyle">
+      <div :style="styleGuideStyle">
+        <div v-for="r in renderResults">
+          <div :style="{ left: r.x + 'px', top: r.y + 'px', position: 'absolute' }">
+            <div v-html="r.html"></div>
+          </div>
         </div>
       </div>
     </div>
+    <div :style="maskStyle" @wheel="canvasWheel" @click="canvasClick"></div>
   </div>
+  <div v-if="selectedContent">
+    <div v-if="selectedContent.kind === 'text'">
+      <input type="text" :value="selectedContent.text" @change="changeText" />
+    </div>
+  </div>
+  <button @click="applyChanges()">apply changes</button>
+  <input type="checkbox" v-model="auto">
+  auto
 </div>
