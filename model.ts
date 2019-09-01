@@ -12,36 +12,42 @@ export interface Template {
   contents: TemplateContent[]
 }
 
-type TemplateContent = TemplateTextContent | TemplateImageContent | TemplateReferenceContent | TemplateSnapshotContent
+export type TemplateContent = TemplateTextContent | TemplateImageContent | TemplateReferenceContent | TemplateSnapshotContent
 
-interface TemplateTextContent extends TemplateBaseContent {
+interface TemplateTextContent extends Region {
   kind: 'text'
   text: string
   fontFamily: string
   fontSize: number
   color: string
-  width: number
-  height: number
+  characters: TextCharacter[]
 }
 
-interface TemplateImageContent extends TemplateBaseContent {
+interface TextCharacter {
+  text: string
+}
+
+interface TemplateImageContent extends Region {
   kind: 'image'
   url: string
-  width: number
-  height: number
 }
 
-interface TemplateReferenceContent extends TemplateBaseContent {
+interface TemplateReferenceContent extends Position {
   kind: 'reference'
   id: string
 }
 
-interface TemplateSnapshotContent extends TemplateBaseContent {
+interface TemplateSnapshotContent extends Position {
   kind: 'snapshot'
   snapshot: Template
 }
 
-interface TemplateBaseContent {
+export interface Position {
   x: number
   y: number
+}
+
+export interface Region extends Position {
+  width: number
+  height: number
 }

@@ -14,7 +14,7 @@ export function renderTemplate(template: Template, templates: Template[], isRoot
         position: absolute;
         left: ${content.x}px;
         top: ${content.y}px;
-      ">${content.text}</div>`)
+      ">${content.characters.map((c) => c.text).join('')}</div>`)
     } else if (content.kind === 'image') {
       result.push(`<img
         src="${content.url}"
@@ -46,6 +46,7 @@ export function renderTemplate(template: Template, templates: Template[], isRoot
       width: ${template.width}px;
       height: ${template.height}px;
       position: absolute;
+      user-select: none;
       ${backgroundColor}
     "
   >${result.join('')}</div>`
