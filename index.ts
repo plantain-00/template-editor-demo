@@ -3,7 +3,7 @@ import Component from 'vue-class-component'
 import { indexTemplateHtml, indexTemplateHtmlStatic } from './variables'
 import { renderTemplate } from './renderer'
 import { styleGuide } from './data'
-import { Region, Position, TemplateContent } from './model'
+import { Region, Position, TemplateContent, StyleGuide, Template } from './model'
 
 @Component({
   render: indexTemplateHtml,
@@ -24,7 +24,10 @@ export class App extends Vue {
   private canvasHeight = 400
   private styleGuide = styleGuide
   private selectedContent: TemplateContent | null = null
+  private selectedTemplate: Template | null = null
   private changedContents = new Set<TemplateContent>()
+  private keydownX = 0
+  private keydownY = 0
 
   canvasStyle = {
     position: 'absolute',
@@ -93,27 +96,22 @@ export class App extends Vue {
     }
   }
 
-  canvasClick(e: MouseEvent) {
-    const x = (e.offsetX - ((this.styleGuideTranslateX - this.styleGuideWidth / 2) * this.styleGuideScale + this.styleGuideWidth / 2)) / this.styleGuideScale
-    const y = (e.offsetY - ((this.styleGuideTranslateY - this.styleGuideHeight / 2) * this.styleGuideScale + this.styleGuideHeight / 2)) / this.styleGuideScale
-    const position: Position = { x, y }
-    const template = this.styleGuide.templates.find((t) => isInRegion(position, t))
-    if (template) {
-      const content = template.contents.find((c) => {
-        const contentPosition = { x: c.x + template.x, y: c.y + template.y }
-        if (c.kind === 'image' || c.kind === 'text') {
-          return isInRegion(position, { ...contentPosition, width: c.width, height: c.height })
-        }
-        return false
-      })
-      if (content) {
-        this.selectedContent = content
-      } else {
-        this.selectedContent = null
-      }
-    } else {
-      this.selectedContent = null
+  canvasMousedown(e: MouseEvent) {
+    this.keydownX = e.offsetX
+    this.keydownY = e.offsetY
+  }
+
+  canvasMouseup(e: MouseEvent) {
+    const x = this.mapX(e.offsetX)
+    const y = this.mapY(e.offsetY)
+    if (e.offsetX !== this.keydownX || e.offsetY !== this.keydownY) {
+      const keydownX = this.mapX(this.keydownX)
+      const keydownY = this.mapY(this.keydownY)
+      this.selectedTemplate = selectTemplate(this.styleGuide, { x, y }, { x: keydownX, y: keydownY })
+      console.info(this.selectedTemplate)
+      return
     }
+    this.selectedContent = selectContent(this.styleGuide, { x, y })
   }
 
   changeText(e: { target: { value: string } }) {
@@ -125,10 +123,88 @@ export class App extends Vue {
       }
     }
   }
+
+  changeImageUrl(e: { target: { value: string } }) {
+    if (this.selectedContent && this.selectedContent.kind === 'image') {
+      this.selectedContent.url = e.target.value
+      this.changedContents.add(this.selectedContent)
+      if (this.auto) {
+        this.applyChanges()
+      }
+    }
+  }
+
+  private mapX(x: number) {
+    return (x - ((this.styleGuideTranslateX - this.styleGuideWidth / 2) * this.styleGuideScale + this.styleGuideWidth / 2)) / this.styleGuideScale
+  }
+
+  private mapY(y: number) {
+    return (y - ((this.styleGuideTranslateY - this.styleGuideHeight / 2) * this.styleGuideScale + this.styleGuideHeight / 2)) / this.styleGuideScale
+  }
 }
 
 new App({ el: '#container' })
 
-function isInRegion(position: Position, region: Region) {
+function selectTemplate(styleGuide: StyleGuide, position1: Position, position2: Position) {
+  const region: Region = {
+    x: Math.min(position1.x, position2.x),
+    y: Math.min(position1.y, position2.y),
+    width: Math.abs(position1.x - position2.x),
+    height: Math.abs(position1.y - position2.y),
+  }
+  for (const template of styleGuide.templates) {
+    const positions: Position[] = [
+      {
+        x: template.x,
+        y: template.y,
+      },
+      {
+        x: template.x + template.width,
+        y: template.y + template.height,
+      },
+    ]
+    if (isInRegion(positions, region)) {
+      return template
+    }
+  }
+  return null
+}
+
+function selectContent(styleGuide: StyleGuide, position: Position): TemplateContent | null {
+  for (const template of styleGuide.templates) {
+    if (isInRegion(position, template)) {
+      const templateContent = selectReferenceContent(template, template, position, styleGuide)
+      if (templateContent) {
+        return templateContent
+      }
+    }
+  }
+  return null
+}
+
+function selectReferenceContent(template: Template, basePosition: Position, position: Position, styleGuide: StyleGuide): TemplateContent | null {
+  for (const content of template.contents) {
+    const contentPosition = { x: content.x + basePosition.x, y: content.y + basePosition.y }
+    if (content.kind === 'image' || content.kind === 'text') {
+      if (isInRegion(position, { ...contentPosition, width: content.width, height: content.height })) {
+        return content
+      }
+    } else if (content.kind === 'reference') {
+      const reference = styleGuide.templates.find((t) => t.id === content.id)
+      if (reference) {
+        const referenceContent = selectReferenceContent(reference, contentPosition, position, styleGuide)
+        if (referenceContent) {
+          return referenceContent
+        }
+      }
+    }
+  }
+  return null
+}
+
+function isInRegion(position: Position | Position[], region: Region): boolean {
+  if (Array.isArray(position)) {
+    return position.every((p) => isInRegion(p, region))
+  }
   return position.x >= region.x && position.y >= region.y && position.x <= region.x + region.width && position.y <= region.y + region.height
 }
