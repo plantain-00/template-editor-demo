@@ -3,7 +3,7 @@ import Component from 'vue-class-component'
 import { indexTemplateHtml, indexTemplateHtmlStatic } from './variables'
 import { renderTemplate } from './renderer'
 import { styleGuide } from './data'
-import { Region, Position, TemplateContent, StyleGuide, Template } from './model'
+import { Region, Position, TemplateContent, StyleGuide, Template, CanvasSelection, CanvasSelectionData } from './model'
 
 @Component({
   render: indexTemplateHtml,
@@ -23,8 +23,9 @@ export class App extends Vue {
   private canvasWidth = 1200
   private canvasHeight = 400
   private styleGuide = styleGuide
-  private selectedContent: TemplateContent | null = null
-  private selectedTemplate: Template | null = null
+  private selection: CanvasSelection = {
+    kind: 'none'
+  }
   private changedContents = new Set<TemplateContent>()
   private keydownX = 0
   private keydownY = 0
@@ -74,11 +75,27 @@ export class App extends Vue {
         content.characters = Array.from(content.text).map((t) => ({ text: t }))
       }
     }
-    this.renderResults = this.styleGuide.templates.map((t) => ({
-      html: renderTemplate(t, this.styleGuide.templates),
-      x: t.x,
-      y: t.y,
-    }))
+    this.renderResults = this.styleGuide.templates.map((t) => {
+      let selection: CanvasSelectionData | undefined
+      if (this.selection.kind === 'template') {
+        selection = {
+          kind: 'template',
+          id: this.selection.template.id
+        }
+      } else if (this.selection.kind === 'content') {
+        const content = this.selection.content
+        selection = {
+          kind: 'content',
+          id: this.selection.template.id,
+          index: this.selection.template.contents.findIndex((c) => c === content)
+        }
+      }
+      return {
+        html: renderTemplate(t, this.styleGuide.templates, true, selection),
+        x: t.x,
+        y: t.y,
+      }
+    })
   }
 
   canvasWheel(e: WheelEvent) {
@@ -107,17 +124,21 @@ export class App extends Vue {
     if (e.offsetX !== this.keydownX || e.offsetY !== this.keydownY) {
       const keydownX = this.mapX(this.keydownX)
       const keydownY = this.mapY(this.keydownY)
-      this.selectedTemplate = selectTemplate(this.styleGuide, { x, y }, { x: keydownX, y: keydownY })
-      console.info(this.selectedTemplate)
-      return
+      const template = selectTemplate(this.styleGuide, { x, y }, { x: keydownX, y: keydownY })
+      this.selection = template ? { kind: 'template', template } : { kind: 'none' }
+    } else {
+      const content = selectContent(this.styleGuide, { x, y })
+      this.selection = content ? { kind: 'content', ...content } : { kind: 'none' }
     }
-    this.selectedContent = selectContent(this.styleGuide, { x, y })
+    if (this.auto) {
+      this.applyChanges()
+    }
   }
 
   changeText(e: { target: { value: string } }) {
-    if (this.selectedContent && this.selectedContent.kind === 'text') {
-      this.selectedContent.text = e.target.value
-      this.changedContents.add(this.selectedContent)
+    if (this.selection.kind === 'content' && this.selection.content.kind === 'text') {
+      this.selection.content.text = e.target.value
+      this.changedContents.add(this.selection.content)
       if (this.auto) {
         this.applyChanges()
       }
@@ -125,9 +146,9 @@ export class App extends Vue {
   }
 
   changeImageUrl(e: { target: { value: string } }) {
-    if (this.selectedContent && this.selectedContent.kind === 'image') {
-      this.selectedContent.url = e.target.value
-      this.changedContents.add(this.selectedContent)
+    if (this.selection.kind === 'content' && this.selection.content.kind === 'image') {
+      this.selection.content.url = e.target.value
+      this.changedContents.add(this.selection.content)
       if (this.auto) {
         this.applyChanges()
       }
@@ -170,7 +191,7 @@ function selectTemplate(styleGuide: StyleGuide, position1: Position, position2: 
   return null
 }
 
-function selectContent(styleGuide: StyleGuide, position: Position): TemplateContent | null {
+function selectContent(styleGuide: StyleGuide, position: Position): { content: TemplateContent, template: Template } | null {
   for (const template of styleGuide.templates) {
     if (isInRegion(position, template)) {
       const templateContent = selectReferenceContent(template, template, position, styleGuide)
@@ -182,12 +203,12 @@ function selectContent(styleGuide: StyleGuide, position: Position): TemplateCont
   return null
 }
 
-function selectReferenceContent(template: Template, basePosition: Position, position: Position, styleGuide: StyleGuide): TemplateContent | null {
+function selectReferenceContent(template: Template, basePosition: Position, position: Position, styleGuide: StyleGuide): { content: TemplateContent, template: Template } | null {
   for (const content of template.contents) {
     const contentPosition = { x: content.x + basePosition.x, y: content.y + basePosition.y }
     if (content.kind === 'image' || content.kind === 'text') {
       if (isInRegion(position, { ...contentPosition, width: content.width, height: content.height })) {
-        return content
+        return { content, template }
       }
     } else if (content.kind === 'reference') {
       const reference = styleGuide.templates.find((t) => t.id === content.id)

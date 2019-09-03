@@ -11,12 +11,12 @@
     </div>
     <div :style="maskStyle" @wheel="canvasWheel" @mousedown="canvasMousedown" @mouseup="canvasMouseup"></div>
   </div>
-  <div v-if="selectedContent">
-    <div v-if="selectedContent.kind === 'text'">
-      <input type="text" :value="selectedContent.text" @change="changeText" />
+  <div v-if="selection.kind === 'content'">
+    <div v-if="selection.content.kind === 'text'">
+      <input type="text" :value="selection.content.text" @change="changeText" />
     </div>
-    <div v-if="selectedContent.kind === 'image'">
-      <input type="text" :value="selectedContent.url" @change="changeImageUrl" />
+    <div v-if="selection.content.kind === 'image'">
+      <input type="text" :value="selection.content.url" @change="changeImageUrl" />
     </div>
   </div>
   <button @click="applyChanges()">apply changes</button>
