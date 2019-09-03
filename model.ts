@@ -51,3 +51,28 @@ export interface Region extends Position {
   width: number
   height: number
 }
+
+export type CanvasSelection =
+  | {
+    kind: 'none'
+  }
+  | {
+    kind: 'template',
+    template: Template
+  }
+  | {
+    kind: 'content',
+    content: TemplateContent,
+    template: Template
+  }
+
+export type CanvasSelectionData =
+  | {
+    kind: 'template'
+    id: string
+  }
+  | {
+    kind: 'content'
+    id: string
+    index: number
+  }
