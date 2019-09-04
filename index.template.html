@@ -1,5 +1,5 @@
 <div>
-  <div style="margin-left: 210px; margin-top: 10px">
+  <div style="margin-left: 210px; margin-top: 10px; position: absolute">
     <div :style="canvasStyle">
       <div :style="styleGuideStyle">
         <div v-for="r in renderResults">
@@ -9,7 +9,8 @@
         </div>
       </div>
     </div>
-    <div :style="maskStyle" @wheel="canvasWheel" @mousedown="canvasMousedown" @mouseup="canvasMouseup"></div>
+    <div v-if="mousePressing && isDragging" :style="draggingAreaStyle"></div>
+    <div :style="maskStyle" @wheel="canvasWheel" @mousedown="canvasMousedown" @mouseup="canvasMouseup" @mousemove="canvasMousemove"></div>
   </div>
   <div v-if="selection.kind === 'content'">
     <div v-if="selection.content.kind === 'text'">
