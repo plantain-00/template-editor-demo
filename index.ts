@@ -27,8 +27,11 @@ export class App extends Vue {
     kind: 'none'
   }
   private changedContents = new Set<TemplateContent>()
-  private keydownX = 0
-  private keydownY = 0
+  private mousedownX = 0
+  private mousedownY = 0
+  private mouseupX = 0
+  private mouseupY = 0
+  private mousePressing = false
 
   canvasStyle = {
     position: 'absolute',
@@ -59,6 +62,21 @@ export class App extends Vue {
 
   private get styleGuideHeight() {
     return Math.max(...this.styleGuide.templates.map((t) => t.y + t.height))
+  }
+
+  private get isDragging() {
+    return !equal(this.mouseupX, this.mousedownX) || !(this.mouseupY, this.mousedownY)
+  }
+
+  get draggingAreaStyle() {
+    return {
+      position: 'absolute',
+      border: '1px dashed black',
+      left: Math.min(this.mousedownX, this.mouseupX) + 'px',
+      top: Math.min(this.mousedownY, this.mouseupY) + 'px',
+      width: Math.abs(this.mousedownX - this.mouseupX) + 'px',
+      height: Math.abs(this.mousedownY - this.mouseupY) + 'px',
+    }
   }
 
   beforeMount() {
@@ -114,17 +132,31 @@ export class App extends Vue {
   }
 
   canvasMousedown(e: MouseEvent) {
-    this.keydownX = e.offsetX
-    this.keydownY = e.offsetY
+    this.mousedownX = e.offsetX
+    this.mousedownY = e.offsetY
+    this.mouseupX = e.offsetX
+    this.mouseupY = e.offsetY
+    this.mousePressing = true
+  }
+
+  canvasMousemove(e: MouseEvent) {
+    if (this.mousePressing) {
+      this.mouseupX = e.offsetX
+      this.mouseupY = e.offsetY
+    }
   }
 
   canvasMouseup(e: MouseEvent) {
-    const x = this.mapX(e.offsetX)
-    const y = this.mapY(e.offsetY)
-    if (e.offsetX !== this.keydownX || e.offsetY !== this.keydownY) {
-      const keydownX = this.mapX(this.keydownX)
-      const keydownY = this.mapY(this.keydownY)
-      const template = selectTemplate(this.styleGuide, { x, y }, { x: keydownX, y: keydownY })
+    this.mouseupX = e.offsetX
+    this.mouseupY = e.offsetY
+    this.mousePressing = false
+
+    const x = this.mapX(this.mouseupX)
+    const y = this.mapY(this.mouseupY)
+    if (this.isDragging) {
+      const mousedownX = this.mapX(this.mousedownX)
+      const mousedownY = this.mapY(this.mousedownY)
+      const template = selectTemplate(this.styleGuide, { x, y }, { x: mousedownX, y: mousedownY })
       this.selection = template ? { kind: 'template', template } : { kind: 'none' }
     } else {
       const content = selectContent(this.styleGuide, { x, y })
@@ -165,6 +197,11 @@ export class App extends Vue {
 }
 
 new App({ el: '#container' })
+
+function equal(n1: number, n2: number) {
+  const diff = n1 - n2
+  return diff < Number.EPSILON && diff > -Number.EPSILON
+}
 
 function selectTemplate(styleGuide: StyleGuide, position1: Position, position2: Position) {
   const region: Region = {
