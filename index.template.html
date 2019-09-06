@@ -2,25 +2,25 @@
   <div style="margin-left: 210px; margin-top: 10px; position: absolute">
     <div :style="canvasStyle">
       <div :style="styleGuideStyle">
-        <div v-for="r in renderResults">
+        <div v-for="r in canvasState.renderResults">
           <div :style="{ left: r.x + 'px', top: r.y + 'px', position: 'absolute' }">
             <div v-html="r.html"></div>
           </div>
         </div>
       </div>
     </div>
-    <div v-if="mousePressing && isDragging" :style="draggingAreaStyle"></div>
-    <div :style="maskStyle" @wheel="canvasWheel" @mousedown="canvasMousedown" @mouseup="canvasMouseup" @mousemove="canvasMousemove"></div>
+    <div v-if="canvasState.mousePressing && canvasState.isDragging" :style="draggingAreaStyle"></div>
+    <canvas-mask :canvasState="canvasState"></canvas-mask>
   </div>
-  <div v-if="selection.kind === 'content'">
-    <div v-if="selection.content.kind === 'text'">
-      <input type="text" :value="selection.content.text" @change="changeText" />
+  <div v-if="canvasState.selection.kind === 'content'">
+    <div v-if="canvasState.selection.content.kind === 'text'">
+      <input type="text" :value="canvasState.selection.content.text" @change="changeText" />
     </div>
-    <div v-if="selection.content.kind === 'image'">
-      <input type="text" :value="selection.content.url" @change="changeImageUrl" />
+    <div v-if="canvasState.selection.content.kind === 'image'">
+      <input type="text" :value="canvasState.selection.content.url" @change="changeImageUrl" />
     </div>
   </div>
-  <button @click="applyChanges()">apply changes</button>
-  <input type="checkbox" v-model="auto">
+  <button @click="canvasState.applyChanges()">apply changes</button>
+  <input type="checkbox" v-model="canvasState.auto">
   auto
 </div>
