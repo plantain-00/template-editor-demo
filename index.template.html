@@ -12,15 +12,5 @@
     <div v-if="canvasState.mousePressing && canvasState.isDragging" :style="draggingAreaStyle"></div>
     <canvas-mask :canvasState="canvasState"></canvas-mask>
   </div>
-  <div v-if="canvasState.selection.kind === 'content'">
-    <div v-if="canvasState.selection.content.kind === 'text'">
-      <input type="text" :value="canvasState.selection.content.text" @change="changeText" />
-    </div>
-    <div v-if="canvasState.selection.content.kind === 'image'">
-      <input type="text" :value="canvasState.selection.content.url" @change="changeImageUrl" />
-    </div>
-  </div>
-  <button @click="canvasState.applyChanges()">apply changes</button>
-  <input type="checkbox" v-model="canvasState.auto">
-  auto
+  <editor-panel :canvasState="canvasState"></editor-panel>
 </div>

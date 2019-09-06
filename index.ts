@@ -4,8 +4,10 @@ import { indexTemplateHtml, indexTemplateHtmlStatic } from './variables'
 import { styleGuide } from './data'
 import { CanvasState } from './canvas-state'
 import { CanvasMask } from './canvas-mask'
+import { EditorPanel } from './editor-panel'
 
 Vue.component('canvas-mask', CanvasMask)
+Vue.component('editor-panel', EditorPanel)
 
 @Component({
   render: indexTemplateHtml,
@@ -38,22 +40,6 @@ export class App extends Vue {
       top: Math.min(this.canvasState.mousedownY, this.canvasState.mouseupY) + 'px',
       width: Math.abs(this.canvasState.mousedownX - this.canvasState.mouseupX) + 'px',
       height: Math.abs(this.canvasState.mousedownY - this.canvasState.mouseupY) + 'px',
-    }
-  }
-
-  changeText(e: { target: { value: string } }) {
-    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
-      this.canvasState.selection.content.text = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
-      this.canvasState.applyChangesIfAuto()
-    }
-  }
-
-  changeImageUrl(e: { target: { value: string } }) {
-    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'image') {
-      this.canvasState.selection.content.url = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
-      this.canvasState.applyChangesIfAuto()
     }
   }
 }
