@@ -12,9 +12,9 @@ import { CanvasState } from './canvas-state'
   }
 })
 export class EditorPanel extends Vue {
-  public canvasState = CanvasState.create(styleGuide)
+  canvasState = CanvasState.create(styleGuide)
 
-  public changeText(e: { target: { value: string } }) {
+  changeText(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
       this.canvasState.selection.content.text = e.target.value
       this.canvasState.changedContents.add(this.canvasState.selection.content)
@@ -22,7 +22,7 @@ export class EditorPanel extends Vue {
     }
   }
 
-  public changeImageUrl(e: { target: { value: string } }) {
+  changeImageUrl(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'image') {
       this.canvasState.selection.content.url = e.target.value
       this.canvasState.changedContents.add(this.canvasState.selection.content)

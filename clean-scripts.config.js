@@ -1,7 +1,7 @@
 const { Service, executeScriptAsync } = require('clean-scripts')
 const { watch } = require('watch-then-execute')
 
-const tsFiles = `"*.ts" "spec/**/*.ts"`
+const tsFiles = `"src/*.ts" "spec/**/*.ts"`
 const jsFiles = `"*.config.js" "spec/**/*.config.js"`
 const lessFiles = `"*.less"`
 
@@ -41,7 +41,7 @@ module.exports = {
     export: `no-unused-export ${tsFiles} ${lessFiles} --strict --need-module tslib`,
     commit: `commitlint --from=HEAD~1`,
     markdown: `markdownlint README.md`,
-    typeCoverage: 'type-coverage -p . --strict --ignore-files variables.ts'
+    typeCoverage: 'type-coverage -p . --strict --ignore-files src/variables.ts'
   },
   test: [
     'tsc -p spec',
