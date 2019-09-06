@@ -9,7 +9,7 @@
         </div>
       </div>
     </div>
-    <div v-if="canvasState.mousePressing && canvasState.isDragging" :style="draggingAreaStyle"></div>
+    <dragging-area :canvasState="canvasState"></dragging-area>
     <canvas-mask :canvasState="canvasState"></canvas-mask>
   </div>
   <editor-panel :canvasState="canvasState"></editor-panel>
