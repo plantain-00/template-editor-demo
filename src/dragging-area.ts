@@ -12,9 +12,9 @@ import { draggingAreaTemplateHtml, draggingAreaTemplateHtmlStatic } from './vari
   }
 })
 export class DraggingArea extends Vue {
-  private canvasState!: CanvasState
+  canvasState!: CanvasState
 
-  public get draggingAreaStyle() {
+  get draggingAreaStyle() {
     return {
       position: 'absolute',
       border: '1px dashed black',

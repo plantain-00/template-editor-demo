@@ -3,7 +3,7 @@ const isDev = process.env.NODE_ENV === 'development'
 module.exports = {
   mode: process.env.NODE_ENV,
   entry: {
-    index: './index'
+    index: './dist/index'
   },
   output: {
     path: __dirname,

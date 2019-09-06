@@ -15,7 +15,7 @@ import { canvasMaskTemplateHtml, canvasMaskTemplateHtmlStatic } from './variable
 export class CanvasMask extends Vue {
   private canvasState!: CanvasState
 
-  public get maskStyle() {
+  get maskStyle() {
     return {
       position: 'absolute',
       width: this.canvasState.canvasWidth + 'px',
@@ -25,7 +25,7 @@ export class CanvasMask extends Vue {
     }
   }
 
-  public canvasWheel(e: WheelEvent) {
+  canvasWheel(e: WheelEvent) {
     if (e.ctrlKey) {
       e.preventDefault();
       e.stopImmediatePropagation();
@@ -40,7 +40,7 @@ export class CanvasMask extends Vue {
     }
   }
 
-  public canvasMousedown(e: MouseEvent) {
+  canvasMousedown(e: MouseEvent) {
     this.canvasState.mousedownX = e.offsetX
     this.canvasState.mousedownY = e.offsetY
     this.canvasState.mouseupX = e.offsetX
@@ -48,14 +48,14 @@ export class CanvasMask extends Vue {
     this.canvasState.mousePressing = true
   }
 
-  public canvasMousemove(e: MouseEvent) {
+  canvasMousemove(e: MouseEvent) {
     if (this.canvasState.mousePressing) {
       this.canvasState.mouseupX = e.offsetX
       this.canvasState.mouseupY = e.offsetY
     }
   }
 
-  public canvasMouseup(e: MouseEvent) {
+  canvasMouseup(e: MouseEvent) {
     this.canvasState.mouseupX = e.offsetX
     this.canvasState.mouseupY = e.offsetY
     this.canvasState.mousePressing = false
