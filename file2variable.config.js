@@ -21,11 +21,11 @@ module.exports = {
         path: './mask-layer'
       }
     }
-    if (file.endsWith('dragging-layer.template.html')) {
+    if (file.endsWith('dragging-for-selection-layer.template.html')) {
       return {
         type: 'vue',
-        name: 'DraggingLayer',
-        path: './dragging-layer'
+        name: 'DraggingForSelectionLayer',
+        path: './dragging-for-selection-layer'
       }
     }
     if (file.endsWith('operation-panel.template.html')) {

@@ -78,6 +78,7 @@ export class CanvasState extends Vue {
   mouseupX = 0
   mouseupY = 0
   mousePressing = false
+  isDraggingForMoving = false
 
   get styleGuideWidth() {
     return Math.max(...this.styleGuide.templates.map((t) => t.x + t.width))
@@ -87,8 +88,21 @@ export class CanvasState extends Vue {
     return Math.max(...this.styleGuide.templates.map((t) => t.y + t.height))
   }
 
-  get isDragging() {
-    return !equal(this.mouseupX, this.mousedownX) || !(this.mouseupY, this.mousedownY)
+  get isDraggingForSelection() {
+    return (!equal(this.mouseupX, this.mousedownX) || !(this.mouseupY, this.mousedownY)) && this.mousePressing && !this.isDraggingForMoving
+  }
+
+  get mousedownMappedX() {
+    return this.mapX(this.mousedownX)
+  }
+  get mousedownMappedY() {
+    return this.mapY(this.mousedownY)
+  }
+  get mouseupMappedX() {
+    return this.mapX(this.mouseupX)
+  }
+  get mouseupMappedY() {
+    return this.mapY(this.mouseupY)
   }
 
   mapX(x: number) {
