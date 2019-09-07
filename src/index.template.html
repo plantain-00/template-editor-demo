@@ -1,16 +1,8 @@
 <div>
   <div style="margin-left: 210px; margin-top: 10px; position: absolute">
-    <div :style="canvasStyle">
-      <div :style="styleGuideStyle">
-        <div v-for="r in canvasState.renderResults">
-          <div :style="{ left: r.x + 'px', top: r.y + 'px', position: 'absolute' }">
-            <div v-html="r.html"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <dragging-area :canvasState="canvasState"></dragging-area>
-    <canvas-mask :canvasState="canvasState"></canvas-mask>
+    <render-layer :canvasState="canvasState"></render-layer>
+    <dragging-layer :canvasState="canvasState"></dragging-layer>
+    <mask-layer :canvasState="canvasState"></mask-layer>
   </div>
-  <editor-panel :canvasState="canvasState"></editor-panel>
+  <operation-panel :canvasState="canvasState"></operation-panel>
 </div>

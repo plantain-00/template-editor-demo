@@ -1,16 +1,16 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { editorPanelTemplateHtml, editorPanelTemplateHtmlStatic } from './variables'
+import { operationPanelTemplateHtml, operationPanelTemplateHtmlStatic } from './variables'
 import { CanvasState } from './canvas-state'
 
 @Component({
-  render: editorPanelTemplateHtml,
-  staticRenderFns: editorPanelTemplateHtmlStatic,
+  render: operationPanelTemplateHtml,
+  staticRenderFns: operationPanelTemplateHtmlStatic,
   props: {
     canvasState: CanvasState
   }
 })
-export class EditorPanel extends Vue {
+export class OperationPanel extends Vue {
   canvasState!: CanvasState
 
   changeX(e: { target: { value: string } }) {

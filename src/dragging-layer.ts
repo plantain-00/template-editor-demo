@@ -2,16 +2,16 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
-import { draggingAreaTemplateHtml, draggingAreaTemplateHtmlStatic } from './variables'
+import { draggingLayerTemplateHtml, draggingLayerTemplateHtmlStatic } from './variables'
 
 @Component({
-  render: draggingAreaTemplateHtml,
-  staticRenderFns: draggingAreaTemplateHtmlStatic,
+  render: draggingLayerTemplateHtml,
+  staticRenderFns: draggingLayerTemplateHtmlStatic,
   props: {
     canvasState: CanvasState
   }
 })
-export class DraggingArea extends Vue {
+export class DraggingLayer extends Vue {
   canvasState!: CanvasState
 
   get draggingAreaStyle() {

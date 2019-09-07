@@ -3,16 +3,16 @@ import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
 import { StyleGuide, Region, Position, TemplateContent, Template } from './model'
-import { canvasMaskTemplateHtml, canvasMaskTemplateHtmlStatic } from './variables'
+import { maskLayerTemplateHtml, maskLayerTemplateHtmlStatic } from './variables'
 
 @Component({
-  render: canvasMaskTemplateHtml,
-  staticRenderFns: canvasMaskTemplateHtmlStatic,
+  render: maskLayerTemplateHtml,
+  staticRenderFns: maskLayerTemplateHtmlStatic,
   props: {
     canvasState: CanvasState
   }
 })
-export class CanvasMask extends Vue {
+export class MaskLayer extends Vue {
   private canvasState!: CanvasState
 
   get maskStyle() {

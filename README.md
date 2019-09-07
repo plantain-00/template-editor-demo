@@ -20,3 +20,4 @@ A template editor demo.
 + add text, image, template
 + layout
 + reset view
++ layer list and visible

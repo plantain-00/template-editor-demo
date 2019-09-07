@@ -14,25 +14,32 @@ module.exports = {
         path: './index'
       }
     }
-    if (file.endsWith('canvas-mask.template.html')) {
+    if (file.endsWith('mask-layer.template.html')) {
       return {
         type: 'vue',
-        name: 'CanvasMask',
-        path: './canvas-mask'
+        name: 'MaskLayer',
+        path: './mask-layer'
       }
     }
-    if (file.endsWith('dragging-area.template.html')) {
+    if (file.endsWith('dragging-layer.template.html')) {
       return {
         type: 'vue',
-        name: 'DraggingArea',
-        path: './dragging-area'
+        name: 'DraggingLayer',
+        path: './dragging-layer'
       }
     }
-    if (file.endsWith('editor-panel.template.html')) {
+    if (file.endsWith('operation-panel.template.html')) {
       return {
         type: 'vue',
-        name: 'EditorPanel',
-        path: './editor-panel'
+        name: 'OperationPanel',
+        path: './operation-panel'
+      }
+    }
+    if (file.endsWith('render-layer.template.html')) {
+      return {
+        type: 'vue',
+        name: 'RenderLayer',
+        path: './render-layer'
       }
     }
     return { type: 'text' }
