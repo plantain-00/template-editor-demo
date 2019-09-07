@@ -6,8 +6,44 @@
     <div v-if="canvasState.selection.content.kind === 'image'">
       <input type="text" :value="canvasState.selection.content.url" @change="changeImageUrl" />
     </div>
+    <div>
+      x
+      <input type="number" :value="canvasState.selection.content.x" @change="changeX" />
+    </div>
+    <div>
+      y
+      <input type="number" :value="canvasState.selection.content.y" @change="changeY" />
+    </div>
+    <div>
+      width
+      <input type="number" :value="canvasState.selection.content.width" @change="changeWidth" />
+    </div>
+    <div>
+      height
+      <input type="number" :value="canvasState.selection.content.height" @change="changeHeight" />
+    </div>
   </div>
-  <button @click="canvasState.applyChanges()">apply changes</button>
-  <input type="checkbox" v-model="canvasState.auto">
-  auto
+  <div v-if="canvasState.selection.kind === 'template'">
+    <div>
+      x
+      <input type="number" :value="canvasState.selection.template.x" @change="changeX" />
+    </div>
+    <div>
+      y
+      <input type="number" :value="canvasState.selection.template.y" @change="changeY" />
+    </div>
+    <div>
+      width
+      <input type="number" :value="canvasState.selection.template.width" @change="changeWidth" />
+    </div>
+    <div>
+      height
+      <input type="number" :value="canvasState.selection.template.height" @change="changeHeight" />
+    </div>
+  </div>
+  <div>
+    <button @click="canvasState.applyChanges()">apply changes</button>
+    <input type="checkbox" v-model="canvasState.auto">
+    auto
+  </div>
 </div>

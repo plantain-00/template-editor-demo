@@ -12,11 +12,11 @@ A template editor demo.
 
 + expression
 + template engine, input data, preview result
-+ template, text, image's properties, x, y, width, height edit
++ template, text, image's properties
 + scale canvas
 + undo, redo
 + move template
 + clone template
 + add text, image, template
-+ refactor to small components
-+ operation panel
++ layout
++ reset view
