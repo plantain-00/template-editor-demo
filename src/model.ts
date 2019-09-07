@@ -32,7 +32,7 @@ interface TemplateImageContent extends Region {
   url: string
 }
 
-interface TemplateReferenceContent extends Position {
+export interface TemplateReferenceContent extends Position {
   kind: 'reference'
   id: string
 }

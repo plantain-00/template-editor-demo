@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
-import { StyleGuide, Region, Position, TemplateContent, Template } from './model'
+import { StyleGuide, Region, Position, TemplateContent, Template, TemplateReferenceContent } from './model'
 import { maskLayerTemplateHtml, maskLayerTemplateHtmlStatic } from './variables'
 
 @Component({
@@ -17,6 +17,7 @@ export class MaskLayer extends Vue {
 
   private draggingSelectionOffsetX = 0
   private draggingSelectionOffsetY = 0
+  private draggingSelectionContent: TemplateReferenceContent | undefined
   private x = 0
   private y = 0
 
@@ -74,6 +75,7 @@ export class MaskLayer extends Vue {
     if (relation) {
       this.draggingSelectionOffsetX = relation.offsetX
       this.draggingSelectionOffsetY = relation.offsetY
+      this.draggingSelectionContent = relation.content
     }
   }
 
@@ -87,8 +89,13 @@ export class MaskLayer extends Vue {
     }
     if (this.canvasState.isDraggingForMoving) {
       if (this.canvasState.selection.kind === 'template') {
-        this.canvasState.selection.template.x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
-        this.canvasState.selection.template.y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
+        if (this.draggingSelectionContent) {
+          this.draggingSelectionContent.x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
+          this.draggingSelectionContent.y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
+        } else {
+          this.canvasState.selection.template.x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
+          this.canvasState.selection.template.y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
+        }
       } else if (this.canvasState.selection.kind === 'content') {
         this.canvasState.selection.content.x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
         this.canvasState.selection.content.y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
@@ -123,11 +130,38 @@ export class MaskLayer extends Vue {
 
   private getSelectionAreaRelation(position: Position) {
     if (this.canvasState.selection.kind === 'template') {
-      const isInSelectionRegion = isInRegion(position, this.canvasState.selection.template)
-      if (isInSelectionRegion) {
-        return {
-          offsetX: position.x - this.canvasState.selection.template.x,
-          offsetY: position.y - this.canvasState.selection.template.y
+      for (const template of this.canvasState.styleGuide.templates) {
+        for (const templatePosition of iterateAllTemplate(
+          this.canvasState.selection.template,
+          template,
+          {
+            x: template.x,
+            y: template.y
+          },
+          this.canvasState.styleGuide
+        )) {
+          const isInSelectionRegion = isInRegion(
+            position,
+            {
+              x: templatePosition.x,
+              y: templatePosition.y,
+              width: this.canvasState.selection.template.width,
+              height: this.canvasState.selection.template.height,
+            }
+          )
+          if (isInSelectionRegion) {
+            if (templatePosition.content) {
+              return {
+                offsetX: position.x - templatePosition.content.x,
+                offsetY: position.y - templatePosition.content.y,
+                content: templatePosition.content
+              }
+            }
+            return {
+              offsetX: position.x - templatePosition.x,
+              offsetY: position.y - templatePosition.y,
+            }
+          }
         }
       }
     } else if (this.canvasState.selection.kind === 'content'
@@ -144,11 +178,41 @@ export class MaskLayer extends Vue {
       if (isInSelectionRegion) {
         return {
           offsetX: position.x - this.canvasState.selection.content.x,
-          offsetY: position.y - this.canvasState.selection.content.y
+          offsetY: position.y - this.canvasState.selection.content.y,
+          content: undefined
         }
       }
     }
     return undefined
+  }
+}
+
+function* iterateAllTemplate(
+  target: Template,
+  template: Template,
+  position: Position & { content?: TemplateReferenceContent },
+  styleGuide: StyleGuide,
+): Generator<Position & { content?: TemplateReferenceContent }, void, unknown> {
+  if (template === target) {
+    yield position
+  } else {
+    for (const content of template.contents) {
+      if (content.kind === 'reference') {
+        const referenceTemplate = styleGuide.templates.find((t) => t.id === content.id)
+        if (referenceTemplate) {
+          yield* iterateAllTemplate(
+            target,
+            referenceTemplate,
+            {
+              x: content.x + position.x,
+              y: content.y + position.y,
+              content,
+            },
+            styleGuide,
+          )
+        }
+      }
+    }
   }
 }
 
