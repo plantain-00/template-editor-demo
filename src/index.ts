@@ -5,11 +5,11 @@ import { styleGuide } from './data'
 import { CanvasState } from './canvas-state'
 import { MaskLayer } from './mask-layer'
 import { OperationPanel } from './operation-panel'
-import { DraggingLayer } from './dragging-layer'
+import { DraggingForSelectionLayer } from './dragging-for-selection-layer'
 import { RenderLayer } from './render-layer'
 
 Vue.component('mask-layer', MaskLayer)
-Vue.component('dragging-layer', DraggingLayer)
+Vue.component('dragging-for-selection-layer', DraggingForSelectionLayer)
 Vue.component('render-layer', RenderLayer)
 
 Vue.component('operation-panel', OperationPanel)

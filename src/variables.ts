@@ -4,22 +4,22 @@
  */
 // tslint:disable
 /* eslint-disable */
-import { DraggingLayer } from "./dragging-layer"
+import { DraggingForSelectionLayer } from "./dragging-for-selection-layer"
 import { App } from "./index"
 import { MaskLayer } from "./mask-layer"
 import { OperationPanel } from "./operation-panel"
 import { RenderLayer } from "./render-layer"
 
 // @ts-ignore
-export function draggingLayerTemplateHtml(this: DraggingLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.canvasState.mousePressing && _vm.canvasState.isDragging)?_c('div',{style:(_vm.draggingAreaStyle)}):_vm._e()}
+export function draggingForSelectionLayerTemplateHtml(this: DraggingForSelectionLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.canvasState.isDraggingForSelection)?_c('div',{style:(_vm.draggingAreaStyle)}):_vm._e()}
 // @ts-ignore
-export var draggingLayerTemplateHtmlStatic = [  ]
+export var draggingForSelectionLayerTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticStyle:{"margin-left":"210px","margin-top":"10px","position":"absolute"}},[_c('render-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('dragging-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('mask-layer',{attrs:{"canvasState":_vm.canvasState}})],1),_vm._v(" "),_c('operation-panel',{attrs:{"canvasState":_vm.canvasState}})],1)}
+export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticStyle:{"margin-left":"210px","margin-top":"10px","position":"absolute"}},[_c('render-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('dragging-for-selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('mask-layer',{attrs:{"canvasState":_vm.canvasState}})],1),_vm._v(" "),_c('operation-panel',{attrs:{"canvasState":_vm.canvasState}})],1)}
 // @ts-ignore
 export var indexTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function maskLayerTemplateHtml(this: MaskLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.maskStyle),on:{"wheel":_vm.canvasWheel,"mousedown":_vm.canvasMousedown,"mouseup":_vm.canvasMouseup,"mousemove":_vm.canvasMousemove}})}
+export function maskLayerTemplateHtml(this: MaskLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.maskStyle),on:{"wheel":_vm.wheel,"mousedown":_vm.mousedown,"mouseup":_vm.mouseup,"mousemove":_vm.mousemove}})}
 // @ts-ignore
 export var maskLayerTemplateHtmlStatic = [  ]
 // @ts-ignore

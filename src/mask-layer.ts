@@ -15,17 +15,38 @@ import { maskLayerTemplateHtml, maskLayerTemplateHtmlStatic } from './variables'
 export class MaskLayer extends Vue {
   private canvasState!: CanvasState
 
+  private draggingSelectionOffsetX = 0
+  private draggingSelectionOffsetY = 0
+  private x = 0
+  private y = 0
+
   get maskStyle() {
+    let cursor: string
+
+    let isInSelectionRegion = false
+    if (this.canvasState.selection.kind === 'template') {
+      const x = this.canvasState.mapX(this.x)
+      const y = this.canvasState.mapY(this.y)
+      isInSelectionRegion = isInRegion({ x, y }, this.canvasState.selection.template)
+    }
+
+    if (isInSelectionRegion || this.canvasState.isDraggingForMoving) {
+      cursor = 'move'
+    } else if (this.canvasState.isDraggingForSelection) {
+      cursor = 'crosshair'
+    } else {
+      cursor = 'auto'
+    }
     return {
       position: 'absolute',
       width: this.canvasState.canvasWidth + 'px',
       height: this.canvasState.canvasHeight + 'px',
       opacity: 0,
-      cursor: this.canvasState.isDragging && this.canvasState.mousePressing ? 'crosshair' : 'auto'
+      cursor
     }
   }
 
-  canvasWheel(e: WheelEvent) {
+  wheel(e: WheelEvent) {
     if (e.ctrlKey) {
       e.preventDefault();
       e.stopImmediatePropagation();
@@ -40,38 +61,63 @@ export class MaskLayer extends Vue {
     }
   }
 
-  canvasMousedown(e: MouseEvent) {
+  mousedown(e: MouseEvent) {
     this.canvasState.mousedownX = e.offsetX
     this.canvasState.mousedownY = e.offsetY
     this.canvasState.mouseupX = e.offsetX
     this.canvasState.mouseupY = e.offsetY
     this.canvasState.mousePressing = true
+
+    if (this.canvasState.selection.kind === 'template') {
+      const x = this.canvasState.mousedownMappedX
+      const y = this.canvasState.mousedownMappedY
+      this.canvasState.isDraggingForMoving = isInRegion({ x, y }, this.canvasState.selection.template)
+      if (this.canvasState.isDraggingForMoving) {
+        this.draggingSelectionOffsetX = x - this.canvasState.selection.template.x
+        this.draggingSelectionOffsetY = y - this.canvasState.selection.template.y
+      }
+    }
   }
 
-  canvasMousemove(e: MouseEvent) {
+  mousemove(e: MouseEvent) {
+    this.x = e.offsetX
+    this.y = e.offsetY
+
     if (this.canvasState.mousePressing) {
       this.canvasState.mouseupX = e.offsetX
       this.canvasState.mouseupY = e.offsetY
     }
+    if (this.canvasState.isDraggingForMoving) {
+      if (this.canvasState.selection.kind === 'template') {
+        this.canvasState.selection.template.x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
+        this.canvasState.selection.template.y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
+      }
+    }
+    this.canvasState.applyChangesIfAuto()
   }
 
-  canvasMouseup(e: MouseEvent) {
+  mouseup(e: MouseEvent) {
     this.canvasState.mouseupX = e.offsetX
     this.canvasState.mouseupY = e.offsetY
-    this.canvasState.mousePressing = false
 
-    const x = this.canvasState.mapX(this.canvasState.mouseupX)
-    const y = this.canvasState.mapY(this.canvasState.mouseupY)
-    if (this.canvasState.isDragging) {
-      const mousedownX = this.canvasState.mapX(this.canvasState.mousedownX)
-      const mousedownY = this.canvasState.mapY(this.canvasState.mousedownY)
-      const template = selectTemplate(this.canvasState.styleGuide, { x, y }, { x: mousedownX, y: mousedownY })
+    if (this.canvasState.isDraggingForMoving) {
+      this.canvasState.isDraggingForMoving = false
+      this.canvasState.mousePressing = false
+      return
+    }
+
+    const x = this.canvasState.mouseupMappedX
+    const y = this.canvasState.mouseupMappedY
+    if (this.canvasState.isDraggingForSelection) {
+      const template = selectTemplate(this.canvasState.styleGuide, { x, y }, { x: this.canvasState.mousedownMappedX, y: this.canvasState.mousedownMappedY })
       this.canvasState.selection = template ? { kind: 'template', template } : { kind: 'none' }
     } else {
       const content = selectContent(this.canvasState.styleGuide, { x, y })
       this.canvasState.selection = content ? { kind: 'content', ...content } : { kind: 'none' }
     }
     this.canvasState.applyChangesIfAuto()
+
+    this.canvasState.mousePressing = false
   }
 }
 

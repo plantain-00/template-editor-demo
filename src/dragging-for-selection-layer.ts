@@ -2,16 +2,16 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
-import { draggingLayerTemplateHtml, draggingLayerTemplateHtmlStatic } from './variables'
+import { draggingForSelectionLayerTemplateHtml, draggingForSelectionLayerTemplateHtmlStatic } from './variables'
 
 @Component({
-  render: draggingLayerTemplateHtml,
-  staticRenderFns: draggingLayerTemplateHtmlStatic,
+  render: draggingForSelectionLayerTemplateHtml,
+  staticRenderFns: draggingForSelectionLayerTemplateHtmlStatic,
   props: {
     canvasState: CanvasState
   }
 })
-export class DraggingLayer extends Vue {
+export class DraggingForSelectionLayer extends Vue {
   canvasState!: CanvasState
 
   get draggingAreaStyle() {
