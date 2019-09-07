@@ -23,14 +23,12 @@ export class MaskLayer extends Vue {
   get maskStyle() {
     let cursor: string
 
-    let isInSelectionRegion = false
-    if (this.canvasState.selection.kind === 'template') {
-      const x = this.canvasState.mapX(this.x)
-      const y = this.canvasState.mapY(this.y)
-      isInSelectionRegion = isInRegion({ x, y }, this.canvasState.selection.template)
-    }
+    const relation = this.getSelectionAreaRelation({
+      x: this.canvasState.mapX(this.x),
+      y: this.canvasState.mapY(this.y)
+    })
 
-    if (isInSelectionRegion || this.canvasState.isDraggingForMoving) {
+    if (relation || this.canvasState.isDraggingForMoving) {
       cursor = 'move'
     } else if (this.canvasState.isDraggingForSelection) {
       cursor = 'crosshair'
@@ -68,14 +66,14 @@ export class MaskLayer extends Vue {
     this.canvasState.mouseupY = e.offsetY
     this.canvasState.mousePressing = true
 
-    if (this.canvasState.selection.kind === 'template') {
-      const x = this.canvasState.mousedownMappedX
-      const y = this.canvasState.mousedownMappedY
-      this.canvasState.isDraggingForMoving = isInRegion({ x, y }, this.canvasState.selection.template)
-      if (this.canvasState.isDraggingForMoving) {
-        this.draggingSelectionOffsetX = x - this.canvasState.selection.template.x
-        this.draggingSelectionOffsetY = y - this.canvasState.selection.template.y
-      }
+    const relation = this.getSelectionAreaRelation({
+      x: this.canvasState.mousedownMappedX,
+      y: this.canvasState.mousedownMappedY
+    })
+    this.canvasState.isDraggingForMoving = !!relation
+    if (relation) {
+      this.draggingSelectionOffsetX = relation.offsetX
+      this.draggingSelectionOffsetY = relation.offsetY
     }
   }
 
@@ -91,6 +89,9 @@ export class MaskLayer extends Vue {
       if (this.canvasState.selection.kind === 'template') {
         this.canvasState.selection.template.x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
         this.canvasState.selection.template.y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
+      } else if (this.canvasState.selection.kind === 'content') {
+        this.canvasState.selection.content.x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
+        this.canvasState.selection.content.y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
       }
     }
     this.canvasState.applyChangesIfAuto()
@@ -118,6 +119,36 @@ export class MaskLayer extends Vue {
     this.canvasState.applyChangesIfAuto()
 
     this.canvasState.mousePressing = false
+  }
+
+  private getSelectionAreaRelation(position: Position) {
+    if (this.canvasState.selection.kind === 'template') {
+      const isInSelectionRegion = isInRegion(position, this.canvasState.selection.template)
+      if (isInSelectionRegion) {
+        return {
+          offsetX: position.x - this.canvasState.selection.template.x,
+          offsetY: position.y - this.canvasState.selection.template.y
+        }
+      }
+    } else if (this.canvasState.selection.kind === 'content'
+      && (this.canvasState.selection.content.kind === 'image'
+        || this.canvasState.selection.content.kind === 'text')) {
+      const isInSelectionRegion = isInRegion(
+        position,
+        {
+          x: this.canvasState.selection.content.x + this.canvasState.selection.template.x,
+          y: this.canvasState.selection.content.y + this.canvasState.selection.template.y,
+          width: this.canvasState.selection.content.width,
+          height: this.canvasState.selection.content.height,
+        })
+      if (isInSelectionRegion) {
+        return {
+          offsetX: position.x - this.canvasState.selection.content.x,
+          offsetY: position.y - this.canvasState.selection.content.y
+        }
+      }
+    }
+    return undefined
   }
 }
 
