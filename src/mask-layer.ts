@@ -121,7 +121,22 @@ export class MaskLayer extends Vue {
       this.canvasState.selection = template ? { kind: 'template', template } : { kind: 'none' }
     } else {
       const content = selectContent(this.canvasState.styleGuide, { x, y })
-      this.canvasState.selection = content ? { kind: 'content', ...content } : { kind: 'none' }
+      if (content) {
+        if (content.kind === 'content') {
+          this.canvasState.selection = {
+            kind: 'content',
+            content: content.content,
+            template: content.template
+          }
+        } else if (content.kind === 'template') {
+          this.canvasState.selection = {
+            kind: 'template',
+            template: content.template
+          }
+        }
+      } else {
+        this.canvasState.selection = { kind: 'none' }
+      }
     }
     this.canvasState.applyChangesIfAuto()
 
@@ -282,13 +297,18 @@ function selectTemplate(styleGuide: StyleGuide, position1: Position, position2: 
   return null
 }
 
-function selectContent(styleGuide: StyleGuide, position: Position): { content: TemplateContent, template: Template } | null {
+function selectContent(styleGuide: StyleGuide, position: Position): { kind: 'content', content: TemplateContent, template: Template } | { kind: 'template', template: Template } | null {
   for (const template of styleGuide.templates) {
     if (isInRegion(position, template)) {
       const templateContent = selectReferenceContent(template, template, position, styleGuide)
       if (templateContent) {
-        return templateContent
+        return { kind: 'content', ...templateContent }
       }
+    }
+  }
+  for (const template of styleGuide.templates) {
+    if (isInRegion(position, template)) {
+      return { kind: 'template', template }
     }
   }
   return null
