@@ -167,19 +167,31 @@ export class MaskLayer extends Vue {
     } else if (this.canvasState.selection.kind === 'content'
       && (this.canvasState.selection.content.kind === 'image'
         || this.canvasState.selection.content.kind === 'text')) {
-      const isInSelectionRegion = isInRegion(
-        position,
-        {
-          x: this.canvasState.selection.content.x + this.canvasState.selection.template.x,
-          y: this.canvasState.selection.content.y + this.canvasState.selection.template.y,
-          width: this.canvasState.selection.content.width,
-          height: this.canvasState.selection.content.height,
-        })
-      if (isInSelectionRegion) {
-        return {
-          offsetX: position.x - this.canvasState.selection.content.x,
-          offsetY: position.y - this.canvasState.selection.content.y,
-          content: undefined
+      for (const template of this.canvasState.styleGuide.templates) {
+        for (const contentPosition of iterateAllContent(
+          this.canvasState.selection.content,
+          template,
+          {
+            x: template.x,
+            y: template.y
+          },
+          this.canvasState.styleGuide
+        )) {
+          const isInSelectionRegion = isInRegion(
+            position,
+            {
+              x: contentPosition.x,
+              y: contentPosition.y,
+              width: this.canvasState.selection.content.width,
+              height: this.canvasState.selection.content.height,
+            })
+          if (isInSelectionRegion) {
+            return {
+              offsetX: position.x - this.canvasState.selection.content.x,
+              offsetY: position.y - this.canvasState.selection.content.y,
+              content: undefined
+            }
+          }
         }
       }
     }
@@ -211,6 +223,35 @@ function* iterateAllTemplate(
             styleGuide,
           )
         }
+      }
+    }
+  }
+}
+
+function* iterateAllContent(
+  target: TemplateContent,
+  template: Template,
+  position: Position,
+  styleGuide: StyleGuide,
+): Generator<Position, void, unknown> {
+  for (const content of template.contents) {
+    if (content === target) {
+      yield {
+        x: position.x + content.x,
+        y: position.y + content.y,
+      }
+    } else if (content.kind === 'reference') {
+      const referenceTemplate = styleGuide.templates.find((t) => t.id === content.id)
+      if (referenceTemplate) {
+        yield* iterateAllContent(
+          target,
+          referenceTemplate,
+          {
+            x: content.x + position.x,
+            y: content.y + position.y,
+          },
+          styleGuide,
+        )
       }
     }
   }
