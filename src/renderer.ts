@@ -1,10 +1,9 @@
-import { Template, CanvasSelectionData } from "./model";
+import { Template } from "./model";
 
-export function renderTemplate(template: Template, templates: Template[], isRoot = true, selection?: CanvasSelectionData) {
+export function renderTemplate(template: Template, templates: Template[], isRoot = true) {
   const result: string[] = []
   for (let i = 0; i < template.contents.length; i++) {
     const content = template.contents[i]
-    const selected = selection && selection.id === template.id && selection.kind === 'content' && selection.index === i
     if (content.kind === 'text') {
       result.push(`<div
       style="
@@ -16,7 +15,6 @@ export function renderTemplate(template: Template, templates: Template[], isRoot
         position: absolute;
         left: ${content.x}px;
         top: ${content.y}px;
-        border: ${selected ? 1 : 0}px solid green;
       ">${content.characters.map((c) => c.text).join('')}</div>`)
     } else if (content.kind === 'image') {
       result.push(`<img
@@ -27,13 +25,12 @@ export function renderTemplate(template: Template, templates: Template[], isRoot
           position: absolute;
           left: ${content.x}px;
           top: ${content.y}px;
-          border: ${selected ? 1 : 0}px solid green;
         "
       />`)
     } else if (content.kind === 'reference') {
       const reference = templates.find((t) => t.id === content.id)
       if (reference) {
-        const referenceResult = renderTemplate(reference, templates, false, selection)
+        const referenceResult = renderTemplate(reference, templates, false)
         result.push(`<div
           style="
             left: ${content.x}px;
@@ -51,7 +48,6 @@ export function renderTemplate(template: Template, templates: Template[], isRoot
       height: ${template.height}px;
       position: absolute;
       user-select: none;
-      border: ${selection && selection.id === template.id && selection.kind === 'template' ? 1 : 0}px solid green;
       ${backgroundColor}
     "
   >${result.join('')}</div>`

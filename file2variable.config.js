@@ -42,6 +42,13 @@ module.exports = {
         path: './render-layer'
       }
     }
+    if (file.endsWith('selection-layer.template.html')) {
+      return {
+        type: 'vue',
+        name: 'SelectionLayer',
+        path: './selection-layer'
+      }
+    }
     return { type: 'text' }
   },
   out: 'src/variables.ts'

@@ -3,6 +3,7 @@ import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
 import { StyleGuide, Region, Position, TemplateContent, Template, TemplateReferenceContent } from './model'
+import { iterateAllContentPositions, iterateAllTemplatePositions } from './utils'
 import { maskLayerTemplateHtml, maskLayerTemplateHtmlStatic } from './variables'
 
 @Component({
@@ -145,130 +146,52 @@ export class MaskLayer extends Vue {
 
   private getSelectionAreaRelation(position: Position) {
     if (this.canvasState.selection.kind === 'template') {
-      for (const template of this.canvasState.styleGuide.templates) {
-        for (const templatePosition of iterateAllTemplate(
-          this.canvasState.selection.template,
-          template,
+      for (const templatePosition of iterateAllTemplatePositions(this.canvasState.selection.template, this.canvasState.styleGuide)) {
+        const isInSelectionRegion = isInRegion(
+          position,
           {
-            x: template.x,
-            y: template.y
-          },
-          this.canvasState.styleGuide
-        )) {
-          const isInSelectionRegion = isInRegion(
-            position,
-            {
-              x: templatePosition.x,
-              y: templatePosition.y,
-              width: this.canvasState.selection.template.width,
-              height: this.canvasState.selection.template.height,
-            }
-          )
-          if (isInSelectionRegion) {
-            if (templatePosition.content) {
-              return {
-                offsetX: position.x - templatePosition.content.x,
-                offsetY: position.y - templatePosition.content.y,
-                content: templatePosition.content
-              }
-            }
+            x: templatePosition.x,
+            y: templatePosition.y,
+            width: this.canvasState.selection.template.width,
+            height: this.canvasState.selection.template.height,
+          }
+        )
+        if (isInSelectionRegion) {
+          if (templatePosition.content) {
             return {
-              offsetX: position.x - templatePosition.x,
-              offsetY: position.y - templatePosition.y,
+              offsetX: position.x - templatePosition.content.x,
+              offsetY: position.y - templatePosition.content.y,
+              content: templatePosition.content
             }
+          }
+          return {
+            offsetX: position.x - templatePosition.x,
+            offsetY: position.y - templatePosition.y,
           }
         }
       }
     } else if (this.canvasState.selection.kind === 'content'
       && (this.canvasState.selection.content.kind === 'image'
         || this.canvasState.selection.content.kind === 'text')) {
-      for (const template of this.canvasState.styleGuide.templates) {
-        for (const contentPosition of iterateAllContent(
-          this.canvasState.selection.content,
-          template,
+      for (const contentPosition of iterateAllContentPositions(this.canvasState.selection.content, this.canvasState.styleGuide)) {
+        const isInSelectionRegion = isInRegion(
+          position,
           {
-            x: template.x,
-            y: template.y
-          },
-          this.canvasState.styleGuide
-        )) {
-          const isInSelectionRegion = isInRegion(
-            position,
-            {
-              x: contentPosition.x,
-              y: contentPosition.y,
-              width: this.canvasState.selection.content.width,
-              height: this.canvasState.selection.content.height,
-            })
-          if (isInSelectionRegion) {
-            return {
-              offsetX: position.x - this.canvasState.selection.content.x,
-              offsetY: position.y - this.canvasState.selection.content.y,
-              content: undefined
-            }
+            x: contentPosition.x,
+            y: contentPosition.y,
+            width: this.canvasState.selection.content.width,
+            height: this.canvasState.selection.content.height,
+          })
+        if (isInSelectionRegion) {
+          return {
+            offsetX: position.x - this.canvasState.selection.content.x,
+            offsetY: position.y - this.canvasState.selection.content.y,
+            content: undefined
           }
         }
       }
     }
     return undefined
-  }
-}
-
-function* iterateAllTemplate(
-  target: Template,
-  template: Template,
-  position: Position & { content?: TemplateReferenceContent },
-  styleGuide: StyleGuide,
-): Generator<Position & { content?: TemplateReferenceContent }, void, unknown> {
-  if (template === target) {
-    yield position
-  } else {
-    for (const content of template.contents) {
-      if (content.kind === 'reference') {
-        const referenceTemplate = styleGuide.templates.find((t) => t.id === content.id)
-        if (referenceTemplate) {
-          yield* iterateAllTemplate(
-            target,
-            referenceTemplate,
-            {
-              x: content.x + position.x,
-              y: content.y + position.y,
-              content,
-            },
-            styleGuide,
-          )
-        }
-      }
-    }
-  }
-}
-
-function* iterateAllContent(
-  target: TemplateContent,
-  template: Template,
-  position: Position,
-  styleGuide: StyleGuide,
-): Generator<Position, void, unknown> {
-  for (const content of template.contents) {
-    if (content === target) {
-      yield {
-        x: position.x + content.x,
-        y: position.y + content.y,
-      }
-    } else if (content.kind === 'reference') {
-      const referenceTemplate = styleGuide.templates.find((t) => t.id === content.id)
-      if (referenceTemplate) {
-        yield* iterateAllContent(
-          target,
-          referenceTemplate,
-          {
-            x: content.x + position.x,
-            y: content.y + position.y,
-          },
-          styleGuide,
-        )
-      }
-    }
   }
 }
 

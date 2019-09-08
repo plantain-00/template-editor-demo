@@ -1,0 +1,8 @@
+<div style="position: absolute">
+  <div :style="styleGuideStyle">
+    <template v-for="r in selectionAreas">
+      <div :style="getSelectionAreaStyle(r)">
+      </div>
+    </template>
+  </div>
+</div>

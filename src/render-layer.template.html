@@ -1,9 +1,9 @@
 <div :style="canvasStyle">
   <div :style="styleGuideStyle">
-    <div v-for="r in canvasState.renderResults">
+    <template v-for="r in canvasState.renderResults">
       <div :style="{ left: r.x + 'px', top: r.y + 'px', position: 'absolute' }">
         <div v-html="r.html"></div>
       </div>
-    </div>
+    </template>
   </div>
 </div>

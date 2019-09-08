@@ -47,10 +47,12 @@ export interface Position {
   y: number
 }
 
-export interface Region extends Position {
+export interface Size {
   width: number
   height: number
 }
+
+export interface Region extends Position, Size { }
 
 export type CanvasSelection =
   | {
@@ -64,15 +66,4 @@ export type CanvasSelection =
     kind: 'content',
     content: TemplateContent,
     template: Template
-  }
-
-export type CanvasSelectionData =
-  | {
-    kind: 'template'
-    id: string
-  }
-  | {
-    kind: 'content'
-    id: string
-    index: number
   }
