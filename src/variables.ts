@@ -9,13 +9,14 @@ import { App } from "./index"
 import { MaskLayer } from "./mask-layer"
 import { OperationPanel } from "./operation-panel"
 import { RenderLayer } from "./render-layer"
+import { SelectionLayer } from "./selection-layer"
 
 // @ts-ignore
 export function draggingForSelectionLayerTemplateHtml(this: DraggingForSelectionLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.canvasState.isDraggingForSelection)?_c('div',{style:(_vm.draggingAreaStyle)}):_vm._e()}
 // @ts-ignore
 export var draggingForSelectionLayerTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticStyle:{"margin-left":"210px","margin-top":"10px","position":"absolute"}},[_c('render-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('dragging-for-selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('mask-layer',{attrs:{"canvasState":_vm.canvasState}})],1),_vm._v(" "),_c('operation-panel',{attrs:{"canvasState":_vm.canvasState}})],1)}
+export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticStyle:{"margin-left":"210px","margin-top":"10px","position":"absolute"}},[_c('render-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('dragging-for-selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('mask-layer',{attrs:{"canvasState":_vm.canvasState}})],1),_vm._v(" "),_c('operation-panel',{attrs:{"canvasState":_vm.canvasState}})],1)}
 // @ts-ignore
 export var indexTemplateHtmlStatic = [  ]
 // @ts-ignore
@@ -27,8 +28,12 @@ export function operationPanelTemplateHtml(this: OperationPanel) {var _vm=this;v
 // @ts-ignore
 export var operationPanelTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function renderLayerTemplateHtml(this: RenderLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.canvasStyle)},[_c('div',{style:(_vm.styleGuideStyle)},_vm._l((_vm.canvasState.renderResults),function(r){return _c('div',[_c('div',{style:({ left: r.x + 'px', top: r.y + 'px', position: 'absolute' })},[_c('div',{domProps:{"innerHTML":_vm._s(r.html)}})])])}),0)])}
+export function renderLayerTemplateHtml(this: RenderLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.canvasStyle)},[_c('div',{style:(_vm.styleGuideStyle)},[_vm._l((_vm.canvasState.renderResults),function(r){return [_c('div',{style:({ left: r.x + 'px', top: r.y + 'px', position: 'absolute' })},[_c('div',{domProps:{"innerHTML":_vm._s(r.html)}})])]})],2)])}
 // @ts-ignore
 export var renderLayerTemplateHtmlStatic = [  ]
+// @ts-ignore
+export function selectionLayerTemplateHtml(this: SelectionLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticStyle:{"position":"absolute"}},[_c('div',{style:(_vm.styleGuideStyle)},[_vm._l((_vm.selectionAreas),function(r){return [_c('div',{style:(_vm.getSelectionAreaStyle(r))})]})],2)])}
+// @ts-ignore
+export var selectionLayerTemplateHtmlStatic = [  ]
 /* eslint-enable */
 // tslint:enable

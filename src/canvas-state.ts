@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import { CanvasSelection, StyleGuide, TemplateContent, CanvasSelectionData } from './model'
+import { CanvasSelection, StyleGuide, TemplateContent } from './model'
 import { renderTemplate } from './renderer'
 
 @Component
@@ -24,27 +24,11 @@ export class CanvasState extends Vue {
         content.characters = Array.from(content.text).map((t) => ({ text: t }))
       }
     }
-    this.renderResults = this.styleGuide.templates.map((t) => {
-      let selection: CanvasSelectionData | undefined
-      if (this.selection.kind === 'template') {
-        selection = {
-          kind: 'template',
-          id: this.selection.template.id
-        }
-      } else if (this.selection.kind === 'content') {
-        const content = this.selection.content
-        selection = {
-          kind: 'content',
-          id: this.selection.template.id,
-          index: this.selection.template.contents.findIndex((c) => c === content)
-        }
-      }
-      return {
-        html: renderTemplate(t, this.styleGuide.templates, true, selection),
-        x: t.x,
-        y: t.y,
-      }
-    })
+    this.renderResults = this.styleGuide.templates.map((t) => ({
+      html: renderTemplate(t, this.styleGuide.templates, true),
+      x: t.x,
+      y: t.y,
+    }))
   }
 
   applyChangesIfAuto() {
