@@ -12,10 +12,10 @@ A template editor demo.
 
 + expression
 + template engine, input data, preview result
-+ scale canvas
 + undo, redo
 + clone template
 + layout
-+ reset view
 + layer list and visible
-+ delete template, image, text
++ shortcut
++ image rotate
++ expression ui

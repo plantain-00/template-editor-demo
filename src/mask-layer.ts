@@ -3,7 +3,7 @@ import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
 import { StyleGuide, Region, Position, TemplateContent, Template, TemplateReferenceContent } from './model'
-import { iterateAllContentPositions, iterateAllTemplatePositions } from './utils'
+import { iterateAllContentPositions, iterateAllTemplatePositions, isInRegion } from './utils'
 import { maskLayerTemplateHtml, maskLayerTemplateHtmlStatic } from './variables'
 
 @Component({
@@ -84,8 +84,8 @@ export class MaskLayer extends Vue {
               color: 'black',
               fontFamily: 'Aria',
               fontSize: 12,
-              x: x - 50,
-              y: y - 50,
+              x: x - template.x - 50,
+              y: y - template.y - 50,
               width: 100,
               height: 100,
               characters: [],
@@ -94,8 +94,8 @@ export class MaskLayer extends Vue {
             template.contents.push({
               kind: 'image',
               url: '',
-              x: x - 50,
-              y: y - 50,
+              x: x - template.x - 50,
+              y: y - template.y - 50,
               width: 100,
               height: 100,
             })
@@ -106,7 +106,6 @@ export class MaskLayer extends Vue {
       this.canvasState.applyChangesIfAuto()
       return
     }
-
 
     this.canvasState.mousedownX = e.offsetX
     this.canvasState.mousedownY = e.offsetY
@@ -190,6 +189,14 @@ export class MaskLayer extends Vue {
     this.canvasState.mousePressing = false
   }
 
+  contextmenu(e: MouseEvent) {
+    this.canvasState.contextMenuEnabled = true
+    this.canvasState.contextMenuX = e.offsetX
+    this.canvasState.contextMenuY = e.offsetY
+    this.canvasState.mousePressing = false
+    e.preventDefault()
+  }
+
   private getSelectionAreaRelation(position: Position) {
     if (this.canvasState.selection.kind === 'template') {
       for (const templatePosition of iterateAllTemplatePositions(this.canvasState.selection.template, this.canvasState.styleGuide)) {
@@ -216,23 +223,45 @@ export class MaskLayer extends Vue {
           }
         }
       }
-    } else if (this.canvasState.selection.kind === 'content'
-      && (this.canvasState.selection.content.kind === 'image'
-        || this.canvasState.selection.content.kind === 'text')) {
-      for (const contentPosition of iterateAllContentPositions(this.canvasState.selection.content, this.canvasState.styleGuide)) {
-        const isInSelectionRegion = isInRegion(
-          position,
-          {
-            x: contentPosition.x,
-            y: contentPosition.y,
-            width: this.canvasState.selection.content.width,
-            height: this.canvasState.selection.content.height,
-          })
-        if (isInSelectionRegion) {
-          return {
-            offsetX: position.x - this.canvasState.selection.content.x,
-            offsetY: position.y - this.canvasState.selection.content.y,
-            content: undefined
+    } else if (this.canvasState.selection.kind === 'content') {
+      const content = this.canvasState.selection.content
+      if (content.kind === 'image' || content.kind === 'text') {
+        for (const contentPosition of iterateAllContentPositions(content, this.canvasState.styleGuide)) {
+          const isInSelectionRegion = isInRegion(
+            position,
+            {
+              x: contentPosition.x,
+              y: contentPosition.y,
+              width: content.width,
+              height: content.height,
+            })
+          if (isInSelectionRegion) {
+            return {
+              offsetX: position.x - content.x,
+              offsetY: position.y - content.y,
+              content: undefined
+            }
+          }
+        }
+      } else if (content.kind === 'reference') {
+        const reference = this.canvasState.styleGuide.templates.find((t) => t.id === content.id)
+        if (reference) {
+          for (const contentPosition of iterateAllContentPositions(content, this.canvasState.styleGuide)) {
+            const isInSelectionRegion = isInRegion(
+              position,
+              {
+                x: contentPosition.x,
+                y: contentPosition.y,
+                width: reference.width,
+                height: reference.height,
+              })
+            if (isInSelectionRegion) {
+              return {
+                offsetX: position.x - content.x,
+                offsetY: position.y - content.y,
+                content: undefined
+              }
+            }
           }
         }
       }
@@ -301,6 +330,9 @@ function selectReferenceContent(template: Template, basePosition: Position, posi
     } else if (content.kind === 'reference') {
       const reference = styleGuide.templates.find((t) => t.id === content.id)
       if (reference) {
+        if (isInRegion(position, { ...contentPosition, width: reference.width, height: reference.height })) {
+          return { content, template }
+        }
         const referenceContent = selectReferenceContent(reference, contentPosition, position, styleGuide)
         if (referenceContent) {
           return referenceContent
@@ -309,11 +341,4 @@ function selectReferenceContent(template: Template, basePosition: Position, posi
     }
   }
   return null
-}
-
-function isInRegion(position: Position | Position[], region: Region): boolean {
-  if (Array.isArray(position)) {
-    return position.every((p) => isInRegion(p, region))
-  }
-  return position.x >= region.x && position.y >= region.y && position.x <= region.x + region.width && position.y <= region.y + region.height
 }

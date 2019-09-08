@@ -65,13 +65,17 @@ export class CanvasState extends Vue {
   mousePressing = false
   isDraggingForMoving = false
   addKind: 'template' | 'image' | 'text' | undefined
+  
+  contextMenuEnabled = false
+  contextMenuX = 0
+  contextMenuY = 0
 
   get styleGuideWidth() {
-    return Math.max(...this.styleGuide.templates.map((t) => t.x + t.width))
+    return Math.max(...this.styleGuide.templates.map((t) => t.x + t.width), 10)
   }
 
   get styleGuideHeight() {
-    return Math.max(...this.styleGuide.templates.map((t) => t.y + t.height))
+    return Math.max(...this.styleGuide.templates.map((t) => t.y + t.height), 10)
   }
 
   get isDraggingForSelection() {
