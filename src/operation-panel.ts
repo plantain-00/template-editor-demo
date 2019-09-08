@@ -102,4 +102,12 @@ export class OperationPanel extends Vue {
   addTemplate() {
     this.canvasState.addKind = 'template'
   }
+
+  addImage() {
+    this.canvasState.addKind = 'image'
+  }
+
+  addText() {
+    this.canvasState.addKind = 'text'
+  }
 }
