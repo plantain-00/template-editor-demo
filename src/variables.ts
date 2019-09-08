@@ -4,6 +4,7 @@
  */
 // tslint:disable
 /* eslint-disable */
+import { ContextMenu } from "./context-menu"
 import { DraggingForSelectionLayer } from "./dragging-for-selection-layer"
 import { App } from "./index"
 import { MaskLayer } from "./mask-layer"
@@ -12,15 +13,19 @@ import { RenderLayer } from "./render-layer"
 import { SelectionLayer } from "./selection-layer"
 
 // @ts-ignore
+export function contextMenuTemplateHtml(this: ContextMenu) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.canvasState.contextMenuEnabled)?_c('div',{on:{"click":_vm.close}},[_c('div',{style:(_vm.maskStyle)}),_vm._v(" "),_c('div',{style:(_vm.contextMenuStyle)},[_c('button',{on:{"click":_vm.remove}},[_vm._v("remove")])])]):_vm._e()}
+// @ts-ignore
+export var contextMenuTemplateHtmlStatic = [  ]
+// @ts-ignore
 export function draggingForSelectionLayerTemplateHtml(this: DraggingForSelectionLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.canvasState.isDraggingForSelection)?_c('div',{style:(_vm.draggingAreaStyle)}):_vm._e()}
 // @ts-ignore
 export var draggingForSelectionLayerTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticStyle:{"margin-left":"210px","margin-top":"10px","position":"absolute"}},[_c('render-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('dragging-for-selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('mask-layer',{attrs:{"canvasState":_vm.canvasState}})],1),_vm._v(" "),_c('operation-panel',{attrs:{"canvasState":_vm.canvasState}})],1)}
+export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticStyle:{"margin-left":"210px","margin-top":"10px","position":"absolute"}},[_c('render-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('dragging-for-selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('mask-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('context-menu',{attrs:{"canvasState":_vm.canvasState}})],1),_vm._v(" "),_c('operation-panel',{attrs:{"canvasState":_vm.canvasState}})],1)}
 // @ts-ignore
 export var indexTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function maskLayerTemplateHtml(this: MaskLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.maskStyle),on:{"wheel":_vm.wheel,"mousedown":_vm.mousedown,"mouseup":_vm.mouseup,"mousemove":_vm.mousemove}})}
+export function maskLayerTemplateHtml(this: MaskLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.maskStyle),on:{"wheel":_vm.wheel,"mousedown":_vm.mousedown,"mouseup":_vm.mouseup,"mousemove":_vm.mousemove,"contextmenu":_vm.contextmenu}})}
 // @ts-ignore
 export var maskLayerTemplateHtmlStatic = [  ]
 // @ts-ignore

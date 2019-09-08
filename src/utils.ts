@@ -1,6 +1,6 @@
 
 
-import { StyleGuide, Position, TemplateContent, Template, TemplateReferenceContent } from './model'
+import { StyleGuide, Position, TemplateContent, Template, TemplateReferenceContent, Region } from './model'
 
 export function* iterateAllTemplatePositions(
   target: Template,
@@ -18,6 +18,13 @@ export function* iterateAllContentPositions(
   for (const template of styleGuide.templates) {
     yield* iterateAllContent(target, template, { x: template.x, y: template.y }, styleGuide)
   }
+}
+
+export function isInRegion(position: Position | Position[], region: Region): boolean {
+  if (Array.isArray(position)) {
+    return position.every((p) => isInRegion(p, region))
+  }
+  return position.x >= region.x && position.y >= region.y && position.x <= region.x + region.width && position.y <= region.y + region.height
 }
 
 function* iterateAllTemplate(

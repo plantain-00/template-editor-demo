@@ -49,6 +49,13 @@ module.exports = {
         path: './selection-layer'
       }
     }
+    if (file.endsWith('context-menu.template.html')) {
+      return {
+        type: 'vue',
+        name: 'ContextMenu',
+        path: './context-menu'
+      }
+    }
     return { type: 'text' }
   },
   out: 'src/variables.ts'
