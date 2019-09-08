@@ -63,6 +63,30 @@ export class OperationPanel extends Vue {
     }
   }
 
+  changeFontFamily(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
+      this.canvasState.selection.content.fontFamily = e.target.value
+      this.canvasState.changedContents.add(this.canvasState.selection.content)
+      this.canvasState.applyChangesIfAuto()
+    }
+  }
+
+  changeFontSize(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
+      this.canvasState.selection.content.fontSize = +e.target.value
+      this.canvasState.changedContents.add(this.canvasState.selection.content)
+      this.canvasState.applyChangesIfAuto()
+    }
+  }
+
+  changeColor(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
+      this.canvasState.selection.content.color = e.target.value
+      this.canvasState.changedContents.add(this.canvasState.selection.content)
+      this.canvasState.applyChangesIfAuto()
+    }
+  }
+
   changeImageUrl(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'image') {
       this.canvasState.selection.content.url = e.target.value
