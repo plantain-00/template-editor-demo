@@ -62,6 +62,20 @@ export class MaskLayer extends Vue {
   }
 
   mousedown(e: MouseEvent) {
+    if (this.canvasState.addKind === 'template') {
+      this.canvasState.styleGuide.templates.push({
+        id: Math.random().toString(),
+        x: this.canvasState.mapX(e.offsetX) - 250,
+        y: this.canvasState.mapY(e.offsetY) - 150,
+        width: 500,
+        height: 300,
+        contents: [],
+      })
+      this.canvasState.addKind = undefined
+      this.canvasState.applyChangesIfAuto()
+      return
+    }
+
     this.canvasState.mousedownX = e.offsetX
     this.canvasState.mousedownY = e.offsetY
     this.canvasState.mouseupX = e.offsetX

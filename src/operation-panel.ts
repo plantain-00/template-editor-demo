@@ -98,4 +98,8 @@ export class OperationPanel extends Vue {
   debug() {
     console.info(this.canvasState)
   }
+
+  addTemplate() {
+    this.canvasState.addKind = 'template'
+  }
 }
