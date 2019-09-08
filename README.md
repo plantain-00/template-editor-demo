@@ -12,7 +12,6 @@ A template editor demo.
 
 + expression
 + template engine, input data, preview result
-+ template, text, image's properties
 + scale canvas
 + undo, redo
 + clone template
