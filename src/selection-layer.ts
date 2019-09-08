@@ -50,11 +50,21 @@ export class SelectionLayer extends Vue {
     return []
   }
 
+  get canvasStyle() {
+    return {
+      position: 'absolute',
+      width: this.canvasState.canvasWidth + 'px',
+      height: this.canvasState.canvasHeight + 'px',
+      overflow: 'hidden',
+    }
+  }
+
   get styleGuideStyle() {
     return {
       transform: `scale(${this.canvasState.styleGuideScale}) translate(${this.canvasState.styleGuideTranslateX}px, ${this.canvasState.styleGuideTranslateY}px)`,
       width: this.canvasState.styleGuideWidth + 'px',
       height: this.canvasState.styleGuideHeight + 'px',
+      overflow: 'hidden',
     }
   }
 

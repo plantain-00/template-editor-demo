@@ -63,6 +63,7 @@ export class CanvasState extends Vue {
   mouseupY = 0
   mousePressing = false
   isDraggingForMoving = false
+  addKind: 'template' | 'image' | 'text' | undefined
 
   get styleGuideWidth() {
     return Math.max(...this.styleGuide.templates.map((t) => t.x + t.width))

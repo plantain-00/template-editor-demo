@@ -15,7 +15,7 @@ A template editor demo.
 + scale canvas
 + undo, redo
 + clone template
-+ add text, image, template
++ add text, image
 + layout
 + reset view
 + layer list and visible
