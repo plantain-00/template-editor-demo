@@ -62,19 +62,51 @@ export class MaskLayer extends Vue {
   }
 
   mousedown(e: MouseEvent) {
-    if (this.canvasState.addKind === 'template') {
-      this.canvasState.styleGuide.templates.push({
-        id: Math.random().toString(),
-        x: this.canvasState.mapX(e.offsetX) - 250,
-        y: this.canvasState.mapY(e.offsetY) - 150,
-        width: 500,
-        height: 300,
-        contents: [],
-      })
+    if (this.canvasState.addKind) {
+      const x = this.canvasState.mapX(e.offsetX)
+      const y = this.canvasState.mapY(e.offsetY)
+      if (this.canvasState.addKind === 'template') {
+        this.canvasState.styleGuide.templates.push({
+          id: Math.random().toString(),
+          x: x - 250,
+          y: y - 150,
+          width: 500,
+          height: 300,
+          contents: [],
+        })
+      } else {
+        const template = selectPositionTemplate(this.canvasState.styleGuide, { x, y })
+        if (template) {
+          if (this.canvasState.addKind === 'text') {
+            template.contents.push({
+              kind: 'text',
+              text: '',
+              color: 'black',
+              fontFamily: 'Aria',
+              fontSize: 12,
+              x: x - 50,
+              y: y - 50,
+              width: 100,
+              height: 100,
+              characters: [],
+            })
+          } else if (this.canvasState.addKind === 'image') {
+            template.contents.push({
+              kind: 'image',
+              url: '',
+              x: x - 50,
+              y: y - 50,
+              width: 100,
+              height: 100,
+            })
+          }
+        }
+      }
       this.canvasState.addKind = undefined
       this.canvasState.applyChangesIfAuto()
       return
     }
+
 
     this.canvasState.mousedownX = e.offsetX
     this.canvasState.mousedownY = e.offsetY
@@ -243,9 +275,17 @@ function selectContent(styleGuide: StyleGuide, position: Position): { kind: 'con
       }
     }
   }
+  const t = selectPositionTemplate(styleGuide, position)
+  if (t) {
+    return { kind: 'template', template: t }
+  }
+  return null
+}
+
+function selectPositionTemplate(styleGuide: StyleGuide, position: Position): Template | null {
   for (const template of styleGuide.templates) {
     if (isInRegion(position, template)) {
-      return { kind: 'template', template }
+      return template
     }
   }
   return null

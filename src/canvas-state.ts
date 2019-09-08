@@ -13,6 +13,7 @@ export class CanvasState extends Vue {
     canvasState.styleGuideScale = Math.min(canvasState.canvasWidth / canvasState.styleGuideWidth, canvasState.canvasHeight / canvasState.styleGuideHeight)
     canvasState.styleGuideTranslateX = (canvasState.canvasWidth - canvasState.styleGuideWidth) * canvasState.styleGuideScale
     canvasState.styleGuideTranslateY = (canvasState.canvasHeight - canvasState.styleGuideHeight) * canvasState.styleGuideScale
+    canvasState.styleGuideScale *= 0.9
 
     canvasState.applyChanges()
     return canvasState
