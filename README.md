@@ -10,12 +10,11 @@ A template editor demo.
 
 ## todo
 
-+ expression
++ expression / expression ui
 + template engine, input data, preview result
 + undo, redo
-+ clone template
-+ layout
++ layout: flex, absolute, fluent
 + layer list and visible
 + shortcut
 + image rotate
-+ expression ui
++ zindex
