@@ -15,6 +15,5 @@ A template editor demo.
 + undo, redo
 + layout: flex, absolute, fluent
 + layer list and visible
-+ shortcut
 + image rotate
 + zindex

@@ -15,7 +15,7 @@ export const styleGuide: StyleGuide = {
           text: 'test',
           fontFamily: 'serif',
           fontSize: 50,
-          color: 'red',
+          color: '#FF0000',
           width: 100,
           height: 100,
           x: 10,

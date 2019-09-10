@@ -84,7 +84,7 @@ export class MaskLayer extends Vue {
             template.contents.push({
               kind: 'text',
               text: '',
-              color: 'black',
+              color: '#000',
               fontFamily: 'Aria',
               fontSize: 12,
               x: x - template.x - 50,
@@ -216,6 +216,7 @@ export class MaskLayer extends Vue {
             x: 0,
             y: 0,
           })
+          this.canvasState.applyChangesIfAuto()
         }
       }
     }
@@ -241,6 +242,10 @@ export class MaskLayer extends Vue {
               offsetY: position.y - templatePosition.content.y,
               content: templatePosition.content
             }
+          }
+          const content = selectReferenceContent(this.canvasState.selection.template, { x: 0, y: 0 }, position, this.canvasState.styleGuide)
+          if (content) {
+            return undefined
           }
           return {
             offsetX: position.x - templatePosition.x,
