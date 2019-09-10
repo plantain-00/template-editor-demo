@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
-import { StyleGuide, Region, Position, TemplateContent, Template, TemplateReferenceContent } from './model'
+import { StyleGuide, Region, Position, TemplateContent, Template, TemplateReferenceContent, CanvasSelection } from './model'
 import { iterateAllContentPositions, iterateAllTemplatePositions, isInRegion } from './utils'
 import { maskLayerTemplateHtml, maskLayerTemplateHtmlStatic } from './variables'
 
@@ -21,6 +21,9 @@ export class MaskLayer extends Vue {
   private draggingSelectionContent: TemplateReferenceContent | undefined
   private x = 0
   private y = 0
+  private clipboard: CanvasSelection = {
+    kind: 'none'
+  }
 
   get maskStyle() {
     let cursor: string
@@ -195,6 +198,28 @@ export class MaskLayer extends Vue {
     this.canvasState.contextMenuY = e.offsetY
     this.canvasState.mousePressing = false
     e.preventDefault()
+  }
+
+  keypress(e: KeyboardEvent) {
+    if (e.ctrlKey) {
+      if (e.key === 'c') {
+        if (this.canvasState.selection.kind !== 'none') {
+          this.clipboard = this.canvasState.selection
+        }
+      } else if (e.key === 'v') {
+        if (this.clipboard.kind === 'template'
+          && this.canvasState.selection.kind === 'template'
+          && this.clipboard.template !== this.canvasState.selection.template) {
+          this.canvasState.selection.template.contents.push({
+            kind: 'reference',
+            id: this.clipboard.template.id,
+            x: 0,
+            y: 0,
+          })
+        }
+      }
+    }
+
   }
 
   private getSelectionAreaRelation(position: Position) {

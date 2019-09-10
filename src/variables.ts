@@ -25,7 +25,7 @@ export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createEle
 // @ts-ignore
 export var indexTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function maskLayerTemplateHtml(this: MaskLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.maskStyle),on:{"wheel":_vm.wheel,"mousedown":_vm.mousedown,"mouseup":_vm.mouseup,"mousemove":_vm.mousemove,"contextmenu":_vm.contextmenu}})}
+export function maskLayerTemplateHtml(this: MaskLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.maskStyle),attrs:{"tabindex":"0"},on:{"wheel":_vm.wheel,"mousedown":_vm.mousedown,"mouseup":_vm.mouseup,"mousemove":_vm.mousemove,"contextmenu":_vm.contextmenu,"keypress":_vm.keypress}})}
 // @ts-ignore
 export var maskLayerTemplateHtmlStatic = [  ]
 // @ts-ignore
