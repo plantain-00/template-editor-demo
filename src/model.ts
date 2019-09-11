@@ -3,18 +3,14 @@ export interface StyleGuide {
   templates: Template[]
 }
 
-export interface Template {
+export interface Template extends Region, SizeExpression {
   id: string
-  x: number
-  y: number
-  width: number
-  height: number
   contents: TemplateContent[]
 }
 
 export type TemplateContent = TemplateTextContent | TemplateImageContent | TemplateReferenceContent | TemplateSnapshotContent
 
-interface TemplateTextContent extends Region {
+interface TemplateTextContent extends Region, RegionExpression {
   kind: 'text'
   text: string
   fontFamily: string
@@ -27,17 +23,17 @@ interface TextCharacter {
   text: string
 }
 
-interface TemplateImageContent extends Region {
+interface TemplateImageContent extends Region, RegionExpression {
   kind: 'image'
   url: string
 }
 
-export interface TemplateReferenceContent extends Position {
+export interface TemplateReferenceContent extends Position, PositionExpression {
   kind: 'reference'
   id: string
 }
 
-interface TemplateSnapshotContent extends Position {
+interface TemplateSnapshotContent extends Position, PositionExpression {
   kind: 'snapshot'
   snapshot: Template
 }
@@ -47,12 +43,24 @@ export interface Position {
   y: number
 }
 
+interface PositionExpression {
+  xExpression?: string
+  yExpression?: string
+}
+
 export interface Size {
   width: number
   height: number
 }
 
+interface SizeExpression {
+  widthExpression?: string
+  heightExpression?: string
+}
+
 export interface Region extends Position, Size { }
+
+interface RegionExpression extends PositionExpression, SizeExpression { }
 
 export type CanvasSelection =
   | {
