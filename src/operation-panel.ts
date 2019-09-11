@@ -55,6 +55,44 @@ export class OperationPanel extends Vue {
     this.canvasState.applyChangesIfAuto()
   }
 
+  changeXExpression(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content') {
+      this.canvasState.selection.content.xExpression = e.target.value
+      this.canvasState.changedContents.add(this.canvasState.selection.content)
+    }
+    this.canvasState.applyChangesIfAuto()
+  }
+
+  changeYExpression(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content') {
+      this.canvasState.selection.content.yExpression = e.target.value
+      this.canvasState.changedContents.add(this.canvasState.selection.content)
+    }
+    this.canvasState.applyChangesIfAuto()
+  }
+
+  changeWidthExpression(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content'
+      && (this.canvasState.selection.content.kind === 'image' || this.canvasState.selection.content.kind === 'text')) {
+      this.canvasState.selection.content.widthExpression = e.target.value
+      this.canvasState.changedContents.add(this.canvasState.selection.content)
+    } else if (this.canvasState.selection.kind === 'template') {
+      this.canvasState.selection.template.widthExpression = e.target.value
+    }
+    this.canvasState.applyChangesIfAuto()
+  }
+
+  changeHeightExpression(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content'
+      && (this.canvasState.selection.content.kind === 'image' || this.canvasState.selection.content.kind === 'text')) {
+      this.canvasState.selection.content.heightExpression = e.target.value
+      this.canvasState.changedContents.add(this.canvasState.selection.content)
+    } else if (this.canvasState.selection.kind === 'template') {
+      this.canvasState.selection.template.heightExpression = e.target.value
+    }
+    this.canvasState.applyChangesIfAuto()
+  }
+
   changeText(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
       this.canvasState.selection.content.text = e.target.value
