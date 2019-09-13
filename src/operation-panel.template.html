@@ -40,6 +40,14 @@
     <div>
       <input type="text" :value="canvasState.selection.content.heightExpression" @change="changeHeightExpression" />
     </div>
+    <div>
+      if
+      <input type="text" :value="canvasState.selection.content.if" @change="changeIf" />
+    </div>
+    <div>
+      repeat
+      <input type="text" :value="canvasState.selection.content.repeat" @change="changeRepeat" />
+    </div>
   </div>
   <div v-if="canvasState.selection.kind === 'template'">
     <div>
@@ -69,5 +77,8 @@
     <button @click="addTemplate()">add template</button>
     <button @click="addText()">add text</button>
     <button @click="addImage()">add image</button>
+  </div>
+  <div>
+    <button @click="generate()">generate</button>
   </div>
 </div>

@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
+
 import { operationPanelTemplateHtml, operationPanelTemplateHtmlStatic } from './variables'
 import { CanvasState } from './canvas-state'
+import { generate } from './template-engine'
 
 @Component({
   render: operationPanelTemplateHtml,
@@ -93,6 +95,22 @@ export class OperationPanel extends Vue {
     this.canvasState.applyChangesIfAuto()
   }
 
+  changeIf(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
+      this.canvasState.selection.content.if = e.target.value
+      this.canvasState.changedContents.add(this.canvasState.selection.content)
+    }
+    this.canvasState.applyChangesIfAuto()
+  }
+
+  changeRepeat(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
+      this.canvasState.selection.content.repeat = e.target.value
+      this.canvasState.changedContents.add(this.canvasState.selection.content)
+    }
+    this.canvasState.applyChangesIfAuto()
+  }
+
   changeText(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
       this.canvasState.selection.content.text = e.target.value
@@ -147,5 +165,11 @@ export class OperationPanel extends Vue {
 
   addText() {
     this.canvasState.addKind = 'text'
+  }
+
+  generate() {
+    if (this.canvasState.selection.kind === 'template') {
+      console.info(generate(this.canvasState.selection.template, this.canvasState.styleGuide, {}))
+    }
   }
 }
