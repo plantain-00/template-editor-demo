@@ -10,7 +10,7 @@ export interface Template extends Region, SizeExpression {
 
 export type TemplateContent = TemplateTextContent | TemplateImageContent | TemplateReferenceContent | TemplateSnapshotContent
 
-interface TemplateTextContent extends Region, RegionExpression {
+interface TemplateTextContent extends Region, RegionExpression, GenerationField {
   kind: 'text'
   text: string
   fontFamily: string
@@ -23,12 +23,12 @@ interface TextCharacter {
   text: string
 }
 
-interface TemplateImageContent extends Region, RegionExpression {
+interface TemplateImageContent extends Region, RegionExpression, GenerationField {
   kind: 'image'
   url: string
 }
 
-export interface TemplateReferenceContent extends Position, PositionExpression {
+export interface TemplateReferenceContent extends Position, PositionExpression, GenerationField {
   kind: 'reference'
   id: string
 }
@@ -61,6 +61,11 @@ interface SizeExpression {
 export interface Region extends Position, Size { }
 
 interface RegionExpression extends PositionExpression, SizeExpression { }
+
+interface GenerationField {
+  if?: string
+  repeat?: string
+}
 
 export type CanvasSelection =
   | {
