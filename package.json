@@ -66,6 +66,7 @@
     "webpack-cli": "3.3.8"
   },
   "dependencies": {
+    "expression-engine": "^1.5.0",
     "vue": "2.6.10",
     "vue-class-component": "7.1.0"
   },

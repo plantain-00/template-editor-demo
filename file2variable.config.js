@@ -56,6 +56,13 @@ module.exports = {
         path: './context-menu'
       }
     }
+    if (file.endsWith('generation-result-modal.template.html')) {
+      return {
+        type: 'vue',
+        name: 'GenerationResultModal',
+        path: './generation-result-modal'
+      }
+    }
     return { type: 'text' }
   },
   out: 'src/variables.ts'
