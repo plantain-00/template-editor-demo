@@ -6,6 +6,7 @@
 /* eslint-disable */
 import { ContextMenu } from "./context-menu"
 import { DraggingForSelectionLayer } from "./dragging-for-selection-layer"
+import { GenerationResultModal } from "./generation-result-modal"
 import { App } from "./index"
 import { MaskLayer } from "./mask-layer"
 import { OperationPanel } from "./operation-panel"
@@ -21,7 +22,11 @@ export function draggingForSelectionLayerTemplateHtml(this: DraggingForSelection
 // @ts-ignore
 export var draggingForSelectionLayerTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticStyle:{"margin-left":"210px","margin-top":"10px","position":"absolute"}},[_c('render-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('dragging-for-selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('mask-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('context-menu',{attrs:{"canvasState":_vm.canvasState}})],1),_vm._v(" "),_c('operation-panel',{attrs:{"canvasState":_vm.canvasState}})],1)}
+export function generationResultModalTemplateHtml(this: GenerationResultModal) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{domProps:{"innerHTML":_vm._s(_vm.result)},on:{"click":function($event){return _vm.clear()}}})])}
+// @ts-ignore
+export var generationResultModalTemplateHtmlStatic = [  ]
+// @ts-ignore
+export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{staticStyle:{"margin-left":"210px","margin-top":"10px","position":"absolute"}},[_c('render-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('dragging-for-selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('mask-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('context-menu',{attrs:{"canvasState":_vm.canvasState}})],1),_vm._v(" "),_c('operation-panel',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('generation-result-modal',{attrs:{"canvasState":_vm.canvasState}})],1)}
 // @ts-ignore
 export var indexTemplateHtmlStatic = [  ]
 // @ts-ignore

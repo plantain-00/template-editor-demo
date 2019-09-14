@@ -152,7 +152,11 @@ export class OperationPanel extends Vue {
   }
 
   debug() {
-    console.info(this.canvasState)
+    if (this.canvasState.selection.kind === 'none') {
+      console.info(this.canvasState)
+    } else {
+      console.info(this.canvasState.selection)
+    }
   }
 
   addTemplate() {
@@ -169,7 +173,7 @@ export class OperationPanel extends Vue {
 
   generate() {
     if (this.canvasState.selection.kind === 'template') {
-      console.info(generate(this.canvasState.selection.template, this.canvasState.styleGuide, {}))
+      this.canvasState.generationResult = generate(this.canvasState.selection.template, this.canvasState.styleGuide, {})
     }
   }
 }
