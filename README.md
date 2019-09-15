@@ -10,8 +10,8 @@ A template editor demo.
 
 ## todo
 
-+ expression / expression ui
-+ template engine, input data, preview result
++ expression ui
++ input data
 + undo, redo
 + layout: flex, absolute, fluent
 + layer list and visible
