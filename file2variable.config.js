@@ -14,53 +14,13 @@ module.exports = {
         path: './index'
       }
     }
-    if (file.endsWith('mask-layer.template.html')) {
+    if (file.endsWith('.template.html')) {
+      file = file.substring(file.lastIndexOf('/') + 1)
+      const names = file.substring(0, file.length - '.template.html'.length).split('-')
       return {
         type: 'vue',
-        name: 'MaskLayer',
-        path: './mask-layer'
-      }
-    }
-    if (file.endsWith('dragging-for-selection-layer.template.html')) {
-      return {
-        type: 'vue',
-        name: 'DraggingForSelectionLayer',
-        path: './dragging-for-selection-layer'
-      }
-    }
-    if (file.endsWith('operation-panel.template.html')) {
-      return {
-        type: 'vue',
-        name: 'OperationPanel',
-        path: './operation-panel'
-      }
-    }
-    if (file.endsWith('render-layer.template.html')) {
-      return {
-        type: 'vue',
-        name: 'RenderLayer',
-        path: './render-layer'
-      }
-    }
-    if (file.endsWith('selection-layer.template.html')) {
-      return {
-        type: 'vue',
-        name: 'SelectionLayer',
-        path: './selection-layer'
-      }
-    }
-    if (file.endsWith('context-menu.template.html')) {
-      return {
-        type: 'vue',
-        name: 'ContextMenu',
-        path: './context-menu'
-      }
-    }
-    if (file.endsWith('generation-result-modal.template.html')) {
-      return {
-        type: 'vue',
-        name: 'GenerationResultModal',
-        path: './generation-result-modal'
+        name: names.map((n) => n[0].toUpperCase() + n.substring(1)).join(''),
+        path: './' + names.join('-')
       }
     }
     return { type: 'text' }

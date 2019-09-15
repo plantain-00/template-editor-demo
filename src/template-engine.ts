@@ -2,49 +2,49 @@ import { parseExpression, tokenizeExpression, evaluateExpression } from 'express
 
 import { Template, TemplateContent, StyleGuide } from './model'
 
-export function generate(template: Template, styleGuide: StyleGuide, viewModel: { [key: string]: unknown }): Template {
+export function generate(template: Template, styleGuide: StyleGuide, model: { [key: string]: unknown }): Template {
   return {
     ...template,
-    contents: template.contents.map((c) => generateContent(c, styleGuide, viewModel)).flat()
+    contents: template.contents.map((c) => generateContent(c, styleGuide, model)).flat()
   }
 }
 
-function generateContent(content: TemplateContent, styleGuide: StyleGuide, viewModel: { [key: string]: unknown }): TemplateContent[] {
+function generateContent(content: TemplateContent, styleGuide: StyleGuide, model: { [key: string]: unknown }): TemplateContent[] {
   if (content.kind === 'snapshot') {
     return [content]
   }
   if (content.repeat) {
     const { expression, itemName, indexName } = analyseRepeat(content.repeat)
-    const result = evaluateExpression(parseExpression(tokenizeExpression(expression)), viewModel)
+    const result = evaluateExpression(parseExpression(tokenizeExpression(expression)), model)
     if (Array.isArray(result)) {
       const contents: TemplateContent[] = []
       for (let i = 0; i < result.length; i++) {
-        const newViewModel: { [key: string]: unknown } = { ...viewModel }
+        const newModel: { [key: string]: unknown } = { ...model }
         if (itemName) {
-          newViewModel[itemName] = result[i]
+          newModel[itemName] = result[i]
           if (indexName) {
-            newViewModel[indexName] = i
+            newModel[indexName] = i
           }
         }
-        contents.push(...generateContent({ ...content, repeat: undefined }, styleGuide, newViewModel))
+        contents.push(...generateContent({ ...content, repeat: undefined }, styleGuide, newModel))
       }
       return contents
     }
   }
   if (content.if) {
-    const result = evaluateExpression(parseExpression(tokenizeExpression(content.if)), viewModel)
+    const result = evaluateExpression(parseExpression(tokenizeExpression(content.if)), model)
     if (!result) {
       return []
     }
   }
   if (content.xExpression) {
-    const result = evaluateExpression(parseExpression(tokenizeExpression(content.xExpression)), viewModel)
+    const result = evaluateExpression(parseExpression(tokenizeExpression(content.xExpression)), model)
     if (typeof result === 'number') {
       content = { ...content, x: result }
     }
   }
   if (content.yExpression) {
-    const result = evaluateExpression(parseExpression(tokenizeExpression(content.yExpression)), viewModel)
+    const result = evaluateExpression(parseExpression(tokenizeExpression(content.yExpression)), model)
     if (typeof result === 'number') {
       content = { ...content, y: result }
     }
@@ -58,7 +58,7 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, viewM
           kind: 'snapshot',
           x: content.x,
           y: content.y,
-          snapshot: generate(reference, styleGuide, viewModel)
+          snapshot: generate(reference, styleGuide, model)
         },
       ]
     }
