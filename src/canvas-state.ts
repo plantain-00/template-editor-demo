@@ -71,6 +71,10 @@ export class CanvasState extends Vue {
   contextMenuY = 0
 
   generationResult: Template | null = null
+  templateModel: { [key: string]: unknown } = {
+    categories: []
+  }
+  templateModelEditorVisible = false
 
   get styleGuideWidth() {
     return Math.max(...this.styleGuide.templates.map((t) => t.x + t.width), 10)

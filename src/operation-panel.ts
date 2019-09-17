@@ -17,7 +17,6 @@ export class OperationPanel extends Vue {
   canvasState!: CanvasState
   styleGuideKey = ''
   templateModelKey = ''
-  private templateModel: { [key: string]: unknown } = {}
 
   changeX(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content') {
@@ -200,7 +199,7 @@ export class OperationPanel extends Vue {
     if (this.templateModelKey) {
       const res = await fetch(`https://storage.yorkyao.xyz/${this.templateModelKey}`)
       const json: { [key: string]: unknown } = await res.json()
-      this.templateModel = json
+      this.canvasState.templateModel = json
       this.canvasState.applyChangesIfAuto()
     }
   }
@@ -212,14 +211,18 @@ export class OperationPanel extends Vue {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(this.templateModel)
+        body: JSON.stringify(this.canvasState.templateModel)
       })
     }
   }
 
+  editTemplateModel() {
+    this.canvasState.templateModelEditorVisible = !this.canvasState.templateModelEditorVisible
+  }
+
   generate() {
     if (this.canvasState.selection.kind === 'template') {
-      this.canvasState.generationResult = generate(this.canvasState.selection.template, this.canvasState.styleGuide, this.templateModel)
+      this.canvasState.generationResult = generate(this.canvasState.selection.template, this.canvasState.styleGuide, this.canvasState.templateModel)
     }
   }
 }
