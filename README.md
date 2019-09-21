@@ -10,10 +10,15 @@ A template editor demo.
 
 ## todo
 
-+ expression ui
-+ input data
++ expression ui(json editor, tokenize)
 + undo, redo
 + layout: flex, absolute, fluent
 + layer list and visible
 + image rotate
 + zindex
++ editor to npm
++ image shadow, base64 in image
++ symbol props
++ symbol actual size
++ symbol props
++ symbol size changes according to content

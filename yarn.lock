@@ -2612,10 +2612,10 @@ expand-tilde@^2.0.0, expand-tilde@^2.0.2:
   dependencies:
     homedir-polyfill "^1.0.1"
 
-expression-engine@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/expression-engine/-/expression-engine-1.5.0.tgz#317545a900fa64b0326cc822fdb8ae1b8f5d4f64"
-  integrity sha512-31aKwLzjaV0bBz4oBXSPmnwmxA/80lcXmsyc2UzH5rRYtL7R/7RlzQR7uuIiU7hcrhe7AYDPt5HXReAgE9gTmQ==
+expression-engine@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/expression-engine/-/expression-engine-1.5.1.tgz#c123e017ecdd6a1813f1fac753e12079b4de729e"
+  integrity sha512-cHSy708yHm+UIMFflb4EvOpFpucTBFP7mTau4r7a45t0CsRgR0R6u0BDcbkOKc7q+2j9TNAXIg1ys8A/aFaQ1A==
 
 extend-shallow@^2.0.1:
   version "2.0.1"

@@ -39,6 +39,15 @@ export function renderTemplate(template: Template, templates: Template[], isRoot
           "
         >${referenceResult}</div>`)
       }
+    } else if (content.kind === 'snapshot') {
+      const referenceResult = renderTemplate(content.snapshot, templates, false)
+      result.push(`<div
+          style="
+            left: ${content.x}px;
+            top: ${content.y}px;
+            position: absolute;
+          "
+        >${referenceResult}</div>`)
     }
   }
   const backgroundColor = isRoot ? `background-color: white;` : ''
