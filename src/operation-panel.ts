@@ -15,8 +15,8 @@ import { StyleGuide } from './model'
 })
 export class OperationPanel extends Vue {
   canvasState!: CanvasState
-  styleGuideKey = ''
-  templateModelKey = ''
+  styleGuideKey = 'kfc.json'
+  templateModelKey = 'kfc-model.json'
 
   changeX(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content') {
