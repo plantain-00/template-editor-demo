@@ -10,9 +10,10 @@ export interface Template extends Region, SizeExpression {
 
 export type TemplateContent = TemplateTextContent | TemplateImageContent | TemplateReferenceContent | TemplateSnapshotContent
 
-interface TemplateTextContent extends Region, RegionExpression, GenerationField {
+export interface TemplateTextContent extends Region, RegionExpression, GenerationField {
   kind: 'text'
   text: string
+  textExpression?: string
   fontFamily: string
   fontSize: number
   color: string

@@ -3,6 +3,7 @@ import Component from 'vue-class-component'
 
 import { CanvasSelection, StyleGuide, TemplateContent, Template } from './model'
 import { renderTemplate } from './renderer'
+import { layoutText } from './mock'
 
 @Component
 export class CanvasState extends Vue {
@@ -22,7 +23,7 @@ export class CanvasState extends Vue {
   applyChanges() {
     for (const content of this.changedContents) {
       if (content.kind === 'text') {
-        content.characters = Array.from(content.text).map((t) => ({ text: t }))
+        layoutText(content)
       }
     }
     this.renderResults = this.styleGuide.templates.map((t) => ({
@@ -65,7 +66,7 @@ export class CanvasState extends Vue {
   mousePressing = false
   isDraggingForMoving = false
   addKind: 'template' | 'image' | 'text' | undefined
-  
+
   contextMenuEnabled = false
   contextMenuX = 0
   contextMenuY = 0

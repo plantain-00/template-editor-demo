@@ -122,6 +122,14 @@ export class OperationPanel extends Vue {
     }
   }
 
+  changeTextExpression(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
+      this.canvasState.selection.content.textExpression = e.target.value
+      this.canvasState.changedContents.add(this.canvasState.selection.content)
+      this.canvasState.applyChangesIfAuto()
+    }
+  }
+
   changeFontFamily(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
       this.canvasState.selection.content.fontFamily = e.target.value
