@@ -1,6 +1,7 @@
 import { parseExpression, tokenizeExpression, evaluateExpression } from 'expression-engine'
 
 import { Template, TemplateContent, StyleGuide } from './model'
+import { layoutText } from './mock'
 
 export function generate(template: Template, styleGuide: StyleGuide, model: { [key: string]: unknown }): Template {
   return {
@@ -63,6 +64,15 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
       ]
     }
     return []
+  }
+  if (content.kind === 'text') {
+    if (content.textExpression) {
+      const result = evaluateExpression(parseExpression(tokenizeExpression(content.textExpression)), model)
+      if (typeof result === 'string') {
+        content = { ...content, text: result }
+        layoutText(content)
+      }
+    }
   }
   return [
     {
