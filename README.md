@@ -18,10 +18,7 @@ A template editor demo.
 + zindex
 + editor to npm
 + image shadow, base64 in image
-+ symbol props
 + symbol actual size
-+ symbol props
 + symbol size changes according to content
 + simple and complex mode
 + copy content
-+ focus after add template or content

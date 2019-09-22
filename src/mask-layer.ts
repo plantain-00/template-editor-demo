@@ -69,19 +69,24 @@ export class MaskLayer extends Vue {
       const x = this.canvasState.mapX(e.offsetX)
       const y = this.canvasState.mapY(e.offsetY)
       if (this.canvasState.addKind === 'template') {
-        this.canvasState.styleGuide.templates.push({
+        const newTemplate: Template = {
           id: Math.random().toString(),
           x: x - 250,
           y: y - 150,
           width: 500,
           height: 300,
           contents: [],
-        })
+        }
+        this.canvasState.styleGuide.templates.push(newTemplate)
+        this.canvasState.selection = {
+          kind: 'template',
+          template: newTemplate,
+        }
       } else {
         const template = selectPositionTemplate(this.canvasState.styleGuide, { x, y })
         if (template) {
           if (this.canvasState.addKind === 'text') {
-            template.contents.push({
+            const newContent: TemplateContent = {
               kind: 'text',
               text: '',
               color: '#000',
@@ -92,16 +97,28 @@ export class MaskLayer extends Vue {
               width: 100,
               height: 100,
               characters: [],
-            })
+            }
+            template.contents.push(newContent)
+            this.canvasState.selection = {
+              kind: 'content',
+              content: newContent,
+              template,
+            }
           } else if (this.canvasState.addKind === 'image') {
-            template.contents.push({
+            const newContent: TemplateContent = {
               kind: 'image',
               url: '',
               x: x - template.x - 50,
               y: y - template.y - 50,
               width: 100,
               height: 100,
-            })
+            }
+            template.contents.push(newContent)
+            this.canvasState.selection = {
+              kind: 'content',
+              content: newContent,
+              template,
+            }
           }
         }
       }

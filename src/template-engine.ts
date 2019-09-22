@@ -14,6 +14,10 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
   if (content.kind === 'snapshot') {
     return [content]
   }
+  if (content.props) {
+    const result = evaluateExpression(parseExpression(tokenizeExpression(content.props)), model)
+    model = { ...model, props: result }
+  }
   if (content.repeat) {
     const { expression, itemName, indexName } = analyseRepeat(content.repeat)
     const result = evaluateExpression(parseExpression(tokenizeExpression(expression)), model)

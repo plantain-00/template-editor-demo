@@ -50,6 +50,10 @@
       repeat
       <input type="text" :value="canvasState.selection.content.repeat" @change="changeRepeat" />
     </div>
+    <div>
+      props
+      <input type="text" :value="canvasState.selection.content.props" @change="changeProps" />
+    </div>
   </div>
   <div v-if="canvasState.selection.kind === 'template'">
     <div>

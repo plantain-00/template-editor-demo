@@ -66,6 +66,7 @@ interface RegionExpression extends PositionExpression, SizeExpression { }
 interface GenerationField {
   if?: string
   repeat?: string
+  props?: string
 }
 
 export type CanvasSelection =
