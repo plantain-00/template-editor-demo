@@ -24,3 +24,4 @@ A template editor demo.
 + symbol size changes according to content
 + simple and complex mode
 + copy content
++ focus after add template or content

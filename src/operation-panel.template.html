@@ -65,8 +65,14 @@
       <input type="number" :value="canvasState.selection.template.width" @change="changeWidth" />
     </div>
     <div>
+      <input type="text" :value="canvasState.selection.template.widthExpression" @change="changeWidthExpression" />
+    </div>
+    <div>
       height
       <input type="number" :value="canvasState.selection.template.height" @change="changeHeight" />
+    </div>
+    <div>
+      <input type="text" :value="canvasState.selection.template.heightExpression" @change="changeHeightExpression" />
     </div>
   </div>
   <div>
