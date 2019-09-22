@@ -22,3 +22,6 @@ A template editor demo.
 + symbol actual size
 + symbol props
 + symbol size changes according to content
++ simple and complex mode
++ copy content
++ focus after add template or content
