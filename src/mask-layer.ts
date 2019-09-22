@@ -220,7 +220,6 @@ export class MaskLayer extends Vue {
         }
       }
     }
-
   }
 
   private getSelectionAreaRelation(position: Position) {
@@ -243,7 +242,7 @@ export class MaskLayer extends Vue {
               content: templatePosition.content
             }
           }
-          const content = selectReferenceContent(this.canvasState.selection.template, { x: 0, y: 0 }, position, this.canvasState.styleGuide)
+          const content = selectReferenceContent(this.canvasState.selection.template, this.canvasState.selection.template, position, this.canvasState.styleGuide)
           if (content) {
             return undefined
           }
@@ -327,11 +326,9 @@ function selectTemplate(styleGuide: StyleGuide, position1: Position, position2: 
 
 function selectContent(styleGuide: StyleGuide, position: Position): { kind: 'content', content: TemplateContent, template: Template } | { kind: 'template', template: Template } | null {
   for (const template of styleGuide.templates) {
-    if (isInRegion(position, template)) {
-      const templateContent = selectReferenceContent(template, template, position, styleGuide)
-      if (templateContent) {
-        return { kind: 'content', ...templateContent }
-      }
+    const templateContent = selectReferenceContent(template, template, position, styleGuide)
+    if (templateContent) {
+      return { kind: 'content', ...templateContent }
     }
   }
   const t = selectPositionTemplate(styleGuide, position)
