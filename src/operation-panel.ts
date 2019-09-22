@@ -114,6 +114,14 @@ export class OperationPanel extends Vue {
     this.canvasState.applyChangesIfAuto()
   }
 
+  changeProps(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
+      this.canvasState.selection.content.props = e.target.value
+      this.canvasState.changedContents.add(this.canvasState.selection.content)
+    }
+    this.canvasState.applyChangesIfAuto()
+  }
+
   changeText(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
       this.canvasState.selection.content.text = e.target.value
