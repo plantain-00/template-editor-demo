@@ -10,7 +10,7 @@ export interface Template extends Region, SizeExpression {
 
 export type TemplateContent = TemplateTextContent | TemplateImageContent | TemplateReferenceContent | TemplateSnapshotContent
 
-export interface TemplateTextContent extends Region, RegionExpression, GenerationField {
+export interface TemplateTextContent extends Region, RegionExpression, GenerationField, Hidden {
   kind: 'text'
   text: string
   textExpression?: string
@@ -24,17 +24,21 @@ interface TextCharacter {
   text: string
 }
 
-interface TemplateImageContent extends Region, RegionExpression, GenerationField {
+interface Hidden {
+  hidden?: boolean
+}
+
+interface TemplateImageContent extends Region, RegionExpression, GenerationField, Hidden {
   kind: 'image'
   url: string
 }
 
-export interface TemplateReferenceContent extends Position, PositionExpression, GenerationField {
+export interface TemplateReferenceContent extends Position, PositionExpression, GenerationField, Hidden {
   kind: 'reference'
   id: string
 }
 
-interface TemplateSnapshotContent extends Position, PositionExpression {
+interface TemplateSnapshotContent extends Position, PositionExpression, Hidden {
   kind: 'snapshot'
   snapshot: Template
 }

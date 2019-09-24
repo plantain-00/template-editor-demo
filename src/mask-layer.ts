@@ -89,7 +89,7 @@ export class MaskLayer extends Vue {
             const newContent: TemplateContent = {
               kind: 'text',
               text: '',
-              color: '#000',
+              color: '#000000',
               fontFamily: 'Aria',
               fontSize: 12,
               x: x - template.x - 50,
