@@ -82,6 +82,9 @@
     <div>
       <input type="text" :value="canvasState.selection.template.heightExpression" @change="changeHeightExpression" />
     </div>
+    <div v-for="content of canvasState.selection.template.contents">
+      <div style="cursor: pointer" @click="selectContent(content)">{{content.kind}}</div>
+    </div>
   </div>
   <div>
     <button @click="canvasState.applyChanges()">apply changes</button>

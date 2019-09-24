@@ -13,7 +13,6 @@ A template editor demo.
 + expression ui(json editor, tokenize)
 + undo, redo
 + layout: flex, absolute, fluent
-+ layer list
 + image rotate
 + zindex
 + editor to npm

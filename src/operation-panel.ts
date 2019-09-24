@@ -4,7 +4,7 @@ import Component from 'vue-class-component'
 import { operationPanelTemplateHtml, operationPanelTemplateHtmlStatic } from './variables'
 import { CanvasState } from './canvas-state'
 import { generate } from './template-engine'
-import { StyleGuide } from './model'
+import { StyleGuide, TemplateContent } from './model'
 
 @Component({
   render: operationPanelTemplateHtml,
@@ -247,6 +247,16 @@ export class OperationPanel extends Vue {
   generate() {
     if (this.canvasState.selection.kind === 'template') {
       this.canvasState.generationResult = generate(this.canvasState.selection.template, this.canvasState.styleGuide, this.canvasState.templateModel)
+    }
+  }
+
+  selectContent(content: TemplateContent) {
+    if (this.canvasState.selection.kind === 'template') {
+      this.canvasState.selection = {
+        kind: 'content',
+        content,
+        template: this.canvasState.selection.template
+      }
     }
   }
 }

@@ -102,5 +102,5 @@ function analyseRepeat(repeat: string): { expression: string, itemName?: string,
     }
     return { expression, itemName: declarations[0].trim(), indexName: declarations[1].trim() }
   }
-  return { expression, itemName: expression }
+  return { expression, itemName: declaration }
 }
