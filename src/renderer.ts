@@ -4,6 +4,9 @@ export function renderTemplate(template: Template, templates: Template[], isRoot
   const result: string[] = []
   for (let i = 0; i < template.contents.length; i++) {
     const content = template.contents[i]
+    if (content.hidden) {
+      continue
+    }
     if (content.kind === 'text') {
       result.push(`<div
       style="

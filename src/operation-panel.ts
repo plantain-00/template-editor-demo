@@ -98,6 +98,14 @@ export class OperationPanel extends Vue {
     this.canvasState.applyChangesIfAuto()
   }
 
+  changeHidden(e: { target: { checked: boolean } }) {
+    if (this.canvasState.selection.kind === 'content') {
+      this.canvasState.selection.content.hidden = e.target.checked
+      this.canvasState.changedContents.add(this.canvasState.selection.content)
+    }
+    this.canvasState.applyChangesIfAuto()
+  }
+
   changeIf(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
       this.canvasState.selection.content.if = e.target.value

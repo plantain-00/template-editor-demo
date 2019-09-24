@@ -43,6 +43,10 @@
       <input type="text" :value="canvasState.selection.content.heightExpression" @change="changeHeightExpression" />
     </div>
     <div>
+      hidden
+      <input type="checkbox" :checked="canvasState.selection.content.hidden" @change="changeHidden" />
+    </div>
+    <div>
       if
       <input type="text" :value="canvasState.selection.content.if" @change="changeIf" />
     </div>
