@@ -51,6 +51,7 @@ export class MaskLayer extends Vue {
 
   wheel(e: WheelEvent) {
     if (e.ctrlKey) {
+      // zoom canvas
       e.preventDefault();
       e.stopImmediatePropagation();
       if (e.deltaY > 0) {
@@ -59,12 +60,14 @@ export class MaskLayer extends Vue {
         this.canvasState.styleGuideScale *= 1.01
       }
     } else {
+      // move canvas
       this.canvasState.styleGuideTranslateX -= e.deltaX
       this.canvasState.styleGuideTranslateY -= e.deltaY
     }
   }
 
   mousedown(e: MouseEvent) {
+    // add content
     if (this.canvasState.addKind) {
       const x = this.canvasState.mapX(e.offsetX)
       const y = this.canvasState.mapY(e.offsetY)
@@ -153,6 +156,8 @@ export class MaskLayer extends Vue {
       this.canvasState.mouseupX = e.offsetX
       this.canvasState.mouseupY = e.offsetY
     }
+
+    // move content or template
     if (this.canvasState.isDraggingForMoving) {
       if (this.canvasState.selection.kind === 'template') {
         if (this.draggingSelectionContent) {
@@ -177,9 +182,12 @@ export class MaskLayer extends Vue {
     if (this.canvasState.isDraggingForMoving) {
       this.canvasState.isDraggingForMoving = false
       this.canvasState.mousePressing = false
-      return
+      if (this.canvasState.moved) {
+        return
+      }
     }
 
+    // set selection after dragging or click
     const x = this.canvasState.mouseupMappedX
     const y = this.canvasState.mouseupMappedY
     if (this.canvasState.isDraggingForSelection) {
@@ -258,10 +266,6 @@ export class MaskLayer extends Vue {
               offsetY: position.y - templatePosition.content.y,
               content: templatePosition.content
             }
-          }
-          const content = selectReferenceContent(this.canvasState.selection.template, this.canvasState.selection.template, position, this.canvasState.styleGuide)
-          if (content) {
-            return undefined
           }
           return {
             offsetX: position.x - templatePosition.x,

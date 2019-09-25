@@ -58,6 +58,9 @@
       props
       <input type="text" :value="canvasState.selection.content.props" @change="changeProps" />
     </div>
+    <div v-if="canvasState.selection.content.kind === 'text' || canvasState.selection.content.kind === 'image'">
+        <button @click="extractAsSymbol()">extract as symbol</button>
+    </div>
   </div>
   <div v-if="canvasState.selection.kind === 'template'">
     <div>
