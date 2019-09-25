@@ -86,7 +86,11 @@ export class CanvasState extends Vue {
   }
 
   get isDraggingForSelection() {
-    return (!equal(this.mouseupX, this.mousedownX) || !(this.mouseupY, this.mousedownY)) && this.mousePressing && !this.isDraggingForMoving
+    return this.moved && this.mousePressing && !this.isDraggingForMoving
+  }
+
+  get moved() {
+    return !equal(this.mouseupX, this.mousedownX) || !equal(this.mouseupY, this.mousedownY)
   }
 
   get mousedownMappedX() {

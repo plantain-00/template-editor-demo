@@ -4,7 +4,7 @@ import Component from 'vue-class-component'
 import { operationPanelTemplateHtml, operationPanelTemplateHtmlStatic } from './variables'
 import { CanvasState } from './canvas-state'
 import { generate } from './template-engine'
-import { StyleGuide, TemplateContent } from './model'
+import { StyleGuide, TemplateContent, Template } from './model'
 
 @Component({
   render: operationPanelTemplateHtml,
@@ -257,6 +257,40 @@ export class OperationPanel extends Vue {
         content,
         template: this.canvasState.selection.template
       }
+    }
+  }
+
+  extractAsSymbol() {
+    if (this.canvasState.selection.kind === 'content'
+      && (this.canvasState.selection.content.kind === 'text'
+        || this.canvasState.selection.content.kind === 'image')) {
+      const id = Math.random().toString()
+      const content = this.canvasState.selection.content
+      const newTemplate: Template = {
+        id,
+        contents: [content],
+        x: 0,
+        y: 0,
+        width: content.width,
+        height: content.height,
+      }
+      this.canvasState.styleGuide.templates.push(newTemplate)
+
+      const index = this.canvasState.selection.template.contents.findIndex((c) => c === content)
+      if (index >= 0) {
+        this.canvasState.selection.template.contents[index] = {
+          kind: 'reference',
+          id,
+          x: content.x,
+          y: content.y,
+        }
+      }
+
+      this.canvasState.selection = {
+        kind: 'template',
+        template: newTemplate,
+      }
+      this.canvasState.applyChangesIfAuto()
     }
   }
 }
