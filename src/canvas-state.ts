@@ -4,6 +4,7 @@ import Component from 'vue-class-component'
 import { CanvasSelection, StyleGuide, TemplateContent, Template } from './model'
 import { renderTemplate } from './renderer'
 import { layoutText } from './mock'
+import { layoutFlex } from './layout-engine'
 
 @Component
 export class CanvasState extends Vue {
@@ -25,6 +26,9 @@ export class CanvasState extends Vue {
       if (content.kind === 'text') {
         layoutText(content)
       }
+    }
+    for (const template of this.styleGuide.templates) {
+      layoutFlex(template, this.styleGuide.templates)
     }
     this.renderResults = this.styleGuide.templates.map((t) => ({
       html: renderTemplate(t, this.styleGuide.templates, true),

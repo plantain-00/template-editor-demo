@@ -2,12 +2,15 @@ import { parseExpression, tokenizeExpression, evaluateExpression } from 'express
 
 import { Template, TemplateContent, StyleGuide } from './model'
 import { layoutText } from './mock'
+import { layoutFlex } from './layout-engine'
 
 export function generate(template: Template, styleGuide: StyleGuide, model: { [key: string]: unknown }): Template {
-  return {
+  const result: Template = {
     ...template,
     contents: template.contents.map((c) => generateContent(c, styleGuide, model)).flat()
   }
+  layoutFlex(result, styleGuide.templates)
+  return result
 }
 
 function generateContent(content: TemplateContent, styleGuide: StyleGuide, model: { [key: string]: unknown }): TemplateContent[] {
