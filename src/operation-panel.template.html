@@ -28,19 +28,21 @@
     <div>
       <input type="text" :value="canvasState.selection.content.yExpression" @change="changeYExpression" />
     </div>
-    <div>
-      width
-      <input type="number" :value="canvasState.selection.content.width" @change="changeWidth" />
-    </div>
-    <div>
-      <input type="text" :value="canvasState.selection.content.widthExpression" @change="changeWidthExpression" />
-    </div>
-    <div>
-      height
-      <input type="number" :value="canvasState.selection.content.height" @change="changeHeight" />
-    </div>
-    <div>
-      <input type="text" :value="canvasState.selection.content.heightExpression" @change="changeHeightExpression" />
+    <div v-if="canvasState.selection.content.kind === 'text' || canvasState.selection.content.kind === 'image'">
+      <div>
+        width
+        <input type="number" :value="canvasState.selection.content.width" @change="changeWidth" />
+      </div>
+      <div>
+        <input type="text" :value="canvasState.selection.content.widthExpression" @change="changeWidthExpression" />
+      </div>
+      <div>
+        height
+        <input type="number" :value="canvasState.selection.content.height" @change="changeHeight" />
+      </div>
+      <div>
+        <input type="text" :value="canvasState.selection.content.heightExpression" @change="changeHeightExpression" />
+      </div>
     </div>
     <div>
       hidden
@@ -54,7 +56,7 @@
       repeat
       <input type="text" :value="canvasState.selection.content.repeat" @change="changeRepeat" />
     </div>
-    <div>
+    <div v-if="canvasState.selection.content.kind === 'reference'">
       props
       <input type="text" :value="canvasState.selection.content.props" @change="changeProps" />
     </div>

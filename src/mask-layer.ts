@@ -232,16 +232,25 @@ export class MaskLayer extends Vue {
           this.clipboard = this.canvasState.selection
         }
       } else if (e.key === 'v') {
-        if (this.clipboard.kind === 'template'
-          && this.canvasState.selection.kind === 'template'
-          && this.clipboard.template !== this.canvasState.selection.template) {
-          this.canvasState.selection.template.contents.push({
-            kind: 'reference',
-            id: this.clipboard.template.id,
-            x: 0,
-            y: 0,
-          })
-          this.canvasState.applyChangesIfAuto()
+        if (this.clipboard.kind === 'template') {
+          if (this.canvasState.selection.kind === 'template') {
+            if (this.clipboard.template !== this.canvasState.selection.template) {
+              this.canvasState.selection.template.contents.push({
+                kind: 'reference',
+                id: this.clipboard.template.id,
+                x: 0,
+                y: 0,
+              })
+              this.canvasState.applyChangesIfAuto()
+            }
+          } else if (this.canvasState.selection.kind === 'none') {
+            const newTemplate: Template = JSON.parse(JSON.stringify(this.clipboard.template))
+            newTemplate.id = Math.random().toString()
+            newTemplate.x = 0
+            newTemplate.y = 0
+            this.canvasState.styleGuide.templates.push(newTemplate)
+            this.canvasState.applyChangesIfAuto()
+          }
         }
       }
     }
