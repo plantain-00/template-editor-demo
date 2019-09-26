@@ -14,9 +14,4 @@ A template editor demo.
 + undo, redo
 + image rotate
 + zindex
-+ editor to npm
 + image shadow, base64 in image
-+ symbol actual size
-+ symbol size changes according to content
-+ simple and complex mode
-+ copy content

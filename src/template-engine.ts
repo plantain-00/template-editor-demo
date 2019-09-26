@@ -9,6 +9,18 @@ export function generate(template: Template, styleGuide: StyleGuide, model: { [k
     ...template,
     contents: template.contents.map((c) => generateContent(c, styleGuide, model)).flat()
   }
+  if (result.widthExpression) {
+    const width = evaluateExpression(parseExpression(tokenizeExpression(result.widthExpression)), model)
+    if (typeof width === 'number') {
+      result.width = width
+    }
+  }
+  if (result.heightExpression) {
+    const height = evaluateExpression(parseExpression(tokenizeExpression(result.heightExpression)), model)
+    if (typeof height === 'number') {
+      result.height = height
+    }
+  }
   layoutFlex(result, styleGuide.templates)
   return result
 }
@@ -16,10 +28,6 @@ export function generate(template: Template, styleGuide: StyleGuide, model: { [k
 function generateContent(content: TemplateContent, styleGuide: StyleGuide, model: { [key: string]: unknown }): TemplateContent[] {
   if (content.kind === 'snapshot') {
     return [content]
-  }
-  if (content.props) {
-    const result = evaluateExpression(parseExpression(tokenizeExpression(content.props)), model)
-    model = { ...model, props: result }
   }
   if (content.repeat) {
     const { expression, itemName, indexName } = analyseRepeat(content.repeat)
@@ -45,6 +53,7 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
       return []
     }
   }
+
   if (content.xExpression) {
     const result = evaluateExpression(parseExpression(tokenizeExpression(content.xExpression)), model)
     if (typeof result === 'number') {
@@ -57,10 +66,15 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
       content = { ...content, y: result }
     }
   }
+
   if (content.kind === 'reference') {
     const id = content.id
     const reference = styleGuide.templates.find((t) => t.id === id)
     if (reference) {
+      if (content.props) {
+        const result = evaluateExpression(parseExpression(tokenizeExpression(content.props)), model)
+        model = { ...model, props: result }
+      }
       return [
         {
           kind: 'snapshot',
@@ -72,6 +86,20 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
     }
     return []
   }
+
+  if (content.widthExpression) {
+    const result = evaluateExpression(parseExpression(tokenizeExpression(content.widthExpression)), model)
+    if (typeof result === 'number') {
+      content = { ...content, width: result }
+    }
+  }
+  if (content.heightExpression) {
+    const result = evaluateExpression(parseExpression(tokenizeExpression(content.heightExpression)), model)
+    if (typeof result === 'number') {
+      content = { ...content, height: result }
+    }
+  }
+
   if (content.kind === 'text') {
     if (content.textExpression) {
       const result = evaluateExpression(parseExpression(tokenizeExpression(content.textExpression)), model)
