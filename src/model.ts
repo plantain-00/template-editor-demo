@@ -3,7 +3,7 @@ export interface StyleGuide {
   templates: Template[]
 }
 
-export interface Template extends Region, SizeExpression {
+export interface Template extends Region, SizeExpression, FlexField {
   id: string
   contents: TemplateContent[]
 }
@@ -71,6 +71,20 @@ interface GenerationField {
   if?: string
   repeat?: string
   props?: string
+}
+
+interface FlexField extends MarginField {
+  display?: 'flex'
+  flexDirection?: 'row' | 'column'
+  justifyContent?: 'start' | 'end' | 'center' | 'between'
+  alignItems?: 'start' | 'end' | 'center'
+}
+
+interface MarginField {
+  marginLeft?: number
+  marginRight?: number
+  marginTop?: number
+  marginBottom?: number
 }
 
 export type CanvasSelection =
