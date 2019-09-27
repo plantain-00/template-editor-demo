@@ -108,6 +108,20 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
         layoutText(content)
       }
     }
+    if (content.fontSizeExpression) {
+      const result = evaluateExpression(parseExpression(tokenizeExpression(content.fontSizeExpression)), model)
+      if (typeof result === 'number') {
+        content = { ...content, fontSize: result }
+      }
+    }
+  }
+  if (content.kind === 'image') {
+    if (content.urlExpression) {
+      const result = evaluateExpression(parseExpression(tokenizeExpression(content.urlExpression)), model)
+      if (typeof result === 'string') {
+        content = { ...content, url: result }
+      }
+    }
   }
   return [
     {

@@ -16,6 +16,7 @@ export interface TemplateTextContent extends Region, RegionExpression, Generatio
   textExpression?: string
   fontFamily: string
   fontSize: number
+  fontSizeExpression?: string
   color: string
   characters: TextCharacter[]
 }
@@ -31,6 +32,7 @@ interface Hidden {
 interface TemplateImageContent extends Region, RegionExpression, GenerationField, Hidden {
   kind: 'image'
   url: string
+  urlExpression?: string
 }
 
 export interface TemplateReferenceContent extends Position, PositionExpression, GenerationField, Hidden {

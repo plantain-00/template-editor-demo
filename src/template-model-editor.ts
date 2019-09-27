@@ -37,6 +37,12 @@ export class TemplateModelEditor extends Vue {
                   id: {
                     type: 'string',
                   },
+                  description: {
+                    type: 'string',
+                  },
+                  image: {
+                    type: 'string',
+                  },
                   prices: {
                     type: 'array',
                     items: {
@@ -44,7 +50,7 @@ export class TemplateModelEditor extends Vue {
                     }
                   }
                 },
-                required: ['id', 'name', 'prices'],
+                required: ['id', 'name', 'prices','description', 'image'],
                 collapsed: true
               }
             }
