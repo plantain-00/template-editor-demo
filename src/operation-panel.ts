@@ -162,6 +162,14 @@ export class OperationPanel extends Vue {
     }
   }
 
+  changeFontSizeExpression(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
+      this.canvasState.selection.content.fontSizeExpression = e.target.value
+      this.canvasState.changedContents.add(this.canvasState.selection.content)
+      this.canvasState.applyChangesIfAuto()
+    }
+  }
+
   changeColor(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
       this.canvasState.selection.content.color = e.target.value
@@ -173,6 +181,14 @@ export class OperationPanel extends Vue {
   changeImageUrl(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'image') {
       this.canvasState.selection.content.url = e.target.value
+      this.canvasState.changedContents.add(this.canvasState.selection.content)
+      this.canvasState.applyChangesIfAuto()
+    }
+  }
+
+  changeImageUrlExpression(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'image') {
+      this.canvasState.selection.content.urlExpression = e.target.value
       this.canvasState.changedContents.add(this.canvasState.selection.content)
       this.canvasState.applyChangesIfAuto()
     }

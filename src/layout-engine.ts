@@ -15,14 +15,16 @@ export function layoutFlex(template: Template, templates: Template[]) {
       const crossAxisPositionType = flexDirection === 'row' ? 'y' : 'x'
       const crossAxisSizeType = flexDirection === 'row' ? 'height' : 'width'
 
+      const totalContentSize = template.contents.reduce((p, c) => p + getContentSize(c, templates)[mainAxisSizeType], 0)
+
       if (justifyContent === 'start') {
         content[mainAxisPositionType] = 0
       } else if (justifyContent === 'end') {
-        content[mainAxisPositionType] = template[mainAxisSizeType] - contentSize[mainAxisSizeType]
+        content[mainAxisPositionType] = template[mainAxisSizeType] - totalContentSize
       } else if (justifyContent === 'center') {
-        content[mainAxisPositionType] = (template[mainAxisSizeType] - contentSize[mainAxisSizeType]) / 2
+        content[mainAxisPositionType] = (template[mainAxisSizeType] - totalContentSize) / 2
       } else {
-        content[mainAxisPositionType] = i * Math.max(0, (template[mainAxisSizeType] - template.contents.reduce((p, c) => p + getContentSize(c, templates)[mainAxisSizeType], 0)) / (template.contents.length - 1))
+        content[mainAxisPositionType] = i * Math.max(0, (template[mainAxisSizeType] - totalContentSize) / (template.contents.length - 1))
       }
       for (let j = 0; j < i; j++) {
         content[mainAxisPositionType] += getContentSize(template.contents[j], templates)[mainAxisSizeType]
