@@ -24,7 +24,11 @@ export function layoutFlex(template: Template, templates: Template[]) {
       } else if (justifyContent === 'center') {
         content[mainAxisPositionType] = (template[mainAxisSizeType] - totalContentSize) / 2
       } else {
-        content[mainAxisPositionType] = i * Math.max(0, (template[mainAxisSizeType] - totalContentSize) / (template.contents.length - 1))
+        if (template.contents.length > 1) {
+          content[mainAxisPositionType] = i * Math.max(0, (template[mainAxisSizeType] - totalContentSize) / (template.contents.length - 1))
+        } else {
+          content[mainAxisPositionType] = 0
+        }
       }
       for (let j = 0; j < i; j++) {
         content[mainAxisPositionType] += getContentSize(template.contents[j], templates)[mainAxisSizeType]
