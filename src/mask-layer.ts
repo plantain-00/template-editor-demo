@@ -54,11 +54,17 @@ export class MaskLayer extends Vue {
       // zoom canvas
       e.preventDefault();
       e.stopImmediatePropagation();
+      let newScale = 1
       if (e.deltaY > 0) {
-        this.canvasState.styleGuideScale *= 0.99
+        newScale = this.canvasState.styleGuideScale * 0.98
       } else if (e.deltaY < 0) {
-        this.canvasState.styleGuideScale *= 1.01
+        newScale = this.canvasState.styleGuideScale / 0.98
       }
+      const newTranslateX = (e.offsetX - this.canvasState.mapX(e.offsetX) * newScale - this.canvasState.styleGuideWidth / 2) / newScale + this.canvasState.styleGuideWidth / 2
+      const newTranslateY = (e.offsetY - this.canvasState.mapY(e.offsetY) * newScale - this.canvasState.styleGuideHeight / 2) / newScale + this.canvasState.styleGuideHeight / 2
+      this.canvasState.styleGuideScale = newScale
+      this.canvasState.styleGuideTranslateX = newTranslateX
+      this.canvasState.styleGuideTranslateY = newTranslateY
     } else {
       // move canvas
       this.canvasState.styleGuideTranslateX -= e.deltaX
