@@ -8,17 +8,24 @@ import { layoutFlex } from './layout-engine'
 
 @Component
 export class CanvasState extends Vue {
-  static create(styleGuide: StyleGuide) {
+  static create(styleGuide: StyleGuide, width: number, height: number) {
     const canvasState = new CanvasState()
     canvasState.styleGuide = styleGuide
+    canvasState.canvasWidth = width
+    canvasState.canvasHeight = height
 
-    canvasState.styleGuideScale = Math.min(canvasState.canvasWidth / canvasState.styleGuideWidth, canvasState.canvasHeight / canvasState.styleGuideHeight)
-    canvasState.styleGuideTranslateX = (canvasState.canvasWidth - canvasState.styleGuideWidth) * canvasState.styleGuideScale
-    canvasState.styleGuideTranslateY = (canvasState.canvasHeight - canvasState.styleGuideHeight) * canvasState.styleGuideScale
-    canvasState.styleGuideScale *= 0.9
-
-    canvasState.applyChanges()
+    canvasState.applyCanvasSizeChange()
+    
     return canvasState
+  }
+
+  applyCanvasSizeChange() {
+    this.styleGuideScale = Math.min(this.canvasWidth / this.styleGuideWidth, this.canvasHeight / this.styleGuideHeight)
+    this.styleGuideTranslateX = (this.canvasWidth - this.styleGuideWidth) * this.styleGuideScale
+    this.styleGuideTranslateY = (this.canvasHeight - this.styleGuideHeight) * this.styleGuideScale
+    this.styleGuideScale *= 0.9
+
+    this.applyChanges()
   }
 
   applyChanges() {

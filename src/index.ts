@@ -30,7 +30,26 @@ Vue.component('template-model-editor', TemplateModelEditor)
   staticRenderFns: indexTemplateHtmlStatic
 })
 export class App extends Vue {
-  canvasState = CanvasState.create(styleGuide)
+  canvasState = CanvasState.create(styleGuide, window.innerWidth - 300, window.innerHeight)
+
+  mounted() {
+    window.addEventListener('resize', () => {
+      this.canvasState.canvasWidth = window.innerWidth - 300
+      this.canvasState.canvasHeight = window.innerHeight
+      this.canvasState.applyCanvasSizeChange()
+    })
+  }
+
+  get canvasStyle() {
+    return {
+      width: this.canvasState.canvasWidth + 'px',
+      height: this.canvasState.canvasHeight + 'px'
+    }
+  }
+
+  resize(e: unknown) {
+    console.info(e)
+  }
 }
 
 new App({ el: '#container' })

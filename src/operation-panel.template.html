@@ -4,20 +4,26 @@
       text
       <input type="text" :value="canvasState.selection.content.text" @change="changeText" />
       <br />
+      text f(x)
       <input type="text" :value="canvasState.selection.content.textExpression" @change="changeTextExpression" />
       <br />
+      font family
       <input type="text" :value="canvasState.selection.content.fontFamily" @change="changeFontFamily" />
       <br />
+      font size
       <input type="number" :value="canvasState.selection.content.fontSize" @change="changeFontSize" />
       <br />
+      font size f(x)
       <input type="text" :value="canvasState.selection.content.fontSizeExpression" @change="changeFontSizeExpression" />
       <br />
+      color
       <input type="color" :value="canvasState.selection.content.color" @change="changeColor" />
     </div>
     <div v-if="canvasState.selection.content.kind === 'image'">
       url
       <input type="text" :value="canvasState.selection.content.url" @change="changeImageUrl" />
       <br />
+      url f(x)
       <input type="text" :value="canvasState.selection.content.urlExpression" @change="changeImageUrlExpression" />
     </div>
     <div>
@@ -25,6 +31,7 @@
       <input type="number" :value="canvasState.selection.content.x" @change="changeX" />
     </div>
     <div>
+      x f(x)
       <input type="text" :value="canvasState.selection.content.xExpression" @change="changeXExpression" />
     </div>
     <div>
@@ -32,6 +39,7 @@
       <input type="number" :value="canvasState.selection.content.y" @change="changeY" />
     </div>
     <div>
+      y f(x)
       <input type="text" :value="canvasState.selection.content.yExpression" @change="changeYExpression" />
     </div>
     <div v-if="canvasState.selection.content.kind === 'text' || canvasState.selection.content.kind === 'image'">
@@ -40,6 +48,7 @@
         <input type="number" :value="canvasState.selection.content.width" @change="changeWidth" />
       </div>
       <div>
+        width f(x)
         <input type="text" :value="canvasState.selection.content.widthExpression" @change="changeWidthExpression" />
       </div>
       <div>
@@ -47,6 +56,7 @@
         <input type="number" :value="canvasState.selection.content.height" @change="changeHeight" />
       </div>
       <div>
+        height f(x)
         <input type="text" :value="canvasState.selection.content.heightExpression" @change="changeHeightExpression" />
       </div>
     </div>
@@ -84,6 +94,7 @@
       <input type="number" :value="canvasState.selection.template.width" @change="changeWidth" />
     </div>
     <div>
+      width f(x)
       <input type="text" :value="canvasState.selection.template.widthExpression" @change="changeWidthExpression" />
     </div>
     <div>
@@ -91,10 +102,11 @@
       <input type="number" :value="canvasState.selection.template.height" @change="changeHeight" />
     </div>
     <div>
+      height f(x)
       <input type="text" :value="canvasState.selection.template.heightExpression" @change="changeHeightExpression" />
     </div>
-    <div v-for="content of canvasState.selection.template.contents">
-      <div style="cursor: pointer" @click="selectContent(content)">{{content.kind}}</div>
+    <div v-for="(content, i) of canvasState.selection.template.contents">
+      <div style="cursor: pointer" @click="selectContent(content)">content {{i}}: {{content.kind}}</div>
     </div>
     <div>
       display

@@ -65,9 +65,9 @@ export class TemplateModelEditor extends Vue {
 
   editorStyle = {
     position: 'absolute',
-    width: '1200px',
-    left: '210px',
-    top: '10px',
+    width: this.canvasState.canvasWidth + 'px',
+    left: '0px',
+    top: '0px',
     backgroundColor: 'white',
   }
 
