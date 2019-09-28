@@ -231,8 +231,8 @@ export class MaskLayer extends Vue {
     e.preventDefault()
   }
 
-  keypress(e: KeyboardEvent) {
-    if (e.ctrlKey) {
+  keydown(e: KeyboardEvent) {
+    if (e.ctrlKey || e.metaKey) {
       if (e.key === 'c') {
         if (this.canvasState.selection.kind !== 'none') {
           this.clipboard = this.canvasState.selection
