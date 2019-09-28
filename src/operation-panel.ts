@@ -284,7 +284,13 @@ export class OperationPanel extends Vue {
       const content = this.canvasState.selection.content
       const newTemplate: Template = {
         id,
-        contents: [content],
+        contents: [
+          {
+            ...content,
+            x: 0,
+            y: 0,
+          }
+        ],
         x: 0,
         y: 0,
         width: content.width,
