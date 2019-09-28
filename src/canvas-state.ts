@@ -124,6 +124,21 @@ export class CanvasState extends Vue {
   mapY(y: number) {
     return (y - ((this.styleGuideTranslateY - this.styleGuideHeight / 2) * this.styleGuideScale + this.styleGuideHeight / 2)) / this.styleGuideScale
   }
+
+  private styleGuideHistory: StyleGuide[] = []
+  action() {
+    this.styleGuideHistory.push(JSON.parse(JSON.stringify(this.styleGuide)))
+    if (this.styleGuideHistory.length > 10) {
+      this.styleGuideHistory.splice(0, this.styleGuideHistory.length - 10)
+    }
+  }
+  undo() {
+    const styleGuide = this.styleGuideHistory.pop()
+    if (styleGuide) {
+      this.styleGuide = styleGuide
+      this.applyChangesIfAuto()
+    }
+  }
 }
 
 function equal(n1: number, n2: number) {
