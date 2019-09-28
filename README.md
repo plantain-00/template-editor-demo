@@ -11,7 +11,6 @@ A template editor demo.
 ## todo
 
 + expression ui(json editor, tokenize)
-+ undo, redo
 + image rotate
 + zindex
 + image shadow, base64 in image

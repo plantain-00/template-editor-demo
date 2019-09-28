@@ -43,6 +43,7 @@ export class ContextMenu extends Vue {
   remove() {
     const x = this.canvasState.mapX(this.canvasState.contextMenuX)
     const y = this.canvasState.mapY(this.canvasState.contextMenuY)
+    this.canvasState.action()
     if (this.canvasState.selection.kind === 'template') {
       for (let i = 0; i < this.canvasState.styleGuide.templates.length; i++) {
         const template = this.canvasState.styleGuide.templates[i]

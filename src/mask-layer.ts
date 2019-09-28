@@ -75,6 +75,7 @@ export class MaskLayer extends Vue {
   mousedown(e: MouseEvent) {
     // add content
     if (this.canvasState.addKind) {
+      this.canvasState.action()
       const x = this.canvasState.mapX(e.offsetX)
       const y = this.canvasState.mapY(e.offsetY)
       if (this.canvasState.addKind === 'template') {
@@ -239,6 +240,7 @@ export class MaskLayer extends Vue {
         }
       } else if (e.key === 'v') {
         if (this.clipboard.kind === 'template') {
+          this.canvasState.action()
           if (this.canvasState.selection.kind === 'template') {
             if (this.clipboard.template !== this.canvasState.selection.template) {
               this.canvasState.selection.template.contents.push({
@@ -258,6 +260,8 @@ export class MaskLayer extends Vue {
             this.canvasState.applyChangesIfAuto()
           }
         }
+      } else if (e.key === 'z') {
+        this.canvasState.undo()
       }
     }
   }
