@@ -14,6 +14,14 @@ import { renderTemplate } from './renderer'
 export class GenerationResultModal extends Vue {
   private canvasState!: CanvasState
 
+  modalStyle = {
+    position: 'absolute',
+    width: this.canvasState.canvasWidth + 'px',
+    left: '0px',
+    top: '0px',
+    backgroundColor: 'white',
+  }
+
   get result() {
     if (!this.canvasState.generationResult) {
       return ''
