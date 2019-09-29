@@ -1,8 +1,7 @@
-import { parseExpression, tokenizeExpression, evaluateExpression } from 'expression-engine'
-
 import { Template, TemplateContent, StyleGuide } from './model'
 import { layoutText } from './mock'
 import { layoutFlex } from './layout-engine'
+import { evaluate } from './expression'
 
 export function generate(template: Template, styleGuide: StyleGuide, model: { [key: string]: unknown }): Template {
   const result: Template = {
@@ -10,13 +9,13 @@ export function generate(template: Template, styleGuide: StyleGuide, model: { [k
     contents: template.contents.map((c) => generateContent(c, styleGuide, model)).flat()
   }
   if (result.widthExpression) {
-    const width = evaluateExpression(parseExpression(tokenizeExpression(result.widthExpression)), model)
+    const width = evaluate(result.widthExpression, model)
     if (typeof width === 'number') {
       result.width = width
     }
   }
   if (result.heightExpression) {
-    const height = evaluateExpression(parseExpression(tokenizeExpression(result.heightExpression)), model)
+    const height = evaluate(result.heightExpression, model)
     if (typeof height === 'number') {
       result.height = height
     }
@@ -31,7 +30,7 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
   }
   if (content.repeat) {
     const { expression, itemName, indexName } = analyseRepeat(content.repeat)
-    const result = evaluateExpression(parseExpression(tokenizeExpression(expression)), model)
+    const result = evaluate(expression, model)
     if (Array.isArray(result)) {
       const contents: TemplateContent[] = []
       for (let i = 0; i < result.length; i++) {
@@ -48,20 +47,20 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
     }
   }
   if (content.if) {
-    const result = evaluateExpression(parseExpression(tokenizeExpression(content.if)), model)
-    if (!result) {
+    const result = evaluate(content.if, model)
+    if (result === false) {
       return []
     }
   }
 
   if (content.xExpression) {
-    const result = evaluateExpression(parseExpression(tokenizeExpression(content.xExpression)), model)
+    const result = evaluate(content.xExpression, model)
     if (typeof result === 'number') {
       content = { ...content, x: result }
     }
   }
   if (content.yExpression) {
-    const result = evaluateExpression(parseExpression(tokenizeExpression(content.yExpression)), model)
+    const result = evaluate(content.yExpression, model)
     if (typeof result === 'number') {
       content = { ...content, y: result }
     }
@@ -72,7 +71,7 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
     const reference = styleGuide.templates.find((t) => t.id === id)
     if (reference) {
       if (content.props) {
-        const result = evaluateExpression(parseExpression(tokenizeExpression(content.props)), model)
+        const result = evaluate(content.props, model)
         model = { ...model, props: result }
       }
       return [
@@ -88,13 +87,13 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
   }
 
   if (content.widthExpression) {
-    const result = evaluateExpression(parseExpression(tokenizeExpression(content.widthExpression)), model)
+    const result = evaluate(content.widthExpression, model)
     if (typeof result === 'number') {
       content = { ...content, width: result }
     }
   }
   if (content.heightExpression) {
-    const result = evaluateExpression(parseExpression(tokenizeExpression(content.heightExpression)), model)
+    const result = evaluate(content.heightExpression, model)
     if (typeof result === 'number') {
       content = { ...content, height: result }
     }
@@ -102,14 +101,14 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
 
   if (content.kind === 'text') {
     if (content.textExpression) {
-      const result = evaluateExpression(parseExpression(tokenizeExpression(content.textExpression)), model)
+      const result = evaluate(content.textExpression, model)
       if (typeof result === 'string') {
         content = { ...content, text: result }
         layoutText(content)
       }
     }
     if (content.fontSizeExpression) {
-      const result = evaluateExpression(parseExpression(tokenizeExpression(content.fontSizeExpression)), model)
+      const result = evaluate(content.fontSizeExpression, model)
       if (typeof result === 'number') {
         content = { ...content, fontSize: result }
       }
@@ -117,7 +116,7 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
   }
   if (content.kind === 'image') {
     if (content.urlExpression) {
-      const result = evaluateExpression(parseExpression(tokenizeExpression(content.urlExpression)), model)
+      const result = evaluate(content.urlExpression, model)
       if (typeof result === 'string') {
         content = { ...content, url: result }
       }
