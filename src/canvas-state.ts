@@ -15,15 +15,18 @@ export class CanvasState extends Vue {
     canvasState.canvasHeight = height
 
     canvasState.applyCanvasSizeChange()
-    
+
     return canvasState
   }
 
   applyCanvasSizeChange() {
-    this.styleGuideScale = Math.min(this.canvasWidth / this.styleGuideWidth, this.canvasHeight / this.styleGuideHeight)
-    this.styleGuideTranslateX = (this.canvasWidth - this.styleGuideWidth) * this.styleGuideScale
-    this.styleGuideTranslateY = (this.canvasHeight - this.styleGuideHeight) * this.styleGuideScale
-    this.styleGuideScale *= 0.9
+    const widthScale = this.canvasWidth / this.styleGuideWidth
+    const heightScale = this.canvasHeight / this.styleGuideHeight
+    this.styleGuideScale = Math.min(widthScale, heightScale) * 0.9
+    const x = this.styleGuideWidth * (widthScale - this.styleGuideScale) / 2
+    const y = this.styleGuideHeight * (heightScale - this.styleGuideScale) / 2
+    this.styleGuideTranslateX = (x - this.styleGuideX * this.styleGuideScale - this.styleGuideWidth / 2) / this.styleGuideScale + this.styleGuideWidth / 2
+    this.styleGuideTranslateY = (y - this.styleGuideY * this.styleGuideScale - this.styleGuideHeight / 2) / this.styleGuideScale + this.styleGuideHeight / 2
 
     this.applyChanges()
   }
@@ -82,12 +85,20 @@ export class CanvasState extends Vue {
   contextMenuX = 0
   contextMenuY = 0
 
+  private get styleGuideX() {
+    return Math.min(...this.styleGuide.templates.map((t) => t.x))
+  }
   get styleGuideWidth() {
-    return Math.max(...this.styleGuide.templates.map((t) => t.x + t.width), 10)
+    const maxX = Math.max(...this.styleGuide.templates.map((t) => t.x + t.width))
+    return Math.max(maxX - this.styleGuideX, 10)
   }
 
+  private get styleGuideY() {
+    return Math.min(...this.styleGuide.templates.map((t) => t.y))
+  }
   get styleGuideHeight() {
-    return Math.max(...this.styleGuide.templates.map((t) => t.y + t.height), 10)
+    const maxY = Math.max(...this.styleGuide.templates.map((t) => t.y + t.height))
+    return Math.max(maxY - this.styleGuideY, 10)
   }
 
   get isDraggingForSelection() {

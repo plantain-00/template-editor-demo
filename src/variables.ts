@@ -7,16 +7,16 @@
 import { AppPanel } from "./app-panel"
 import { ContextMenu } from "./context-menu"
 import { DraggingForSelectionLayer } from "./dragging-for-selection-layer"
-import { GenerationResultModal } from "./generation-result-modal"
 import { App } from "./index"
 import { MaskLayer } from "./mask-layer"
 import { OperationPanel } from "./operation-panel"
 import { RenderLayer } from "./render-layer"
 import { SelectionLayer } from "./selection-layer"
+import { TemplateEditor } from "./template-editor"
 import { TemplateModelEditor } from "./template-model-editor"
 
 // @ts-ignore
-export function appPanelTemplateHtml(this: AppPanel) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticStyle:{"display":"flex","align-items":"center","height":"50px"}},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.styleGuideKey),expression:"styleGuideKey"}],attrs:{"type":"text"},domProps:{"value":(_vm.styleGuideKey)},on:{"input":function($event){if($event.target.composing){ return; }_vm.styleGuideKey=$event.target.value}}}),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.loadStyleGuide()}}},[_vm._v("load style guide")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.saveStyleGuide()}}},[_vm._v("save style guide")]),_vm._v(" "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.templateModelKey),expression:"templateModelKey"}],attrs:{"type":"text"},domProps:{"value":(_vm.templateModelKey)},on:{"input":function($event){if($event.target.composing){ return; }_vm.templateModelKey=$event.target.value}}}),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.loadTemplateModel()}}},[_vm._v("load template model")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.saveTemplateModel()}}},[_vm._v("save template model")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.editTemplateModel()}}},[_vm._v("edit template model")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.generate()}}},[_vm._v("generate")])])}
+export function appPanelTemplateHtml(this: AppPanel) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticStyle:{"display":"flex","align-items":"center","height":"50px"}},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.styleGuideKey),expression:"styleGuideKey"}],attrs:{"type":"text"},domProps:{"value":(_vm.styleGuideKey)},on:{"input":function($event){if($event.target.composing){ return; }_vm.styleGuideKey=$event.target.value}}}),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.loadStyleGuide()}}},[_vm._v("load style guide")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.saveStyleGuide()}}},[_vm._v("save style guide")]),_vm._v(" "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.templateModelKey),expression:"templateModelKey"}],attrs:{"type":"text"},domProps:{"value":(_vm.templateModelKey)},on:{"input":function($event){if($event.target.composing){ return; }_vm.templateModelKey=$event.target.value}}}),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.loadTemplateModel()}}},[_vm._v("load template model")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.saveTemplateModel()}}},[_vm._v("save template model")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.editTemplateModel()}}},[_vm._v(_vm._s(_vm.appState.templateModelEditorVisible ? 'hide template model editor' : 'show template model editor'))]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.generate()}}},[_vm._v(_vm._s(_vm.appState.graphicCanvasState ? 'back to template' : 'generate graphic'))])])}
 // @ts-ignore
 export var appPanelTemplateHtmlStatic = [  ]
 // @ts-ignore
@@ -28,11 +28,7 @@ export function draggingForSelectionLayerTemplateHtml(this: DraggingForSelection
 // @ts-ignore
 export var draggingForSelectionLayerTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function generationResultModalTemplateHtml(this: GenerationResultModal) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.modalStyle)},[_c('div',{domProps:{"innerHTML":_vm._s(_vm.result)},on:{"click":function($event){return _vm.clear()}}})])}
-// @ts-ignore
-export var generationResultModalTemplateHtmlStatic = [  ]
-// @ts-ignore
-export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticStyle:{"display":"flex","flex-direction":"column"}},[_c('div',{staticStyle:{"height":"50px"}},[_c('app-panel',{attrs:{"canvasState":_vm.canvasState,"appState":_vm.appState}}),_vm._v(" "),_c('template-model-editor',{attrs:{"canvasState":_vm.canvasState,"appState":_vm.appState}})],1),_vm._v(" "),_c('div',{staticStyle:{"display":"flex"}},[_c('div',{style:(_vm.canvasStyle)},[_c('render-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('dragging-for-selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('mask-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('context-menu',{attrs:{"canvasState":_vm.canvasState}})],1),_vm._v(" "),_c('div',{staticStyle:{"width":"300px"}},[_c('operation-panel',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('generation-result-modal',{attrs:{"appState":_vm.appState}})],1)])])}
+export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticStyle:{"display":"flex","flex-direction":"column"}},[_c('div',{staticStyle:{"height":"50px"}},[_c('app-panel',{attrs:{"appState":_vm.appState}}),_vm._v(" "),_c('template-model-editor',{attrs:{"appState":_vm.appState}})],1),_vm._v(" "),(_vm.appState.graphicCanvasState)?_c('template-editor',{attrs:{"canvasState":_vm.appState.graphicCanvasState}}):_c('template-editor',{attrs:{"canvasState":_vm.appState.canvasState}})],1)}
 // @ts-ignore
 export var indexTemplateHtmlStatic = [  ]
 // @ts-ignore
@@ -51,6 +47,10 @@ export var renderLayerTemplateHtmlStatic = [  ]
 export function selectionLayerTemplateHtml(this: SelectionLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.canvasStyle)},[_c('div',{style:(_vm.styleGuideStyle)},[_vm._l((_vm.selectionAreas),function(r){return [_c('div',{style:(_vm.getSelectionAreaStyle(r))})]})],2)])}
 // @ts-ignore
 export var selectionLayerTemplateHtmlStatic = [  ]
+// @ts-ignore
+export function templateEditorTemplateHtml(this: TemplateEditor) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticStyle:{"display":"flex"}},[_c('div',{style:(_vm.canvasStyle)},[_c('render-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('dragging-for-selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('mask-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('context-menu',{attrs:{"canvasState":_vm.canvasState}})],1),_vm._v(" "),_c('div',{staticStyle:{"width":"300px","right":"0","position":"absolute"}},[_c('operation-panel',{attrs:{"canvasState":_vm.canvasState}})],1)])}
+// @ts-ignore
+export var templateEditorTemplateHtmlStatic = [  ]
 // @ts-ignore
 export function templateModelEditorTemplateHtml(this: TemplateModelEditor) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.appState.templateModelEditorVisible)?_c('div',{style:(_vm.editorStyle)},[_c('json-editor',{attrs:{"schema":_vm.schema,"initial-value":_vm.appState.templateModel},on:{"update-value":function($event){return _vm.updateValue($event)}}})],1):_vm._e()}
 // @ts-ignore

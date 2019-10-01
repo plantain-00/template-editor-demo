@@ -14,5 +14,4 @@ A template editor demo.
 + image rotate
 + zindex
 + image shadow, base64 in image
-+ generation result editor
 + symbol props ui(string, number, boolean, enum, expression, json editor?)

@@ -1,19 +1,8 @@
 <div style="display: flex; flex-direction: column">
   <div style="height: 50px">
-    <app-panel :canvasState="canvasState" :appState="appState"></app-panel>
-    <template-model-editor :canvasState="canvasState" :appState="appState"></template-model-editor>
+    <app-panel :appState="appState"></app-panel>
+    <template-model-editor :appState="appState"></template-model-editor>
   </div>
-  <div style="display: flex">
-    <div :style="canvasStyle">
-      <render-layer :canvasState="canvasState"></render-layer>
-      <selection-layer :canvasState="canvasState"></selection-layer>
-      <dragging-for-selection-layer :canvasState="canvasState"></dragging-for-selection-layer>
-      <mask-layer :canvasState="canvasState"></mask-layer>
-      <context-menu :canvasState="canvasState"></context-menu>
-    </div>
-    <div style="width: 300px">
-      <operation-panel :canvasState="canvasState"></operation-panel>
-      <generation-result-modal :appState="appState"></generation-result-modal>
-    </div>
-  </div>
+  <template-editor v-if="appState.graphicCanvasState" :canvasState="appState.graphicCanvasState"></template-editor>
+  <template-editor v-else :canvasState="appState.canvasState"></template-editor>
 </div>

@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { appPanelTemplateHtml, appPanelTemplateHtmlStatic } from './variables'
-import { CanvasState } from './canvas-state'
 import { generate } from './template-engine'
 import { StyleGuide } from './model'
 import { AppState } from './app-state'
@@ -11,12 +10,10 @@ import { AppState } from './app-state'
   render: appPanelTemplateHtml,
   staticRenderFns: appPanelTemplateHtmlStatic,
   props: {
-    canvasState: CanvasState,
     appState: AppState,
   }
 })
 export class AppPanel extends Vue {
-  private canvasState!: CanvasState
   private appState!: AppState
   styleGuideKey = 'kfc.json'
   templateModelKey = 'kfc-model.json'
@@ -25,8 +22,8 @@ export class AppPanel extends Vue {
     if (this.styleGuideKey) {
       const res = await fetch(`https://storage.yorkyao.xyz/${this.styleGuideKey}`)
       const json: StyleGuide = await res.json()
-      this.canvasState.styleGuide = json
-      this.canvasState.applyChangesIfAuto()
+      this.appState.canvasState.styleGuide = json
+      this.appState.canvasState.applyCanvasSizeChange()
     }
   }
 
@@ -37,7 +34,7 @@ export class AppPanel extends Vue {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(this.canvasState.styleGuide)
+        body: JSON.stringify(this.appState.canvasState.styleGuide)
       })
     }
   }
@@ -47,7 +44,7 @@ export class AppPanel extends Vue {
       const res = await fetch(`https://storage.yorkyao.xyz/${this.templateModelKey}`)
       const json: { [key: string]: unknown } = await res.json()
       this.appState.templateModel = json
-      this.canvasState.applyChangesIfAuto()
+      this.appState.canvasState.applyChangesIfAuto()
     }
   }
 
@@ -68,8 +65,12 @@ export class AppPanel extends Vue {
   }
 
   generate() {
-    if (this.canvasState.selection.kind === 'template') {
-      this.appState.generationResult = generate(this.canvasState.selection.template, this.canvasState.styleGuide, this.appState.templateModel)
+    if (this.appState.graphicCanvasState) {
+      this.appState.graphicCanvasState = null
+      return
+    }
+    if (this.appState.canvasState.selection.kind === 'template') {
+      this.appState.loadGraphicCanvas(generate(this.appState.canvasState.selection.template, this.appState.canvasState.styleGuide, this.appState.templateModel))
     }
   }
 }

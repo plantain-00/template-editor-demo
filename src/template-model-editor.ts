@@ -1,19 +1,16 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { templateModelEditorTemplateHtml, templateModelEditorTemplateHtmlStatic } from './variables'
-import { CanvasState } from './canvas-state'
 import { AppState } from './app-state'
 
 @Component({
   render: templateModelEditorTemplateHtml,
   staticRenderFns: templateModelEditorTemplateHtmlStatic,
   props: {
-    canvasState: CanvasState,
     appState: AppState,
   }
 })
 export class TemplateModelEditor extends Vue {
-  private canvasState!: CanvasState
   private appState!: AppState
   schema = {
     type: 'object',
@@ -73,7 +70,7 @@ export class TemplateModelEditor extends Vue {
     top: '50px',
     backgroundColor: 'white',
     zIndex: 1,
-    height: this.canvasState.canvasHeight + 'px',
+    height: this.appState.canvasState.canvasHeight + 'px',
     overflow: 'auto',
   }
 
