@@ -16,9 +16,9 @@ export class GenerationResultModal extends Vue {
 
   modalStyle = {
     position: 'absolute',
-    width: this.canvasState.canvasWidth + 'px',
+    right: '0px',
     left: '0px',
-    top: '0px',
+    top: '50px',
     backgroundColor: 'white',
   }
 

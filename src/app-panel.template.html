@@ -1,0 +1,10 @@
+<div style="display: flex; align-items: center; height: 50px;">
+  <input type="text" v-model="styleGuideKey" />
+  <button @click="loadStyleGuide()">load style guide</button>
+  <button @click="saveStyleGuide()">save style guide</button>
+  <input type="text" v-model="templateModelKey" />
+  <button @click="loadTemplateModel()">load template model</button>
+  <button @click="saveTemplateModel()">save template model</button>
+  <button @click="editTemplateModel()">edit template model</button>
+  <button @click="generate()">generate</button>
+</div>
