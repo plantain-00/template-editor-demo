@@ -14,6 +14,7 @@ import { SelectionLayer } from './selection-layer'
 import { ContextMenu } from './context-menu'
 import { GenerationResultModal } from './generation-result-modal'
 import { TemplateModelEditor } from './template-model-editor'
+import { AppState } from './app-state'
 
 Vue.component('mask-layer', MaskLayer)
 Vue.component('dragging-for-selection-layer', DraggingForSelectionLayer)
@@ -33,6 +34,7 @@ Vue.component('template-model-editor', TemplateModelEditor)
 })
 export class App extends Vue {
   canvasState = CanvasState.create(styleGuide, window.innerWidth - 300, window.innerHeight - 50)
+  appState = new AppState()
 
   mounted() {
     window.addEventListener('resize', () => {

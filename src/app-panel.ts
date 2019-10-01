@@ -5,16 +5,19 @@ import { appPanelTemplateHtml, appPanelTemplateHtmlStatic } from './variables'
 import { CanvasState } from './canvas-state'
 import { generate } from './template-engine'
 import { StyleGuide } from './model'
+import { AppState } from './app-state'
 
 @Component({
   render: appPanelTemplateHtml,
   staticRenderFns: appPanelTemplateHtmlStatic,
   props: {
-    canvasState: CanvasState
+    canvasState: CanvasState,
+    appState: AppState,
   }
 })
 export class AppPanel extends Vue {
   private canvasState!: CanvasState
+  private appState!: AppState
   styleGuideKey = 'kfc.json'
   templateModelKey = 'kfc-model.json'
 
@@ -43,7 +46,7 @@ export class AppPanel extends Vue {
     if (this.templateModelKey) {
       const res = await fetch(`https://storage.yorkyao.xyz/${this.templateModelKey}`)
       const json: { [key: string]: unknown } = await res.json()
-      this.canvasState.templateModel = json
+      this.appState.templateModel = json
       this.canvasState.applyChangesIfAuto()
     }
   }
@@ -55,18 +58,18 @@ export class AppPanel extends Vue {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(this.canvasState.templateModel)
+        body: JSON.stringify(this.appState.templateModel)
       })
     }
   }
 
   editTemplateModel() {
-    this.canvasState.templateModelEditorVisible = !this.canvasState.templateModelEditorVisible
+    this.appState.templateModelEditorVisible = !this.appState.templateModelEditorVisible
   }
 
   generate() {
     if (this.canvasState.selection.kind === 'template') {
-      this.canvasState.generationResult = generate(this.canvasState.selection.template, this.canvasState.styleGuide, this.canvasState.templateModel)
+      this.appState.generationResult = generate(this.canvasState.selection.template, this.canvasState.styleGuide, this.appState.templateModel)
     }
   }
 }

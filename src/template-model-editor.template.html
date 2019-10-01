@@ -1,4 +1,4 @@
-<div v-if="canvasState.templateModelEditorVisible" :style="editorStyle">
-  <json-editor :schema="schema" :initial-value="canvasState.templateModel" @update-value="updateValue($event)">
+<div v-if="appState.templateModelEditorVisible" :style="editorStyle">
+  <json-editor :schema="schema" :initial-value="appState.templateModel" @update-value="updateValue($event)">
   </json-editor>
 </div>
