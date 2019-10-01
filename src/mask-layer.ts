@@ -67,8 +67,8 @@ export class MaskLayer extends Vue {
       this.canvasState.styleGuideTranslateY = newTranslateY
     } else {
       // move canvas
-      this.canvasState.styleGuideTranslateX -= e.deltaX
-      this.canvasState.styleGuideTranslateY -= e.deltaY
+      this.canvasState.styleGuideTranslateX -= e.deltaX / this.canvasState.styleGuideScale
+      this.canvasState.styleGuideTranslateY -= e.deltaY / this.canvasState.styleGuideScale
     }
   }
 
@@ -333,6 +333,24 @@ export class MaskLayer extends Vue {
             }
           }
         }
+      } else if (content.kind === 'snapshot') {
+        for (const contentPosition of iterateAllContentPositions(content, this.canvasState.styleGuide)) {
+          const isInSelectionRegion = isInRegion(
+            position,
+            {
+              x: contentPosition.x,
+              y: contentPosition.y,
+              width: content.snapshot.width,
+              height: content.snapshot.height,
+            })
+          if (isInSelectionRegion) {
+            return {
+              offsetX: position.x - content.x,
+              offsetY: position.y - content.y,
+              content: undefined
+            }
+          }
+        }
       }
     }
     return undefined
@@ -404,6 +422,14 @@ function selectReferenceContent(template: Template, basePosition: Position, posi
         if (referenceContent) {
           return referenceContent
         }
+      }
+    } else if (content.kind === 'snapshot') {
+      const referenceContent = selectReferenceContent(content.snapshot, contentPosition, position, styleGuide)
+      if (referenceContent) {
+        return referenceContent
+      }
+      if (isInRegion(position, { ...contentPosition, width: content.snapshot.width, height: content.snapshot.height })) {
+        return { content, template }
       }
     }
   }

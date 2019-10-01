@@ -6,6 +6,8 @@ import { evaluate } from './expression'
 export function generate(template: Template, styleGuide: StyleGuide, model: { [key: string]: unknown }): Template {
   const result: Template = {
     ...template,
+    x: 0,
+    y: 0,
     contents: template.contents.map((c) => generateContent(c, styleGuide, model)).flat()
   }
   if (result.widthExpression) {

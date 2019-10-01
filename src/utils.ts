@@ -14,7 +14,12 @@ export function* iterateAllTemplatePositions(
 export function* iterateAllContentPositions(
   target: TemplateContent,
   styleGuide: StyleGuide,
+  targetTemplate?: Template,
 ) {
+  if (targetTemplate) {
+    yield* iterateAllContent(target, targetTemplate, { x: targetTemplate.x, y: targetTemplate.y }, styleGuide)
+    return
+  }
   for (const template of styleGuide.templates) {
     yield* iterateAllContent(target, template, { x: template.x, y: template.y }, styleGuide)
   }
@@ -61,12 +66,15 @@ function* iterateAllContent(
   template: Template,
   position: Position,
   styleGuide: StyleGuide,
-): Generator<Position, void, unknown> {
-  for (const content of template.contents) {
+): Generator<Position & { index: number, contents: TemplateContent[] }, void, unknown> {
+  for (let i = 0; i < template.contents.length; i++) {
+    const content = template.contents[i]
     if (content === target) {
       yield {
         x: position.x + content.x,
         y: position.y + content.y,
+        index: i,
+        contents: template.contents,
       }
     } else if (content.kind === 'reference') {
       const referenceTemplate = styleGuide.templates.find((t) => t.id === content.id)
@@ -81,6 +89,16 @@ function* iterateAllContent(
           styleGuide,
         )
       }
+    } else if (content.kind === 'snapshot') {
+      yield* iterateAllContent(
+        target,
+        content.snapshot,
+        {
+          x: content.x + position.x,
+          y: content.y + position.y,
+        },
+        styleGuide,
+      )
     }
   }
 }

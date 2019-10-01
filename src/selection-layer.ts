@@ -74,7 +74,7 @@ export class SelectionLayer extends Vue {
       width: region.width + 'px',
       height: region.height + 'px',
       position: 'absolute',
-      border: '1px solid green'
+      border: `${1 / this.canvasState.styleGuideScale}px solid green`
     }
   }
 }

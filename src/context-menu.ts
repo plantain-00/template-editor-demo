@@ -3,7 +3,7 @@ import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
 import { contextMenuTemplateHtml, contextMenuTemplateHtmlStatic } from './variables'
-import { isInRegion } from './utils'
+import { isInRegion, iterateAllContentPositions } from './utils'
 
 @Component({
   render: contextMenuTemplateHtml,
@@ -74,23 +74,14 @@ export class ContextMenu extends Vue {
         }
       }
     } else if (this.canvasState.selection.kind === 'content') {
-      for (const template of this.canvasState.styleGuide.templates) {
-        for (let j = 0; j < template.contents.length; j++) {
-          const content = template.contents[j]
-          if (content === this.canvasState.selection.content
-            && isInRegion(
-              { x, y },
-              {
-                x: template.x + content.x,
-                y: template.y + content.y,
-                width: template.width,
-                height: template.height,
-              })) {
-            template.contents.splice(j, 1)
-            this.canvasState.applyChangesIfAuto()
-            return
-          }
-        }
+      for (const contentPosition of iterateAllContentPositions(
+        this.canvasState.selection.content,
+        this.canvasState.styleGuide,
+        this.canvasState.selection.template
+      )) {
+        contentPosition.contents.splice(contentPosition.index, 1)
+        this.canvasState.applyChangesIfAuto()
+        return
       }
     }
   }
