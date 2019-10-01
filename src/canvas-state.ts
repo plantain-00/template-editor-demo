@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import { CanvasSelection, StyleGuide, TemplateContent, Template } from './model'
+import { CanvasSelection, StyleGuide, TemplateContent } from './model'
 import { renderTemplate } from './renderer'
 import { layoutText } from './mock'
 import { layoutFlex } from './layout-engine'
@@ -81,12 +81,6 @@ export class CanvasState extends Vue {
   contextMenuEnabled = false
   contextMenuX = 0
   contextMenuY = 0
-
-  generationResult: Template | null = null
-  templateModel: { [key: string]: unknown } = {
-    categories: []
-  }
-  templateModelEditorVisible = false
 
   get styleGuideWidth() {
     return Math.max(...this.styleGuide.templates.map((t) => t.x + t.width), 10)

@@ -1,7 +1,7 @@
 <div style="display: flex; flex-direction: column">
   <div style="height: 50px">
-    <app-panel :canvasState="canvasState"></app-panel>
-    <template-model-editor :canvasState="canvasState"></template-model-editor>
+    <app-panel :canvasState="canvasState" :appState="appState"></app-panel>
+    <template-model-editor :canvasState="canvasState" :appState="appState"></template-model-editor>
   </div>
   <div style="display: flex">
     <div :style="canvasStyle">
@@ -13,7 +13,7 @@
     </div>
     <div style="width: 300px">
       <operation-panel :canvasState="canvasState"></operation-panel>
-      <generation-result-modal :canvasState="canvasState"></generation-result-modal>
+      <generation-result-modal :appState="appState"></generation-result-modal>
     </div>
   </div>
 </div>

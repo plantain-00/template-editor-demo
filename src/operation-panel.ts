@@ -15,6 +15,13 @@ import { TemplateContent, Template } from './model'
 export class OperationPanel extends Vue {
   canvasState!: CanvasState
 
+  get panelStyle() {
+    return {
+      height: this.canvasState.canvasHeight + 'px',
+      overflow: 'auto',
+    }
+  }
+
   changeX(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content') {
       this.canvasState.selection.content.x = +e.target.value

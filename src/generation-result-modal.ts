@@ -1,18 +1,18 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { generationResultModalTemplateHtml, generationResultModalTemplateHtmlStatic } from './variables'
-import { CanvasState } from './canvas-state'
 import { renderTemplate } from './renderer'
+import { AppState } from './app-state'
 
 @Component({
   render: generationResultModalTemplateHtml,
   staticRenderFns: generationResultModalTemplateHtmlStatic,
   props: {
-    canvasState: CanvasState
+    appState: AppState,
   }
 })
 export class GenerationResultModal extends Vue {
-  private canvasState!: CanvasState
+  private appState!: AppState
 
   modalStyle = {
     position: 'absolute',
@@ -23,13 +23,13 @@ export class GenerationResultModal extends Vue {
   }
 
   get result() {
-    if (!this.canvasState.generationResult) {
+    if (!this.appState.generationResult) {
       return ''
     }
-    return renderTemplate(this.canvasState.generationResult, [])
+    return renderTemplate(this.appState.generationResult, [])
   }
 
   clear() {
-    this.canvasState.generationResult = null
+    this.appState.generationResult = null
   }
 }
