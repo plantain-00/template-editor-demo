@@ -65,10 +65,11 @@ export class TemplateModelEditor extends Vue {
 
   editorStyle = {
     position: 'absolute',
-    width: this.canvasState.canvasWidth + 'px',
+    right: '0px',
     left: '0px',
-    top: '0px',
+    top: '50px',
     backgroundColor: 'white',
+    zIndex: 1,
   }
 
   updateValue(value: { isValid: boolean, value: { [key: string]: unknown } }) {
