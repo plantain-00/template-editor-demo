@@ -13,6 +13,7 @@ import { ContextMenu } from './context-menu'
 import { TemplateModelEditor } from './template-model-editor'
 import { AppState } from './app-state'
 import { TemplateEditor } from './template-editor'
+import { TemplateRenderer } from './renderer'
 
 Vue.component('mask-layer', MaskLayer)
 Vue.component('dragging-for-selection-layer', DraggingForSelectionLayer)
@@ -20,6 +21,7 @@ Vue.component('render-layer', RenderLayer)
 Vue.component('selection-layer', SelectionLayer)
 Vue.component('operation-panel', OperationPanel)
 Vue.component('context-menu', ContextMenu)
+Vue.component('template-renderer', TemplateRenderer)
 
 Vue.component('app-panel', AppPanel)
 Vue.component('template-model-editor', TemplateModelEditor)
