@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { CanvasSelection, StyleGuide, TemplateContent } from './model'
-import { renderTemplate } from './renderer'
 import { layoutText } from './mock'
 import { layoutFlex } from './layout-engine'
 
@@ -40,11 +39,6 @@ export class CanvasState extends Vue {
     for (const template of this.styleGuide.templates) {
       layoutFlex(template, this.styleGuide.templates)
     }
-    this.renderResults = this.styleGuide.templates.map((t) => ({
-      html: renderTemplate(t, this.styleGuide.templates, true),
-      x: t.x,
-      y: t.y,
-    }))
   }
 
   applyChangesIfAuto() {
@@ -57,11 +51,6 @@ export class CanvasState extends Vue {
     name: '',
     templates: []
   }
-  renderResults: Array<{
-    html: string,
-    x: number,
-    y: number,
-  }> = []
   auto = true
 
   styleGuideTranslateX = 0
@@ -88,17 +77,29 @@ export class CanvasState extends Vue {
   private get styleGuideX() {
     return Math.min(...this.styleGuide.templates.map((t) => t.x))
   }
+  private _styleGuideWidth = 0
   get styleGuideWidth() {
+    if (this.isDraggingForMoving) {
+      return this._styleGuideWidth
+    }
     const maxX = Math.max(...this.styleGuide.templates.map((t) => t.x + t.width))
-    return Math.max(maxX - this.styleGuideX, 10)
+    const styleGuideWidth = Math.max(maxX - this.styleGuideX, 10)
+    this._styleGuideWidth = styleGuideWidth
+    return styleGuideWidth
   }
 
   private get styleGuideY() {
     return Math.min(...this.styleGuide.templates.map((t) => t.y))
   }
+  private _styleGuideHeight = 0
   get styleGuideHeight() {
+    if (this.isDraggingForMoving) {
+      return this._styleGuideHeight
+    }
     const maxY = Math.max(...this.styleGuide.templates.map((t) => t.y + t.height))
-    return Math.max(maxY - this.styleGuideY, 10)
+    const styleGuideHeight = Math.max(maxY - this.styleGuideY, 10)
+    this._styleGuideHeight = styleGuideHeight
+    return styleGuideHeight
   }
 
   get isDraggingForSelection() {

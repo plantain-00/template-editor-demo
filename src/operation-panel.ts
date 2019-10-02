@@ -219,7 +219,7 @@ export class OperationPanel extends Vue {
   }
 
   selectContent(content: TemplateContent) {
-    if (this.canvasState.selection.kind === 'template') {
+    if (this.canvasState.selection.kind !== 'none') {
       this.canvasState.selection = {
         kind: 'content',
         content,

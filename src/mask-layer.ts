@@ -178,8 +178,8 @@ export class MaskLayer extends Vue {
         this.canvasState.selection.content.x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
         this.canvasState.selection.content.y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
       }
+      this.canvasState.applyChangesIfAuto()
     }
-    this.canvasState.applyChangesIfAuto()
   }
 
   mouseup(e: MouseEvent) {
@@ -187,7 +187,15 @@ export class MaskLayer extends Vue {
     this.canvasState.mouseupY = e.offsetY
 
     if (this.canvasState.isDraggingForMoving) {
+      // contants before and after moving
+      const constantsX = (this.canvasState.styleGuideTranslateX - this.canvasState.styleGuideWidth / 2) * this.canvasState.styleGuideScale + this.canvasState.styleGuideWidth / 2
+      const constantsY = (this.canvasState.styleGuideTranslateY - this.canvasState.styleGuideHeight / 2) * this.canvasState.styleGuideScale + this.canvasState.styleGuideHeight / 2
+      
       this.canvasState.isDraggingForMoving = false
+      // keep canvas stable
+      this.canvasState.styleGuideTranslateX = (constantsX - this.canvasState.styleGuideWidth / 2) / this.canvasState.styleGuideScale + this.canvasState.styleGuideWidth / 2
+      this.canvasState.styleGuideTranslateY = (constantsY - this.canvasState.styleGuideHeight / 2) / this.canvasState.styleGuideScale + this.canvasState.styleGuideHeight / 2
+
       this.canvasState.mousePressing = false
       if (this.canvasState.moved) {
         return
@@ -243,12 +251,18 @@ export class MaskLayer extends Vue {
           this.canvasState.action()
           if (this.canvasState.selection.kind === 'template') {
             if (this.clipboard.template !== this.canvasState.selection.template) {
-              this.canvasState.selection.template.contents.push({
+              const newContent: TemplateContent = {
                 kind: 'reference',
                 id: this.clipboard.template.id,
                 x: 0,
                 y: 0,
-              })
+              }
+              this.canvasState.selection.template.contents.push(newContent)
+              this.canvasState.selection = {
+                kind: 'content',
+                content: newContent,
+                template: this.canvasState.selection.template,
+              }
               this.canvasState.applyChangesIfAuto()
             }
           } else if (this.canvasState.selection.kind === 'none') {
@@ -257,6 +271,10 @@ export class MaskLayer extends Vue {
             newTemplate.x = 0
             newTemplate.y = 0
             this.canvasState.styleGuide.templates.push(newTemplate)
+            this.canvasState.selection = {
+              kind: 'template',
+              template: newTemplate,
+            }
             this.canvasState.applyChangesIfAuto()
           }
         }
