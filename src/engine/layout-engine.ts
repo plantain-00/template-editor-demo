@@ -1,4 +1,4 @@
-import { Template, TemplateContent, Size } from './model'
+import { Template, TemplateContent, Size } from '../model'
 
 export function layoutFlex(template: Template, templates: Template[]) {
   if (template.display === 'flex') {

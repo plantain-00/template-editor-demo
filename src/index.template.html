@@ -4,5 +4,5 @@
     <template-model-editor :appState="appState"></template-model-editor>
   </div>
   <template-editor v-if="appState.graphicCanvasState" :canvasState="appState.graphicCanvasState"></template-editor>
-  <template-editor v-else :canvasState="appState.canvasState"></template-editor>
+  <template-editor v-show="!appState.graphicCanvasState" :canvasState="appState.canvasState"></template-editor>
 </div>

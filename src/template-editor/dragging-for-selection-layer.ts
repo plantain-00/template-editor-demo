@@ -2,11 +2,11 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
-import { draggingForSelectionLayerTemplateHtml, draggingForSelectionLayerTemplateHtmlStatic } from './variables'
+import { templateEditorDraggingForSelectionLayerTemplateHtml, templateEditorDraggingForSelectionLayerTemplateHtmlStatic } from '../variables'
 
 @Component({
-  render: draggingForSelectionLayerTemplateHtml,
-  staticRenderFns: draggingForSelectionLayerTemplateHtmlStatic,
+  render: templateEditorDraggingForSelectionLayerTemplateHtml,
+  staticRenderFns: templateEditorDraggingForSelectionLayerTemplateHtmlStatic,
   props: {
     canvasState: CanvasState
   }

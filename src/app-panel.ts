@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { appPanelTemplateHtml, appPanelTemplateHtmlStatic } from './variables'
-import { generate } from './template-engine'
+import { generate } from './engine/template-engine'
 import { StyleGuide } from './model'
 import { AppState } from './app-state'
 
@@ -44,7 +44,6 @@ export class AppPanel extends Vue {
       const res = await fetch(`https://storage.yorkyao.xyz/${this.templateModelKey}`)
       const json: { [key: string]: unknown } = await res.json()
       this.appState.templateModel = json
-      this.appState.canvasState.applyChangesIfAuto()
     }
   }
 

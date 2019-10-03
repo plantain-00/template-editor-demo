@@ -1,7 +1,9 @@
+const path = require('path')
+
 module.exports = {
   base: 'src',
   files: [
-    'src/*.template.html'
+    'src/**/*.template.html'
   ],
   /**
    * @argument {string} file
@@ -15,12 +17,14 @@ module.exports = {
       }
     }
     if (file.endsWith('.template.html')) {
-      file = file.substring(file.lastIndexOf('/') + 1)
-      const names = file.substring(0, file.length - '.template.html'.length).split('-')
+      file = path.relative('src', file)
+      const dirname = path.dirname(file)
+      const filename = path.basename(file)
+      const names = filename.substring(0, filename.length - '.template.html'.length).split('-')
       return {
         type: 'vue',
         name: names.map((n) => n[0].toUpperCase() + n.substring(1)).join(''),
-        path: './' + names.join('-')
+        path: (dirname === '.' ? '.' : './' + dirname) + '/' + names.join('-')
       }
     }
     return { type: 'text' }

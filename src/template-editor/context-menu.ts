@@ -2,12 +2,12 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
-import { contextMenuTemplateHtml, contextMenuTemplateHtmlStatic } from './variables'
-import { isInRegion, iterateAllContentPositions } from './utils'
+import { templateEditorContextMenuTemplateHtml, templateEditorContextMenuTemplateHtmlStatic } from '../variables'
+import { isInRegion, iterateAllContentPositions } from '../utils'
 
 @Component({
-  render: contextMenuTemplateHtml,
-  staticRenderFns: contextMenuTemplateHtmlStatic,
+  render: templateEditorContextMenuTemplateHtml,
+  staticRenderFns: templateEditorContextMenuTemplateHtmlStatic,
   props: {
     canvasState: CanvasState
   }
@@ -50,7 +50,6 @@ export class ContextMenu extends Vue {
         if (isInRegion({ x, y }, template)) {
           if (template === this.canvasState.selection.template) {
             this.canvasState.styleGuide.templates.splice(i, 1)
-            this.canvasState.applyChangesIfAuto()
             return
           }
 
@@ -67,7 +66,6 @@ export class ContextMenu extends Vue {
                   height: template.height,
                 })) {
               template.contents.splice(j, 1)
-              this.canvasState.applyChangesIfAuto()
               return
             }
           }
@@ -80,7 +78,6 @@ export class ContextMenu extends Vue {
         this.canvasState.selection.template
       )) {
         contentPosition.contents.splice(contentPosition.index, 1)
-        this.canvasState.applyChangesIfAuto()
         return
       }
     }

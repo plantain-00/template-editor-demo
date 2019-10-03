@@ -1,7 +1,6 @@
-import { Template, TemplateContent, StyleGuide } from './model'
-import { layoutText } from './mock'
+import { Template, TemplateContent, StyleGuide } from '../model'
 import { layoutFlex } from './layout-engine'
-import { evaluate } from './expression'
+import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression } from './expression'
 
 export function generate(template: Template, styleGuide: StyleGuide, model: { [key: string]: unknown }): Template {
   const result: Template = {
@@ -10,18 +9,8 @@ export function generate(template: Template, styleGuide: StyleGuide, model: { [k
     y: 0,
     contents: template.contents.map((c) => generateContent(c, styleGuide, model)).flat()
   }
-  if (result.widthExpression) {
-    const width = evaluate(result.widthExpression, model)
-    if (typeof width === 'number') {
-      result.width = width
-    }
-  }
-  if (result.heightExpression) {
-    const height = evaluate(result.heightExpression, model)
-    if (typeof height === 'number') {
-      result.height = height
-    }
-  }
+  result.width = evaluateSizeExpression('width', result, model, 'error')
+  result.height = evaluateSizeExpression('height', result, model, 'error')
   layoutFlex(result, styleGuide.templates)
   return result
 }
@@ -32,7 +21,7 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
   }
   if (content.repeat) {
     const { expression, itemName, indexName } = analyseRepeat(content.repeat)
-    const result = evaluate(expression, model)
+    const result = evaluate(expression, model, 'error')
     if (Array.isArray(result)) {
       const contents: TemplateContent[] = []
       for (let i = 0; i < result.length; i++) {
@@ -49,31 +38,21 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
     }
   }
   if (content.if) {
-    const result = evaluate(content.if, model)
+    const result = evaluate(content.if, model, 'error')
     if (result === false) {
       return []
     }
   }
-
-  if (content.xExpression) {
-    const result = evaluate(content.xExpression, model)
-    if (typeof result === 'number') {
-      content = { ...content, x: result }
-    }
-  }
-  if (content.yExpression) {
-    const result = evaluate(content.yExpression, model)
-    if (typeof result === 'number') {
-      content = { ...content, y: result }
-    }
-  }
+  content = { ...content }
+  content.x = evaluatePositionExpression('x', content, model, 'error')
+  content.y = evaluatePositionExpression('y', content, model, 'error')
 
   if (content.kind === 'reference') {
     const id = content.id
     const reference = styleGuide.templates.find((t) => t.id === id)
     if (reference) {
       if (content.props) {
-        const result = evaluate(content.props, model)
+        const result = evaluate(content.props, model, 'error')
         model = { ...model, props: result }
       }
       return [
@@ -88,41 +67,18 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
     return []
   }
 
-  if (content.widthExpression) {
-    const result = evaluate(content.widthExpression, model)
-    if (typeof result === 'number') {
-      content = { ...content, width: result }
-    }
-  }
-  if (content.heightExpression) {
-    const result = evaluate(content.heightExpression, model)
-    if (typeof result === 'number') {
-      content = { ...content, height: result }
-    }
-  }
+  content.width = evaluateSizeExpression('width', content, model, 'error')
+  content.height = evaluateSizeExpression('height', content, model, 'error')
 
   if (content.kind === 'text') {
-    if (content.textExpression) {
-      const result = evaluate(content.textExpression, model)
-      if (typeof result === 'string') {
-        content = { ...content, text: result }
-        layoutText(content)
-      }
-    }
-    if (content.fontSizeExpression) {
-      const result = evaluate(content.fontSizeExpression, model)
-      if (typeof result === 'number') {
-        content = { ...content, fontSize: result }
-      }
-    }
+    const textResult = evaluateTextExpression(content, model, 'error')
+    content.text = textResult.text
+    content.characters = textResult.characters
+
+    content.fontSize = evaluateFontSizeExpression(content, model, 'error')
   }
   if (content.kind === 'image') {
-    if (content.urlExpression) {
-      const result = evaluate(content.urlExpression, model)
-      if (typeof result === 'string') {
-        content = { ...content, url: result }
-      }
-    }
+    content.url = evaluateUrlExpression(content, model, 'error')
   }
   return [
     {

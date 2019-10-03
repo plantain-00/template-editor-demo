@@ -28,36 +28,36 @@
     </div>
     <div>
       x
-      <input type="number" :value="canvasState.selection.content.x" @change="changeX" />
+      <input type="number" :value="canvasState.selection.content.x" @change="changePosition($event, 'x')" />
     </div>
     <div>
       x f(x)
-      <input type="text" :value="canvasState.selection.content.xExpression" @change="changeXExpression" />
+      <input type="text" :value="canvasState.selection.content.xExpression" @change="changePositionExpression($event, 'x')" />
     </div>
     <div>
       y
-      <input type="number" :value="canvasState.selection.content.y" @change="changeY" />
+      <input type="number" :value="canvasState.selection.content.y" @change="changePosition($event, 'y')" />
     </div>
     <div>
       y f(x)
-      <input type="text" :value="canvasState.selection.content.yExpression" @change="changeYExpression" />
+      <input type="text" :value="canvasState.selection.content.yExpression" @change="changePositionExpression($event, 'y')" />
     </div>
     <div v-if="canvasState.selection.content.kind === 'text' || canvasState.selection.content.kind === 'image'">
       <div>
         width
-        <input type="number" :value="canvasState.selection.content.width" @change="changeWidth" />
+        <input type="number" :value="canvasState.selection.content.width" @change="changeSize($event, 'width')" />
       </div>
       <div>
         width f(x)
-        <input type="text" :value="canvasState.selection.content.widthExpression" @change="changeWidthExpression" />
+        <input type="text" :value="canvasState.selection.content.widthExpression" @change="changeSizeExpression($event, 'width')" />
       </div>
       <div>
         height
-        <input type="number" :value="canvasState.selection.content.height" @change="changeHeight" />
+        <input type="number" :value="canvasState.selection.content.height" @change="changeSize($event, 'height')" />
       </div>
       <div>
         height f(x)
-        <input type="text" :value="canvasState.selection.content.heightExpression" @change="changeHeightExpression" />
+        <input type="text" :value="canvasState.selection.content.heightExpression" @change="changeSizeExpression($event, 'height')" />
       </div>
     </div>
     <template v-if="canvasState.selection.content.kind === 'snapshot'">
@@ -88,27 +88,27 @@
   <div v-if="canvasState.selection.kind === 'template'">
     <div>
       x
-      <input type="number" :value="canvasState.selection.template.x" @change="changeX" />
+      <input type="number" :value="canvasState.selection.template.x" @change="changePosition($event, 'x')" />
     </div>
     <div>
       y
-      <input type="number" :value="canvasState.selection.template.y" @change="changeY" />
+      <input type="number" :value="canvasState.selection.template.y" @change="changePosition($event, 'y')" />
     </div>
     <div>
       width
-      <input type="number" :value="canvasState.selection.template.width" @change="changeWidth" />
+      <input type="number" :value="canvasState.selection.template.width" @change="changeSize($event, 'width')" />
     </div>
     <div>
       width f(x)
-      <input type="text" :value="canvasState.selection.template.widthExpression" @change="changeWidthExpression" />
+      <input type="text" :value="canvasState.selection.template.widthExpression" @change="changeSizeExpression($event, 'width')" />
     </div>
     <div>
       height
-      <input type="number" :value="canvasState.selection.template.height" @change="changeHeight" />
+      <input type="number" :value="canvasState.selection.template.height" @change="changeSize($event, 'height')" />
     </div>
     <div>
       height f(x)
-      <input type="text" :value="canvasState.selection.template.heightExpression" @change="changeHeightExpression" />
+      <input type="text" :value="canvasState.selection.template.heightExpression" @change="changeSizeExpression($event, 'height')" />
     </div>
     <div v-for="(content, i) of canvasState.selection.template.contents">
       <div style="cursor: pointer" @click="selectContent(content)">content {{i}}: {{content.kind}}</div>
@@ -150,9 +150,6 @@
     </div>
   </div>
   <div>
-    <button @click="canvasState.applyChanges()">apply changes</button>
-    <input type="checkbox" v-model="canvasState.auto">
-    auto
     <button @click="debug()">debug</button>
   </div>
   <div>
