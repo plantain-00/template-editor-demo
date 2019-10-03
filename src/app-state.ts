@@ -3,7 +3,7 @@ import Component from 'vue-class-component'
 
 import { Template } from './model'
 import { styleGuide } from './data'
-import { CanvasState } from './canvas-state'
+import { CanvasState } from './template-editor/canvas-state'
 
 const offsetWidth = 300
 const offsetHeight = 50

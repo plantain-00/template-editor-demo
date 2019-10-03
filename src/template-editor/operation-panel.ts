@@ -1,14 +1,15 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import { operationPanelTemplateHtml, operationPanelTemplateHtmlStatic } from './variables'
+import { templateEditorOperationPanelTemplateHtml, templateEditorOperationPanelTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
-import { TemplateContent, Template } from './model'
-import { renderTemplate, loadTemplateImages } from './renderer'
+import { TemplateContent, Template } from '../model'
+import { renderTemplate, loadTemplateImages } from '../engine/renderer'
+import { getCharacters } from '../engine/mock'
 
 @Component({
-  render: operationPanelTemplateHtml,
-  staticRenderFns: operationPanelTemplateHtmlStatic,
+  render: templateEditorOperationPanelTemplateHtml,
+  staticRenderFns: templateEditorOperationPanelTemplateHtmlStatic,
   props: {
     canvasState: CanvasState
   }
@@ -23,179 +24,108 @@ export class OperationPanel extends Vue {
     }
   }
 
-  changeX(e: { target: { value: string } }) {
+  changePosition(e: { target: { value: string } }, kind: 'x' | 'y') {
     if (this.canvasState.selection.kind === 'content') {
-      this.canvasState.selection.content.x = +e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
+      this.canvasState.selection.content[kind] = +e.target.value
     } else if (this.canvasState.selection.kind === 'template') {
-      this.canvasState.selection.template.x = +e.target.value
+      this.canvasState.selection.template[kind] = +e.target.value
     }
-    this.canvasState.applyChangesIfAuto()
   }
 
-  changeY(e: { target: { value: string } }) {
-    if (this.canvasState.selection.kind === 'content') {
-      this.canvasState.selection.content.y = +e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
-    } else if (this.canvasState.selection.kind === 'template') {
-      this.canvasState.selection.template.y = +e.target.value
-    }
-    this.canvasState.applyChangesIfAuto()
-  }
-
-  changeWidth(e: { target: { value: string } }) {
+  changeSize(e: { target: { value: string } }, kind: 'width' | 'height') {
     if (this.canvasState.selection.kind === 'content'
       && (this.canvasState.selection.content.kind === 'image' || this.canvasState.selection.content.kind === 'text')) {
-      this.canvasState.selection.content.width = +e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
+      this.canvasState.selection.content[kind] = +e.target.value
     } else if (this.canvasState.selection.kind === 'template') {
-      this.canvasState.selection.template.width = +e.target.value
+      this.canvasState.selection.template[kind] = +e.target.value
     }
-    this.canvasState.applyChangesIfAuto()
   }
 
-  changeHeight(e: { target: { value: string } }) {
-    if (this.canvasState.selection.kind === 'content'
-      && (this.canvasState.selection.content.kind === 'image' || this.canvasState.selection.content.kind === 'text')) {
-      this.canvasState.selection.content.height = +e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
-    } else if (this.canvasState.selection.kind === 'template') {
-      this.canvasState.selection.template.height = +e.target.value
-    }
-    this.canvasState.applyChangesIfAuto()
-  }
-
-  changeXExpression(e: { target: { value: string } }) {
+  changePositionExpression(e: { target: { value: string } }, kind: 'x' | 'y') {
     if (this.canvasState.selection.kind === 'content') {
-      this.canvasState.selection.content.xExpression = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
+      Vue.set(this.canvasState.selection.content, kind + 'Expression', e.target.value)
     }
-    this.canvasState.applyChangesIfAuto()
   }
 
-  changeYExpression(e: { target: { value: string } }) {
-    if (this.canvasState.selection.kind === 'content') {
-      this.canvasState.selection.content.yExpression = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
-    }
-    this.canvasState.applyChangesIfAuto()
-  }
-
-  changeWidthExpression(e: { target: { value: string } }) {
+  changeSizeExpression(e: { target: { value: string } }, kind: 'width' | 'height') {
     if (this.canvasState.selection.kind === 'content'
       && (this.canvasState.selection.content.kind === 'image' || this.canvasState.selection.content.kind === 'text')) {
-      this.canvasState.selection.content.widthExpression = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
+      Vue.set(this.canvasState.selection.content, kind + 'Expression', e.target.value)
     } else if (this.canvasState.selection.kind === 'template') {
-      this.canvasState.selection.template.widthExpression = e.target.value
+      Vue.set(this.canvasState.selection.template, kind + 'Expression', e.target.value)
     }
-    this.canvasState.applyChangesIfAuto()
-  }
-
-  changeHeightExpression(e: { target: { value: string } }) {
-    if (this.canvasState.selection.kind === 'content'
-      && (this.canvasState.selection.content.kind === 'image' || this.canvasState.selection.content.kind === 'text')) {
-      this.canvasState.selection.content.heightExpression = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
-    } else if (this.canvasState.selection.kind === 'template') {
-      this.canvasState.selection.template.heightExpression = e.target.value
-    }
-    this.canvasState.applyChangesIfAuto()
   }
 
   changeHidden(e: { target: { checked: boolean } }) {
     if (this.canvasState.selection.kind === 'content') {
-      this.canvasState.selection.content.hidden = e.target.checked
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
+      Vue.set(this.canvasState.selection.content, 'hidden', e.target.checked)
     }
-    this.canvasState.applyChangesIfAuto()
   }
 
   changeIf(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
-      this.canvasState.selection.content.if = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
+      Vue.set(this.canvasState.selection.content, 'if', e.target.value)
     }
-    this.canvasState.applyChangesIfAuto()
   }
 
   changeRepeat(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
-      this.canvasState.selection.content.repeat = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
+      Vue.set(this.canvasState.selection.content, 'repeat', e.target.value)
     }
-    this.canvasState.applyChangesIfAuto()
   }
 
   changeProps(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'reference') {
-      this.canvasState.selection.content.props = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
+      Vue.set(this.canvasState.selection.content, 'props', e.target.value)
     }
-    this.canvasState.applyChangesIfAuto()
   }
 
   changeText(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
       this.canvasState.selection.content.text = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
-      this.canvasState.applyChangesIfAuto()
+      this.canvasState.selection.content.characters = getCharacters(e.target.value)
     }
   }
 
   changeTextExpression(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
-      this.canvasState.selection.content.textExpression = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
-      this.canvasState.applyChangesIfAuto()
+      Vue.set(this.canvasState.selection.content, 'textExpression', e.target.value)
     }
   }
 
   changeFontFamily(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
       this.canvasState.selection.content.fontFamily = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
-      this.canvasState.applyChangesIfAuto()
     }
   }
 
   changeFontSize(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
       this.canvasState.selection.content.fontSize = +e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
-      this.canvasState.applyChangesIfAuto()
     }
   }
 
   changeFontSizeExpression(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
-      this.canvasState.selection.content.fontSizeExpression = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
-      this.canvasState.applyChangesIfAuto()
+      Vue.set(this.canvasState.selection.content, 'fontSizeExpression', e.target.value)
     }
   }
 
   changeColor(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
       this.canvasState.selection.content.color = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
-      this.canvasState.applyChangesIfAuto()
     }
   }
 
   changeImageUrl(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'image') {
       this.canvasState.selection.content.url = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
-      this.canvasState.applyChangesIfAuto()
     }
   }
 
   changeImageUrlExpression(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'image') {
-      this.canvasState.selection.content.urlExpression = e.target.value
-      this.canvasState.changedContents.add(this.canvasState.selection.content)
-      this.canvasState.applyChangesIfAuto()
+      Vue.set(this.canvasState.selection.content, 'urlExpression', e.target.value)
     }
   }
 
@@ -265,7 +195,6 @@ export class OperationPanel extends Vue {
         kind: 'template',
         template: newTemplate,
       }
-      this.canvasState.applyChangesIfAuto()
     }
   }
 

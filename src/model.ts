@@ -29,7 +29,7 @@ interface Hidden {
   hidden?: boolean
 }
 
-interface TemplateImageContent extends Region, RegionExpression, GenerationField, Hidden {
+export interface TemplateImageContent extends Region, RegionExpression, GenerationField, Hidden {
   kind: 'image'
   url: string
   urlExpression?: string
@@ -51,7 +51,7 @@ export interface Position {
   y: number
 }
 
-interface PositionExpression {
+export interface PositionExpression {
   xExpression?: string
   yExpression?: string
 }
@@ -61,7 +61,7 @@ export interface Size {
   height: number
 }
 
-interface SizeExpression {
+export interface SizeExpression {
   widthExpression?: string
   heightExpression?: string
 }
@@ -73,7 +73,6 @@ interface RegionExpression extends PositionExpression, SizeExpression { }
 interface GenerationField {
   if?: string
   repeat?: string
-  
 }
 
 interface FlexField extends MarginField {

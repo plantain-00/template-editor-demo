@@ -2,13 +2,13 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
-import { StyleGuide, Region, Position, TemplateContent, Template, TemplateReferenceContent, CanvasSelection } from './model'
-import { iterateAllContentPositions, iterateAllTemplatePositions, isInRegion } from './utils'
-import { maskLayerTemplateHtml, maskLayerTemplateHtmlStatic } from './variables'
+import { StyleGuide, Region, Position, TemplateContent, Template, TemplateReferenceContent, CanvasSelection } from '../model'
+import { iterateAllContentPositions, iterateAllTemplatePositions, isInRegion } from '../utils'
+import { templateEditorMaskLayerTemplateHtml, templateEditorMaskLayerTemplateHtmlStatic } from '../variables'
 
 @Component({
-  render: maskLayerTemplateHtml,
-  staticRenderFns: maskLayerTemplateHtmlStatic,
+  render: templateEditorMaskLayerTemplateHtml,
+  staticRenderFns: templateEditorMaskLayerTemplateHtmlStatic,
   props: {
     canvasState: CanvasState
   }
@@ -133,7 +133,6 @@ export class MaskLayer extends Vue {
         }
       }
       this.canvasState.addKind = undefined
-      this.canvasState.applyChangesIfAuto()
       return
     }
 
@@ -178,7 +177,6 @@ export class MaskLayer extends Vue {
         this.canvasState.selection.content.x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
         this.canvasState.selection.content.y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
       }
-      this.canvasState.applyChangesIfAuto()
     }
   }
 
@@ -227,7 +225,6 @@ export class MaskLayer extends Vue {
         this.canvasState.selection = { kind: 'none' }
       }
     }
-    this.canvasState.applyChangesIfAuto()
 
     this.canvasState.mousePressing = false
   }
@@ -263,7 +260,6 @@ export class MaskLayer extends Vue {
                 content: newContent,
                 template: this.canvasState.selection.template,
               }
-              this.canvasState.applyChangesIfAuto()
             }
           } else if (this.canvasState.selection.kind === 'none') {
             const newTemplate: Template = JSON.parse(JSON.stringify(this.clipboard.template))
@@ -275,7 +271,6 @@ export class MaskLayer extends Vue {
               kind: 'template',
               template: newTemplate,
             }
-            this.canvasState.applyChangesIfAuto()
           }
         }
       } else if (e.key === 'z') {

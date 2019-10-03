@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { selectionLayerTemplateHtml, selectionLayerTemplateHtmlStatic } from './variables'
+import { templateEditorSelectionLayerTemplateHtml, templateEditorSelectionLayerTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
-import { Region, Size } from './model'
-import { iterateAllTemplatePositions, iterateAllContentPositions } from './utils'
+import { Region, Size } from '../model'
+import { iterateAllTemplatePositions, iterateAllContentPositions } from '../utils'
 
 @Component({
-  render: selectionLayerTemplateHtml,
-  staticRenderFns: selectionLayerTemplateHtmlStatic,
+  render: templateEditorSelectionLayerTemplateHtml,
+  staticRenderFns: templateEditorSelectionLayerTemplateHtmlStatic,
   props: {
     canvasState: CanvasState
   }

@@ -1,9 +1,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import { CanvasSelection, StyleGuide, TemplateContent } from './model'
-import { layoutText } from './mock'
-import { layoutFlex } from './layout-engine'
+import { CanvasSelection, StyleGuide } from '../model'
 
 @Component
 export class CanvasState extends Vue {
@@ -26,32 +24,12 @@ export class CanvasState extends Vue {
     const y = this.styleGuideHeight * (heightScale - this.styleGuideScale) / 2
     this.styleGuideTranslateX = (x - this.styleGuideX * this.styleGuideScale - this.styleGuideWidth / 2) / this.styleGuideScale + this.styleGuideWidth / 2
     this.styleGuideTranslateY = (y - this.styleGuideY * this.styleGuideScale - this.styleGuideHeight / 2) / this.styleGuideScale + this.styleGuideHeight / 2
-
-    this.applyChanges()
-  }
-
-  applyChanges() {
-    for (const content of this.changedContents) {
-      if (content.kind === 'text') {
-        layoutText(content)
-      }
-    }
-    for (const template of this.styleGuide.templates) {
-      layoutFlex(template, this.styleGuide.templates)
-    }
-  }
-
-  applyChangesIfAuto() {
-    if (this.auto) {
-      this.applyChanges()
-    }
   }
 
   styleGuide: StyleGuide = {
     name: '',
     templates: []
   }
-  auto = true
 
   styleGuideTranslateX = 0
   styleGuideTranslateY = 0
@@ -61,7 +39,6 @@ export class CanvasState extends Vue {
   selection: CanvasSelection = {
     kind: 'none'
   }
-  changedContents = new Set<TemplateContent>()
   mousedownX = 0
   mousedownY = 0
   mouseupX = 0
@@ -142,7 +119,6 @@ export class CanvasState extends Vue {
     const styleGuide = this.styleGuideHistory.pop()
     if (styleGuide) {
       this.styleGuide = styleGuide
-      this.applyChangesIfAuto()
     }
   }
 }

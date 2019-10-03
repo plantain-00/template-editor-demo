@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { renderLayerTemplateHtml, renderLayerTemplateHtmlStatic } from './variables'
+import { templateEditorRenderLayerTemplateHtml, templateEditorRenderLayerTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
+import { TemplateRenderer } from '../engine/renderer'
 
 @Component({
-  render: renderLayerTemplateHtml,
-  staticRenderFns: renderLayerTemplateHtmlStatic,
+  render: templateEditorRenderLayerTemplateHtml,
+  staticRenderFns: templateEditorRenderLayerTemplateHtmlStatic,
   props: {
     canvasState: CanvasState
   }
@@ -31,3 +32,5 @@ export class RenderLayer extends Vue {
     }
   }
 }
+
+Vue.component('template-renderer', TemplateRenderer)
