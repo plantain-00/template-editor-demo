@@ -35,5 +35,9 @@ export class AppState extends Vue {
       name: '',
       templates: [template],
     }, window.innerWidth - offsetWidth, window.innerHeight - offsetHeight)
+    this.graphicCanvasState.selection = {
+      kind: 'template',
+      template
+    }
   }
 }

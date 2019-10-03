@@ -4,6 +4,7 @@ import Component from 'vue-class-component'
 import { operationPanelTemplateHtml, operationPanelTemplateHtmlStatic } from './variables'
 import { CanvasState } from './canvas-state'
 import { TemplateContent, Template } from './model'
+import { renderTemplate, loadTemplateImages } from './renderer'
 
 @Component({
   render: operationPanelTemplateHtml,
@@ -127,7 +128,7 @@ export class OperationPanel extends Vue {
   }
 
   changeProps(e: { target: { value: string } }) {
-    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'reference') {
       this.canvasState.selection.content.props = e.target.value
       this.canvasState.changedContents.add(this.canvasState.selection.content)
     }
@@ -265,6 +266,16 @@ export class OperationPanel extends Vue {
         template: newTemplate,
       }
       this.canvasState.applyChangesIfAuto()
+    }
+  }
+
+  private imageUrl = ''
+
+  async renderToImage() {
+    if (this.canvasState.selection.kind === 'template') {
+      const images = await loadTemplateImages(this.canvasState.selection.template, this.canvasState.styleGuide.templates)
+      const url = renderTemplate(this.canvasState.selection.template, this.canvasState.styleGuide.templates, images)
+      this.imageUrl = url
     }
   }
 }

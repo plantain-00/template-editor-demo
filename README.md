@@ -15,4 +15,3 @@ A template editor demo.
 + zindex
 + image shadow, base64 in image
 + symbol props ui(string, number, boolean, enum, expression, json editor?)
-+ canvas renderer
