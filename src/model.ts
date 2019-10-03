@@ -38,6 +38,7 @@ interface TemplateImageContent extends Region, RegionExpression, GenerationField
 export interface TemplateReferenceContent extends Position, PositionExpression, GenerationField, Hidden {
   kind: 'reference'
   id: string
+  props?: string
 }
 
 interface TemplateSnapshotContent extends Position, PositionExpression, Hidden {
@@ -72,7 +73,7 @@ interface RegionExpression extends PositionExpression, SizeExpression { }
 interface GenerationField {
   if?: string
   repeat?: string
-  props?: string
+  
 }
 
 interface FlexField extends MarginField {

@@ -144,6 +144,10 @@
         <option value="center">center</option>
       </select>
     </div>
+    <div>
+      <button @click="renderToImage()">render to image</button>
+      <img v-if="imageUrl" :src="imageUrl" style="object-fit: contain; width: 100%;" />
+    </div>
   </div>
   <div>
     <button @click="canvasState.applyChanges()">apply changes</button>
