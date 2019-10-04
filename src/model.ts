@@ -41,7 +41,7 @@ export interface TemplateReferenceContent extends Position, PositionExpression, 
   props?: string
 }
 
-interface TemplateSnapshotContent extends Position, PositionExpression, Hidden {
+export interface TemplateSnapshotContent extends Position, PositionExpression, Hidden {
   kind: 'snapshot'
   snapshot: Template
 }

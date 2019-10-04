@@ -26,6 +26,9 @@ export class OperationPanel extends Vue {
 
   changePosition(e: { target: { value: string } }, kind: 'x' | 'y') {
     if (this.canvasState.selection.kind === 'content') {
+      if (this.canvasState.selection.template.display === 'flex') {
+        return
+      }
       this.canvasState.selection.content[kind] = +e.target.value
     } else if (this.canvasState.selection.kind === 'template') {
       this.canvasState.selection.template[kind] = +e.target.value
