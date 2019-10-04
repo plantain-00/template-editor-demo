@@ -95,8 +95,8 @@ function renderSymbol(
     } else if (renderItem.kind === 'symbol') {
       ctx.save()
       ctx.translate(x, y)
-      const props = renderItem.props ? evaluate(renderItem.props, {}) : undefined
-      renderSymbol(ctx, renderItem.symbol, templates, images, props)
+      const newProps = renderItem.props ? evaluate(renderItem.props, { props }) : undefined
+      renderSymbol(ctx, renderItem.symbol, templates, images, newProps)
       ctx.restore()
     }
   }
@@ -191,7 +191,7 @@ class SymbolRenderer extends Vue {
         ))
       } else if (renderItem.kind === 'symbol') {
         const content = renderItem.content
-        const props = renderItem.props ? evaluate(renderItem.props, {}) : undefined
+        const props = renderItem.props ? evaluate(renderItem.props, { props: this.props }) : undefined
         children.push(createElement(
           'symbol-renderer',
           {
