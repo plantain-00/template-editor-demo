@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import { Template, TemplateTextContent, TemplateImageContent, Position, PositionExpression } from '../model'
+import { Template, TemplateTextContent, TemplateImageContent, TemplateReferenceContent, TemplateSnapshotContent } from '../model'
 import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression } from './expression'
+import { layoutFlex, getFlexPosition } from './layout-engine'
 
 export function renderTemplate(template: Template, templates: Template[], images: { [url: string]: HTMLImageElement }) {
   const canvas = document.createElement('canvas')
@@ -11,6 +12,7 @@ export function renderTemplate(template: Template, templates: Template[], images
   const ctx = canvas.getContext('2d')!
   ctx.fillStyle = 'white'
   ctx.fillRect(0, 0, template.width, template.height)
+  layoutFlex(template, templates)
   renderSymbol(ctx, template, templates, images)
   return canvas.toDataURL()
 }
@@ -128,10 +130,10 @@ export class TemplateRenderer extends Vue {
             props: {
               template: this.template,
               templates: this.templates,
-              position: {
+              content: {
                 x: 0,
                 y: 0,
-              }
+              },
             }
           }
         )
@@ -141,14 +143,15 @@ export class TemplateRenderer extends Vue {
 }
 
 @Component({
-  props: ['template', 'templates', 'props', 'position', 'positionProps']
+  props: ['template', 'templates', 'props', 'content', 'container', 'containerProps']
 })
 class SymbolRenderer extends Vue {
   template!: Template
   templates!: Template[]
   props!: unknown
-  position!: Position & PositionExpression
-  positionProps!: unknown
+  content!: TemplateReferenceContent | TemplateSnapshotContent
+  container?: Template
+  containerProps!: unknown
 
   private get width() {
     return this.props ? evaluateSizeExpression('width', this.template, { props: this.props }) : this.template.width
@@ -159,11 +162,17 @@ class SymbolRenderer extends Vue {
   }
 
   private get x() {
-    return this.positionProps ? evaluatePositionExpression('x', this.position, { props: this.positionProps }) : this.position.x
+    if (this.container && this.container.display === 'flex') {
+      return getFlexPosition(this.content, 'x', this.container, this.templates)
+    }
+    return this.containerProps ? evaluatePositionExpression('x', this.content, { props: this.containerProps }) : this.content.x
   }
 
   private get y() {
-    return this.positionProps ? evaluatePositionExpression('y', this.position, { props: this.positionProps }) : this.position.y
+    if (this.container && this.container.display === 'flex') {
+      return getFlexPosition(this.content, 'y', this.container, this.templates)
+    }
+    return this.containerProps ? evaluatePositionExpression('y', this.content, { props: this.containerProps }) : this.content.y
   }
 
   render(createElement: Vue.CreateElement): Vue.VNode {
@@ -176,6 +185,8 @@ class SymbolRenderer extends Vue {
             props: {
               content: renderItem.content,
               props: this.props,
+              container: this.template,
+              templates: this.templates,
             }
           },
         ))
@@ -186,6 +197,8 @@ class SymbolRenderer extends Vue {
             props: {
               content: renderItem.content,
               props: this.props,
+              container: this.template,
+              templates: this.templates,
             }
           },
         ))
@@ -199,8 +212,9 @@ class SymbolRenderer extends Vue {
               template: renderItem.symbol,
               templates: this.templates,
               props,
-              position: content,
-              positionProps: this.props,
+              content,
+              container: this.template,
+              containerProps: this.props,
             }
           }
         ))
@@ -226,11 +240,13 @@ class SymbolRenderer extends Vue {
 Vue.component('symbol-renderer', SymbolRenderer)
 
 @Component({
-  props: ['content', 'props']
+  props: ['content', 'props', 'container', 'templates']
 })
 class TextRenderer extends Vue {
   content!: TemplateTextContent
   props!: unknown
+  container!: Template
+  templates!: Template[]
 
   private get characters() {
     return this.props ? evaluateTextExpression(this.content, { props: this.props }).characters : this.content.characters
@@ -241,10 +257,16 @@ class TextRenderer extends Vue {
   }
 
   private get x() {
+    if (this.container.display === 'flex') {
+      return getFlexPosition(this.content, 'x', this.container, this.templates)
+    }
     return this.props ? evaluatePositionExpression('x', this.content, { props: this.props }) : this.content.x
   }
 
   private get y() {
+    if (this.container.display === 'flex') {
+      return getFlexPosition(this.content, 'y', this.container, this.templates)
+    }
     return this.props ? evaluatePositionExpression('y', this.content, { props: this.props }) : this.content.y
   }
 
@@ -269,11 +291,13 @@ class TextRenderer extends Vue {
 Vue.component('text-renderer', TextRenderer)
 
 @Component({
-  props: ['content', 'props']
+  props: ['content', 'props', 'container', 'templates']
 })
 class ImageRenderer extends Vue {
   content!: TemplateImageContent
   props!: unknown
+  container!: Template
+  templates!: Template[]
 
   private get url() {
     return this.props ? evaluateUrlExpression(this.content, { props: this.props }) : this.content.url
@@ -288,10 +312,16 @@ class ImageRenderer extends Vue {
   }
 
   private get x() {
+    if (this.container.display === 'flex') {
+      return getFlexPosition(this.content, 'x', this.container, this.templates)
+    }
     return this.props ? evaluatePositionExpression('x', this.content, { props: this.props }) : this.content.x
   }
 
   private get y() {
+    if (this.container.display === 'flex') {
+      return getFlexPosition(this.content, 'y', this.container, this.templates)
+    }
     return this.props ? evaluatePositionExpression('y', this.content, { props: this.props }) : this.content.y
   }
 

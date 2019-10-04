@@ -174,6 +174,9 @@ export class MaskLayer extends Vue {
           this.canvasState.selection.template.y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
         }
       } else if (this.canvasState.selection.kind === 'content') {
+        if (this.canvasState.selection.template.display === 'flex') {
+          return
+        }
         this.canvasState.selection.content.x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
         this.canvasState.selection.content.y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
       }
