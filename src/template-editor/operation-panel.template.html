@@ -32,7 +32,8 @@
     </div>
     <div>
       x f(x)
-      <input type="text" :value="canvasState.selection.content.xExpression" @change="changePositionExpression($event, 'x')" />
+      <input type="text" :value="canvasState.selection.content.xExpression"
+        @change="changePositionExpression($event, 'x')" />
     </div>
     <div>
       y
@@ -40,7 +41,8 @@
     </div>
     <div>
       y f(x)
-      <input type="text" :value="canvasState.selection.content.yExpression" @change="changePositionExpression($event, 'y')" />
+      <input type="text" :value="canvasState.selection.content.yExpression"
+        @change="changePositionExpression($event, 'y')" />
     </div>
     <div v-if="canvasState.selection.content.kind === 'text' || canvasState.selection.content.kind === 'image'">
       <div>
@@ -49,7 +51,8 @@
       </div>
       <div>
         width f(x)
-        <input type="text" :value="canvasState.selection.content.widthExpression" @change="changeSizeExpression($event, 'width')" />
+        <input type="text" :value="canvasState.selection.content.widthExpression"
+          @change="changeSizeExpression($event, 'width')" />
       </div>
       <div>
         height
@@ -57,7 +60,8 @@
       </div>
       <div>
         height f(x)
-        <input type="text" :value="canvasState.selection.content.heightExpression" @change="changeSizeExpression($event, 'height')" />
+        <input type="text" :value="canvasState.selection.content.heightExpression"
+          @change="changeSizeExpression($event, 'height')" />
       </div>
     </div>
     <template v-if="canvasState.selection.content.kind === 'snapshot'">
@@ -79,7 +83,13 @@
     </div>
     <div v-if="canvasState.selection.content.kind === 'reference'">
       props
-      <input type="text" :value="canvasState.selection.content.props" @change="changeProps" />
+      <span style="opacity: 0.5">{{canvasState.selection.content.props}}</span>
+      <div v-if="parameters">
+        <div v-for="parameter of parameters">
+          {{parameter}}
+          <input type="text" :value="getParameterValue(parameter)" @change="changeParameterValue($event, parameter)" />
+        </div>
+      </div>
     </div>
     <div v-if="canvasState.selection.content.kind === 'text' || canvasState.selection.content.kind === 'image'">
       <button @click="extractAsSymbol()">extract as symbol</button>
@@ -100,7 +110,8 @@
     </div>
     <div>
       width f(x)
-      <input type="text" :value="canvasState.selection.template.widthExpression" @change="changeSizeExpression($event, 'width')" />
+      <input type="text" :value="canvasState.selection.template.widthExpression"
+        @change="changeSizeExpression($event, 'width')" />
     </div>
     <div>
       height
@@ -108,7 +119,8 @@
     </div>
     <div>
       height f(x)
-      <input type="text" :value="canvasState.selection.template.heightExpression" @change="changeSizeExpression($event, 'height')" />
+      <input type="text" :value="canvasState.selection.template.heightExpression"
+        @change="changeSizeExpression($event, 'height')" />
     </div>
     <div v-for="(content, i) of canvasState.selection.template.contents">
       <div style="cursor: pointer" @click="selectContent(content)">content {{i}}: {{content.kind}}</div>
@@ -147,6 +159,13 @@
     <div>
       <button @click="renderToImage()">render to image</button>
       <img v-if="imageUrl" :src="imageUrl" style="object-fit: contain; width: 100%;" />
+    </div>
+    <div>
+      <div v-for="(parameter, i) of canvasState.selection.template.parameters || []">
+        parameter {{i}}
+        <input type="text" :value="parameter" @change="changeParameter($event, i)" />
+      </div>
+      <button @click="addParameter()">add parameter</button>
     </div>
   </div>
   <div>

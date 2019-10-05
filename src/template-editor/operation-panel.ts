@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { tokenizeExpression, parseExpression, printExpression, Expression, Property } from 'expression-engine'
 
 import { templateEditorOperationPanelTemplateHtml, templateEditorOperationPanelTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
@@ -74,12 +75,6 @@ export class OperationPanel extends Vue {
   changeRepeat(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
       Vue.set(this.canvasState.selection.content, 'repeat', e.target.value)
-    }
-  }
-
-  changeProps(e: { target: { value: string } }) {
-    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'reference') {
-      Vue.set(this.canvasState.selection.content, 'props', e.target.value)
     }
   }
 
@@ -209,5 +204,112 @@ export class OperationPanel extends Vue {
       const url = renderTemplate(this.canvasState.selection.template, this.canvasState.styleGuide.templates, images)
       this.imageUrl = url
     }
+  }
+
+  changeParameter(e: { target: { value: string } }, i: number) {
+    if (this.canvasState.selection.kind === 'template' && this.canvasState.selection.template.parameters) {
+      this.canvasState.selection.template.parameters[i] = e.target.value
+    }
+  }
+
+  addParameter() {
+    if (this.canvasState.selection.kind === 'template') {
+      if (this.canvasState.selection.template.parameters) {
+        this.canvasState.selection.template.parameters.push('')
+      } else {
+        Vue.set(this.canvasState.selection.template, 'parameters', [''])
+      }
+    }
+  }
+
+  get parameters() {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'reference') {
+      const id = this.canvasState.selection.content.id
+      const reference = this.canvasState.styleGuide.templates.find((t) => t.id === id)
+      if (reference) {
+        return reference.parameters
+      }
+    }
+    return undefined
+  }
+
+  private get propsAst() {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'reference') {
+      const props = this.canvasState.selection.content.props
+      if (props) {
+        try {
+          const ast = parseExpression(tokenizeExpression(props))
+          if (ast.type === 'ObjectExpression') {
+            return ast
+          }
+        } catch {
+          // no nothing
+        }
+      }
+    }
+    return undefined
+  }
+
+  getParameterValue(parameter: string) {
+    if (this.propsAst) {
+      const property = this.propsAst.properties.find((p) => p.type === 'Property'
+        && ((p.key.type === 'StringLiteral' && p.key.value === parameter)
+          || (p.key.type === 'Identifier' && p.key.name === parameter)))
+      if (property && property.type === 'Property') {
+        return printExpression(property.value)
+      }
+    }
+    return ''
+  }
+
+  changeParameterValue(e: { target: { value: string } }, parameter: string) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'reference') {
+      const value = e.target.value
+      let propertyAst: Expression | undefined
+      if (value) {
+        try {
+          propertyAst = parseExpression(tokenizeExpression(value))
+        } catch {
+          // do nothing
+        }
+      }
+      if (this.propsAst) {
+        const propertyIndex = this.propsAst.properties.findIndex((p) => p.type === 'Property' && p.key.type === 'StringLiteral' && p.key.value === parameter)
+        if (propertyIndex >= 0) {
+          const property = this.propsAst.properties[propertyIndex] as Property
+          if (propertyAst) {
+            property.value = propertyAst
+          } else {
+            this.propsAst.properties.splice(propertyIndex, 1)
+          }
+          this.canvasState.selection.content.props = printExpression(this.propsAst)
+        } else if (propertyAst) {
+          this.propsAst.properties.push(getNewProperty(parameter, propertyAst))
+          this.canvasState.selection.content.props = printExpression(this.propsAst)
+        }
+      } else if (propertyAst) {
+        Vue.set(this.canvasState.selection.content, 'props', printExpression({
+          type: 'ObjectExpression',
+          properties: [
+            getNewProperty(parameter, propertyAst)
+          ],
+          range: [0, 0],
+        }))
+      }
+    }
+  }
+}
+
+function getNewProperty(parameter: string, propertyAst: Expression): Property {
+  return {
+    type: 'Property',
+    key: {
+      type: 'Identifier',
+      name: parameter,
+      range: [0, 0],
+    },
+    value: propertyAst,
+    shorthand: false,
+    range: [0, 0],
   }
 }
