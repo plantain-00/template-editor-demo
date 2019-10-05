@@ -14,5 +14,4 @@ A template editor demo.
 + image rotate
 + zindex
 + image shadow, base64 in image
-+ symbol props ui(string, number, boolean, enum, expression, json editor?)
 + select area and click area error(expression, props, value cache)

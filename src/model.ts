@@ -6,6 +6,7 @@ export interface StyleGuide {
 export interface Template extends Region, SizeExpression, FlexField {
   id: string
   contents: TemplateContent[]
+  parameters?: string[]
 }
 
 export type TemplateContent = TemplateTextContent | TemplateImageContent | TemplateReferenceContent | TemplateSnapshotContent
