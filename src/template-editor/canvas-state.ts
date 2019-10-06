@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { CanvasSelection, StyleGuide } from '../model'
+import { iterateAllTemplateRegions, iterateAllContentRegions } from '../utils'
 
 @Component
 export class CanvasState extends Vue {
@@ -120,6 +121,20 @@ export class CanvasState extends Vue {
     if (styleGuide) {
       this.styleGuide = styleGuide
     }
+  }
+
+  get allTemplateRegions() {
+    if (this.selection.kind === 'template') {
+      return Array.from(iterateAllTemplateRegions(this.selection.template, this.styleGuide))
+    }
+    return []
+  }
+
+  get allContentRegions() {
+    if (this.selection.kind === 'content') {
+      return Array.from(iterateAllContentRegions(this.selection.content, this.styleGuide))
+    }
+    return []
   }
 }
 

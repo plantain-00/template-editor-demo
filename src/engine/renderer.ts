@@ -9,11 +9,13 @@ export function renderTemplate(template: Template, templates: Template[], images
   const canvas = document.createElement('canvas')
   canvas.width = template.width
   canvas.height = template.height
-  const ctx = canvas.getContext('2d')!
-  ctx.fillStyle = 'white'
-  ctx.fillRect(0, 0, template.width, template.height)
-  layoutFlex(template, templates)
-  renderSymbol(ctx, template, templates, images)
+  const ctx = canvas.getContext('2d')
+  if (ctx) {
+    ctx.fillStyle = 'white'
+    ctx.fillRect(0, 0, template.width, template.height)
+    layoutFlex(template, templates)
+    renderSymbol(ctx, template, templates, images)
+  }
   return canvas.toDataURL()
 }
 
