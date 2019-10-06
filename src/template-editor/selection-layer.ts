@@ -3,8 +3,6 @@ import Component from 'vue-class-component'
 import { templateEditorSelectionLayerTemplateHtml, templateEditorSelectionLayerTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
 import { Region } from '../model'
-import { iterateAllTemplatePositions, iterateAllContentPositions } from '../utils'
-import { getContentSize } from '../engine/layout-engine'
 
 @Component({
   render: templateEditorSelectionLayerTemplateHtml,
@@ -16,27 +14,12 @@ import { getContentSize } from '../engine/layout-engine'
 export class SelectionLayer extends Vue {
   private canvasState!: CanvasState
 
-  get selectionAreas(): Region[] {
+  get selectionRegions(): Region[] {
     if (this.canvasState.selection.kind === 'template') {
-      const template = this.canvasState.selection.template
-      return Array.from(iterateAllTemplatePositions(template, this.canvasState.styleGuide))
-        .map((p) => ({
-          x: p.x,
-          y: p.y,
-          width: template.width,
-          height: template.height,
-        }))
+      return this.canvasState.allTemplateRegions
     }
     if (this.canvasState.selection.kind === 'content') {
-      const content = this.canvasState.selection.content
-      const size = getContentSize(content, this.canvasState.styleGuide.templates)
-      return Array.from(iterateAllContentPositions(content, this.canvasState.styleGuide))
-        .map((p) => ({
-          x: p.x,
-          y: p.y,
-          width: size.width,
-          height: size.height,
-        }))
+      return this.canvasState.allContentRegions
     }
     return []
   }

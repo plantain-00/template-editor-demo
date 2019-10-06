@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { tokenizeExpression, parseExpression, printExpression, Expression, Property } from 'expression-engine'
+import { tokenizeExpression, parseExpression, printExpression, Expression, Property, SpreadElement } from 'expression-engine'
 
 import { templateEditorOperationPanelTemplateHtml, templateEditorOperationPanelTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
@@ -252,9 +252,8 @@ export class OperationPanel extends Vue {
 
   getParameterValue(parameter: string) {
     if (this.propsAst) {
-      const property = this.propsAst.properties.find((p) => p.type === 'Property'
-        && ((p.key.type === 'StringLiteral' && p.key.value === parameter)
-          || (p.key.type === 'Identifier' && p.key.name === parameter)))
+      const predicate = getPropertyPredicate(parameter)
+      const property = this.propsAst.properties.find(predicate)
       if (property && property.type === 'Property') {
         return printExpression(property.value)
       }
@@ -274,7 +273,8 @@ export class OperationPanel extends Vue {
         }
       }
       if (this.propsAst) {
-        const propertyIndex = this.propsAst.properties.findIndex((p) => p.type === 'Property' && p.key.type === 'StringLiteral' && p.key.value === parameter)
+        const predicate = getPropertyPredicate(parameter)
+        const propertyIndex = this.propsAst.properties.findIndex(predicate)
         if (propertyIndex >= 0) {
           const property = this.propsAst.properties[propertyIndex] as Property
           if (propertyAst) {
@@ -312,4 +312,10 @@ function getNewProperty(parameter: string, propertyAst: Expression): Property {
     shorthand: false,
     range: [0, 0],
   }
+}
+
+function getPropertyPredicate(parameter: string) {
+  return (p: Property | SpreadElement) => p.type === 'Property'
+    && ((p.key.type === 'StringLiteral' && p.key.value === parameter)
+      || (p.key.type === 'Identifier' && p.key.name === parameter))
 }

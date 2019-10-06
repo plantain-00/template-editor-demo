@@ -44,7 +44,7 @@ export function templateEditorRenderLayerTemplateHtml(this: RenderLayer) {var _v
 // @ts-ignore
 export var templateEditorRenderLayerTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function templateEditorSelectionLayerTemplateHtml(this: SelectionLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.canvasStyle)},[_c('div',{style:(_vm.styleGuideStyle)},[_vm._l((_vm.selectionAreas),function(r){return [_c('div',{style:(_vm.getSelectionAreaStyle(r))})]})],2)])}
+export function templateEditorSelectionLayerTemplateHtml(this: SelectionLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.canvasStyle)},[_c('div',{style:(_vm.styleGuideStyle)},[_vm._l((_vm.selectionRegions),function(r){return [_c('div',{style:(_vm.getSelectionAreaStyle(r))})]})],2)])}
 // @ts-ignore
 export var templateEditorSelectionLayerTemplateHtmlStatic = [  ]
 // @ts-ignore

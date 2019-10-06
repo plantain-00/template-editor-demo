@@ -1,4 +1,4 @@
-import { Template, TemplateContent, Size } from '../model'
+import { Template, TemplateContent, Size, SizeExpression } from '../model'
 
 export function layoutFlex(template: Template, templates: Template[]) {
   if (template.display === 'flex') {
@@ -94,7 +94,7 @@ function getCrossAxisValue(
   return (template[crossAxisSizeType] - contentSize[crossAxisSizeType]) / 2
 }
 
-export function getContentSize(content: TemplateContent, templates: Template[]): Size {
+export function getContentSize(content: TemplateContent, templates: Template[]): Size & SizeExpression {
   if (content.kind === 'reference') {
     const reference = templates.find((t) => t.id === content.id)
     if (reference) {

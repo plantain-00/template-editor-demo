@@ -42,8 +42,11 @@ export const styleGuide: StyleGuide = {
           height: 100,
           x: 210,
           y: 10,
+          xExpression: 'props.width - 300',
         }
-      ]
+      ],
+      parameters: ['width'],
+      widthExpression: 'props.width'
     },
     {
       id: '2',
@@ -57,6 +60,7 @@ export const styleGuide: StyleGuide = {
           id: '1',
           x: 10,
           y: 10,
+          props: '{width: 400}'
         },
         {
           kind: 'reference',
