@@ -1,13 +1,14 @@
 import { Template, TemplateContent, StyleGuide } from '../model'
 import { layoutFlex } from './layout-engine'
 import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression } from './expression'
+import { applyImageOpacity, loadImage } from './image'
 
-export function generate(template: Template, styleGuide: StyleGuide, model: { [key: string]: unknown }): Template {
+export async function generate(template: Template, styleGuide: StyleGuide, model: { [key: string]: unknown }): Promise<Template> {
   const result: Template = {
     ...template,
     x: 0,
     y: 0,
-    contents: template.contents.map((c) => generateContent(c, styleGuide, model)).flat()
+    contents: (await Promise.all(template.contents.map((c) => generateContent(c, styleGuide, model)))).flat()
   }
   result.width = evaluateSizeExpression('width', result, model, 'error')
   result.height = evaluateSizeExpression('height', result, model, 'error')
@@ -15,7 +16,7 @@ export function generate(template: Template, styleGuide: StyleGuide, model: { [k
   return result
 }
 
-function generateContent(content: TemplateContent, styleGuide: StyleGuide, model: { [key: string]: unknown }): TemplateContent[] {
+async function generateContent(content: TemplateContent, styleGuide: StyleGuide, model: { [key: string]: unknown }): Promise<TemplateContent[]> {
   if (content.kind === 'snapshot') {
     return [content]
   }
@@ -32,7 +33,7 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
             newModel[indexName] = i
           }
         }
-        contents.push(...generateContent({ ...content, repeat: undefined }, styleGuide, newModel))
+        contents.push(...(await generateContent({ ...content, repeat: undefined }, styleGuide, newModel)))
       }
       return contents
     }
@@ -60,7 +61,7 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
           kind: 'snapshot',
           x: content.x,
           y: content.y,
-          snapshot: generate(reference, styleGuide, model)
+          snapshot: await generate(reference, styleGuide, model)
         },
       ]
     }
@@ -79,6 +80,13 @@ function generateContent(content: TemplateContent, styleGuide: StyleGuide, model
   }
   if (content.kind === 'image') {
     content.url = evaluateUrlExpression(content, model, 'error')
+    if (content.opacity !== undefined) {
+      const image = await loadImage(content.url)
+      const canvas = applyImageOpacity(image, content.opacity)
+      if (canvas) {
+        content.base64 = canvas.toDataURL()
+      }
+    }
   }
   return [
     {

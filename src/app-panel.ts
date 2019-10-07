@@ -63,13 +63,13 @@ export class AppPanel extends Vue {
     this.appState.templateModelEditorVisible = !this.appState.templateModelEditorVisible
   }
 
-  generate() {
+  async generate() {
     if (this.appState.graphicCanvasState) {
       this.appState.graphicCanvasState = null
       return
     }
     if (this.appState.canvasState.selection.kind === 'template') {
-      this.appState.loadGraphicCanvas(generate(this.appState.canvasState.selection.template, this.appState.canvasState.styleGuide, this.appState.templateModel))
+      this.appState.loadGraphicCanvas(await generate(this.appState.canvasState.selection.template, this.appState.canvasState.styleGuide, this.appState.templateModel))
     }
   }
 }

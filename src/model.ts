@@ -34,6 +34,8 @@ export interface TemplateImageContent extends Region, RegionExpression, Generati
   kind: 'image'
   url: string
   urlExpression?: string
+  opacity?: number
+  base64?: string
 }
 
 export interface TemplateReferenceContent extends Position, PositionExpression, GenerationField, Hidden {

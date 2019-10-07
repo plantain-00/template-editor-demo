@@ -58,13 +58,19 @@ function* iterateAllTemplate(
       if (content.kind === 'reference') {
         const reference = styleGuide.templates.find((t) => t.id === content.id)
         if (reference) {
+          const x = template.display === 'flex'
+            ? getFlexPosition(content, 'x', template, styleGuide.templates)
+            : props ? evaluatePositionExpression('x', content, { props }) : content.x
+          const y = template.display === 'flex'
+            ? getFlexPosition(content, 'y', template, styleGuide.templates)
+            : props ? evaluatePositionExpression('y', content, { props }) : content.y
           const targetProps = content.props ? evaluate(content.props, { props }) : undefined
           yield* iterateAllTemplate(
             target,
             reference,
             {
-              x: content.x + position.x,
-              y: content.y + position.y,
+              x: x + position.x,
+              y: y + position.y,
             },
             styleGuide,
             targetProps,
