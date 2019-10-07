@@ -4,6 +4,7 @@ import Component from 'vue-class-component'
 import { Template, TemplateTextContent, TemplateImageContent, TemplateReferenceContent, TemplateSnapshotContent } from '../model'
 import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression } from './expression'
 import { layoutFlex, getFlexPosition } from './layout-engine'
+import { applyImageOpacity, loadImage } from './image'
 
 export function renderTemplate(template: Template, templates: Template[], images: { [url: string]: HTMLImageElement }) {
   const canvas = document.createElement('canvas')
@@ -45,17 +46,17 @@ function collectTemplateImages(
       continue
     }
     if (content.kind === 'image') {
+      if (content.base64 && images[content.base64]) {
+        continue
+      }
       if (images[content.url]) {
         continue
       }
-      images[content.url] = new Promise<HTMLImageElement>((resolve) => {
-        const image = document.createElement('img')
-        image.crossOrigin = 'anonymous'
-        image.onload = () => {
-          resolve(image)
-        }
-        image.src = content.url + '?random=' + Math.random()
-      })
+      if (content.base64) {
+        images[content.url] = loadImage(content.base64)
+      } else {
+        images[content.url] = loadImage(content.url)
+      }
     } else if (content.kind === 'reference') {
       const reference = templates.find((t) => t.id === content.id)
       if (reference) {
@@ -95,7 +96,14 @@ function renderSymbol(
       const width = props ? evaluateSizeExpression('width', content, { props }) : content.width
       const height = props ? evaluateSizeExpression('height', content, { props }) : content.height
 
-      ctx.drawImage(images[url], x, y, width, height)
+      let image: HTMLImageElement | HTMLCanvasElement = images[url]
+      if (content.opacity !== undefined) {
+        const imageCanvas = applyImageOpacity(image, content.opacity)
+        if (imageCanvas) {
+          image = imageCanvas
+        }
+      }
+      ctx.drawImage(image, x, y, width, height)
     } else if (renderItem.kind === 'symbol') {
       ctx.save()
       ctx.translate(x, y)
@@ -327,6 +335,27 @@ class ImageRenderer extends Vue {
     return this.props ? evaluatePositionExpression('y', this.content, { props: this.props }) : this.content.y
   }
 
+  private get imageLoader() {
+    const loader = new Loader<HTMLImageElement>()
+    loadImage(this.url).then((image) => {
+      loader.result = image
+    })
+    return loader
+  }
+
+  private get base64() {
+    if (this.content.base64) {
+      return this.content.base64
+    }
+    if (this.content.opacity !== undefined && this.imageLoader.result) {
+      const canvas = applyImageOpacity(this.imageLoader.result, this.content.opacity)
+      if (canvas) {
+        return canvas.toDataURL()
+      }
+    }
+    return this.url
+  }
+
   render(createElement: Vue.CreateElement): Vue.VNode {
     return createElement(
       'img',
@@ -339,7 +368,7 @@ class ImageRenderer extends Vue {
           top: `${this.y}px`,
         },
         attrs: {
-          src: this.url,
+          src: this.base64,
         },
       },
     )
@@ -381,4 +410,9 @@ function* iterateSymbolRenderItem(template: Template, templates: Template[]) {
       }
     }
   }
+}
+
+@Component
+class Loader<T> extends Vue {
+  result: T | null = null
 }

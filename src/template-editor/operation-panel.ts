@@ -66,6 +66,12 @@ export class OperationPanel extends Vue {
     }
   }
 
+  changeOpacity(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'image') {
+      Vue.set(this.canvasState.selection.content, 'opacity', +e.target.value)
+    }
+  }
+
   changeIf(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
       Vue.set(this.canvasState.selection.content, 'if', e.target.value)

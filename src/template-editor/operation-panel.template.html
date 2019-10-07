@@ -25,6 +25,10 @@
       <br />
       url f(x)
       <input type="text" :value="canvasState.selection.content.urlExpression" @change="changeImageUrlExpression" />
+      <div>
+        opacity
+        <input type="number" :value="canvasState.selection.content.opacity" @change="changeOpacity" />
+      </div>
     </div>
     <div>
       x

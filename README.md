@@ -13,4 +13,3 @@ A template editor demo.
 + expression ui(json editor, tokenize)
 + image rotate
 + zindex
-+ image shadow, base64 in image
