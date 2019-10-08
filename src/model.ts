@@ -19,7 +19,7 @@ export interface TemplateTextContent extends Region, RegionExpression, Generatio
   fontSize: number
   fontSizeExpression?: string
   color: string
-  characters: TextCharacter[]
+  characters?: TextCharacter[]
 }
 
 interface TextCharacter {

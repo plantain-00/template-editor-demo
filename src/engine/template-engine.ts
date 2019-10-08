@@ -2,6 +2,7 @@ import { Template, TemplateContent, StyleGuide } from '../model'
 import { layoutFlex } from './layout-engine'
 import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression } from './expression'
 import { applyImageOpacity, loadImage } from './image'
+import { getCharacters } from './mock'
 
 export async function generate(template: Template, styleGuide: StyleGuide, model: { [key: string]: unknown }): Promise<Template> {
   const result: Template = {
@@ -72,9 +73,8 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
   content.height = evaluateSizeExpression('height', content, model, 'error')
 
   if (content.kind === 'text') {
-    const textResult = evaluateTextExpression(content, model, 'error')
-    content.text = textResult.text
-    content.characters = textResult.characters
+    content.text = evaluateTextExpression(content, model, 'error')
+    content.characters = getCharacters(content.text)
 
     content.fontSize = evaluateFontSizeExpression(content, model, 'error')
   }

@@ -6,7 +6,6 @@ import { templateEditorOperationPanelTemplateHtml, templateEditorOperationPanelT
 import { CanvasState } from './canvas-state'
 import { TemplateContent, Template } from '../model'
 import { renderTemplate, loadTemplateImages } from '../engine/renderer'
-import { getCharacters } from '../engine/mock'
 
 @Component({
   render: templateEditorOperationPanelTemplateHtml,
@@ -87,7 +86,6 @@ export class OperationPanel extends Vue {
   changeText(e: { target: { value: string } }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
       this.canvasState.selection.content.text = e.target.value
-      this.canvasState.selection.content.characters = getCharacters(e.target.value)
     }
   }
 

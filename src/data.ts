@@ -20,20 +20,6 @@ export const styleGuide: StyleGuide = {
           height: 100,
           x: 10,
           y: 10,
-          characters: [
-            {
-              text: 't'
-            },
-            {
-              text: 'e'
-            },
-            {
-              text: 's'
-            },
-            {
-              text: 't'
-            },
-          ]
         },
         {
           kind: 'image',

@@ -5,6 +5,7 @@ import { Template, TemplateTextContent, TemplateImageContent, TemplateReferenceC
 import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression } from './expression'
 import { layoutFlex, getFlexPosition } from './layout-engine'
 import { applyImageOpacity, loadImage } from './image'
+import { getCharacters } from './mock'
 
 export function renderTemplate(template: Template, templates: Template[], images: { [url: string]: HTMLImageElement }) {
   const canvas = document.createElement('canvas')
@@ -86,7 +87,7 @@ function renderSymbol(
       const fontSize = props ? evaluateFontSizeExpression(content, { props }) : content.fontSize
       ctx.font = `${fontSize}px ${content.fontFamily}`
 
-      const characters = props ? evaluateTextExpression(content, { props }).characters : content.characters
+      const characters = content.characters || getCharacters(props ? evaluateTextExpression(content, { props }) : content.text)
       ctx.fillText(characters.map((c) => c.text).join(''), x, y)
     } else if (renderItem.kind === 'image') {
       const content = renderItem.content
@@ -258,8 +259,12 @@ class TextRenderer extends Vue {
   container!: Template
   templates!: Template[]
 
+  private get text() {
+    return this.props ? evaluateTextExpression(this.content, { props: this.props }) : this.content.text
+  }
+
   private get characters() {
-    return this.props ? evaluateTextExpression(this.content, { props: this.props }).characters : this.content.characters
+    return getCharacters(this.text)
   }
 
   private get fontSize() {
