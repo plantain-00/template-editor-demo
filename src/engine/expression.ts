@@ -1,6 +1,5 @@
 import { parseExpression, tokenizeExpression, evaluateExpression } from 'expression-engine'
 import { Size, SizeExpression, TemplateImageContent, TemplateTextContent, Position, PositionExpression } from '../model'
-import { getCharacters } from './mock'
 
 export function evaluate(expression: string, model: { [key: string]: unknown }, level?: 'info' | 'error') {
   try {
@@ -50,17 +49,11 @@ export function evaluateUrlExpression(content: TemplateImageContent, model: { [k
 export function evaluateTextExpression(content: TemplateTextContent, model: { [key: string]: unknown }, level?: 'info' | 'error') {
   if (content.textExpression) {
     const result = evaluate(content.textExpression, model, level)
-    if (typeof result === 'string' && content.text !== result) {
-      return {
-        text: result,
-        characters: getCharacters(result)
-      }
+    if (typeof result === 'string') {
+      return result
     }
   }
-  return {
-    text: content.text,
-    characters: content.characters,
-  }
+  return content.text
 }
 
 export function evaluateFontSizeExpression(content: TemplateTextContent, model: { [key: string]: unknown }, level?: 'info' | 'error') {
