@@ -1,10 +1,14 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import Ajv from 'ajv'
 
-import { appPanelTemplateHtml, appPanelTemplateHtmlStatic } from './variables'
+import { appPanelTemplateHtml, appPanelTemplateHtmlStatic, distStyleguideSchemaJson } from './variables'
 import { generate } from './engine/template-engine'
 import { StyleGuide } from './model'
 import { AppState } from './app-state'
+
+const ajv = new Ajv()
+const validateStyleGuide = ajv.compile(distStyleguideSchemaJson)
 
 @Component({
   render: appPanelTemplateHtml,
@@ -22,8 +26,13 @@ export class AppPanel extends Vue {
     if (this.styleGuideKey) {
       const res = await fetch(`https://storage.yorkyao.xyz/${this.styleGuideKey}`)
       const json: StyleGuide = await res.json()
-      this.appState.canvasState.styleGuide = json
-      this.appState.canvasState.applyCanvasSizeChange()
+      const valid = validateStyleGuide(json)
+      if (valid) {
+        this.appState.canvasState.styleGuide = json
+        this.appState.canvasState.applyCanvasSizeChange()
+      } else {
+        console.error(validateStyleGuide.errors)
+      }
     }
   }
 

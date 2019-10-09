@@ -19,6 +19,363 @@ import { TemplateModelEditor } from "./template-model-editor"
 export function appPanelTemplateHtml(this: AppPanel) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticStyle:{"display":"flex","align-items":"center","height":"50px"}},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.styleGuideKey),expression:"styleGuideKey"}],attrs:{"type":"text"},domProps:{"value":(_vm.styleGuideKey)},on:{"input":function($event){if($event.target.composing){ return; }_vm.styleGuideKey=$event.target.value}}}),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.loadStyleGuide()}}},[_vm._v("load style guide")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.saveStyleGuide()}}},[_vm._v("save style guide")]),_vm._v(" "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.templateModelKey),expression:"templateModelKey"}],attrs:{"type":"text"},domProps:{"value":(_vm.templateModelKey)},on:{"input":function($event){if($event.target.composing){ return; }_vm.templateModelKey=$event.target.value}}}),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.loadTemplateModel()}}},[_vm._v("load template model")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.saveTemplateModel()}}},[_vm._v("save template model")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.editTemplateModel()}}},[_vm._v(_vm._s(_vm.appState.templateModelEditorVisible ? 'hide template model editor' : 'show template model editor'))]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.generate()}}},[_vm._v(_vm._s(_vm.appState.graphicCanvasState ? 'back to template' : 'generate graphic'))])])}
 // @ts-ignore
 export var appPanelTemplateHtmlStatic = [  ]
+export const distStyleguideSchemaJson = {
+    "$ref": "#/definitions/StyleGuide",
+    "definitions": {
+        "StyleGuide": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "templates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Template"
+                    }
+                }
+            },
+            "required": [
+                "name",
+                "templates"
+            ],
+            "additionalProperties": false
+        },
+        "Template": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "contents": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/TemplateContent"
+                    }
+                },
+                "parameters": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "width": {
+                    "type": "number"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "widthExpression": {
+                    "type": "string"
+                },
+                "heightExpression": {
+                    "type": "string"
+                },
+                "display": {
+                    "type": "string",
+                    "const": "flex"
+                },
+                "flexDirection": {
+                    "type": "string",
+                    "enum": [
+                        "row",
+                        "column"
+                    ]
+                },
+                "justifyContent": {
+                    "type": "string",
+                    "enum": [
+                        "start",
+                        "end",
+                        "center",
+                        "between"
+                    ]
+                },
+                "alignItems": {
+                    "type": "string",
+                    "enum": [
+                        "start",
+                        "end",
+                        "center"
+                    ]
+                },
+                "marginLeft": {
+                    "type": "number"
+                },
+                "marginRight": {
+                    "type": "number"
+                },
+                "marginTop": {
+                    "type": "number"
+                },
+                "marginBottom": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "id",
+                "contents",
+                "x",
+                "y",
+                "width",
+                "height"
+            ],
+            "additionalProperties": false
+        },
+        "TemplateContent": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/TemplateTextContent"
+                },
+                {
+                    "$ref": "#/definitions/TemplateImageContent"
+                },
+                {
+                    "$ref": "#/definitions/TemplateReferenceContent"
+                },
+                {
+                    "$ref": "#/definitions/TemplateSnapshotContent"
+                }
+            ]
+        },
+        "TemplateTextContent": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "type": "string",
+                    "const": "text"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "textExpression": {
+                    "type": "string"
+                },
+                "fontFamily": {
+                    "type": "string"
+                },
+                "fontSize": {
+                    "type": "number"
+                },
+                "fontSizeExpression": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "characters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/TextCharacter"
+                    }
+                },
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "width": {
+                    "type": "number"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "xExpression": {
+                    "type": "string"
+                },
+                "yExpression": {
+                    "type": "string"
+                },
+                "widthExpression": {
+                    "type": "string"
+                },
+                "heightExpression": {
+                    "type": "string"
+                },
+                "if": {
+                    "type": "string"
+                },
+                "repeat": {
+                    "type": "string"
+                },
+                "hidden": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "kind",
+                "text",
+                "fontFamily",
+                "fontSize",
+                "color",
+                "x",
+                "y",
+                "width",
+                "height"
+            ],
+            "additionalProperties": false
+        },
+        "TextCharacter": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "text"
+            ],
+            "additionalProperties": false
+        },
+        "TemplateImageContent": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "type": "string",
+                    "const": "image"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "urlExpression": {
+                    "type": "string"
+                },
+                "opacity": {
+                    "type": "number"
+                },
+                "base64": {
+                    "type": "string"
+                },
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "width": {
+                    "type": "number"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "xExpression": {
+                    "type": "string"
+                },
+                "yExpression": {
+                    "type": "string"
+                },
+                "widthExpression": {
+                    "type": "string"
+                },
+                "heightExpression": {
+                    "type": "string"
+                },
+                "if": {
+                    "type": "string"
+                },
+                "repeat": {
+                    "type": "string"
+                },
+                "hidden": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "kind",
+                "url",
+                "x",
+                "y",
+                "width",
+                "height"
+            ],
+            "additionalProperties": false
+        },
+        "TemplateReferenceContent": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "type": "string",
+                    "const": "reference"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "props": {
+                    "type": "string"
+                },
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "xExpression": {
+                    "type": "string"
+                },
+                "yExpression": {
+                    "type": "string"
+                },
+                "if": {
+                    "type": "string"
+                },
+                "repeat": {
+                    "type": "string"
+                },
+                "hidden": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "kind",
+                "id",
+                "x",
+                "y"
+            ],
+            "additionalProperties": false
+        },
+        "TemplateSnapshotContent": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "type": "string",
+                    "const": "snapshot"
+                },
+                "snapshot": {
+                    "$ref": "#/definitions/Template"
+                },
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "xExpression": {
+                    "type": "string"
+                },
+                "yExpression": {
+                    "type": "string"
+                },
+                "hidden": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "kind",
+                "snapshot",
+                "x",
+                "y"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
 // @ts-ignore
 export function indexTemplateHtml(this: App) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticStyle:{"display":"flex","flex-direction":"column"}},[_c('div',{staticStyle:{"height":"50px"}},[_c('app-panel',{attrs:{"appState":_vm.appState}}),_vm._v(" "),_c('template-model-editor',{attrs:{"appState":_vm.appState}})],1),_vm._v(" "),(_vm.appState.graphicCanvasState)?_c('template-editor',{attrs:{"canvasState":_vm.appState.graphicCanvasState}}):_vm._e(),_vm._v(" "),_c('template-editor',{directives:[{name:"show",rawName:"v-show",value:(!_vm.appState.graphicCanvasState),expression:"!appState.graphicCanvasState"}],attrs:{"canvasState":_vm.appState.canvasState}})],1)}
 // @ts-ignore
