@@ -1,3 +1,6 @@
+/**
+ * @entry styleguide.schema.json
+ */
 export interface StyleGuide {
   name: string
   templates: Template[]

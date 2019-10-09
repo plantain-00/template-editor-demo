@@ -3,12 +3,18 @@ const path = require('path')
 module.exports = {
   base: 'src',
   files: [
-    'src/**/*.template.html'
+    'src/**/*.template.html',
+    'dist/**/*.schema.json'
   ],
   /**
    * @argument {string} file
    */
   handler: (file) => {
+    if (file.endsWith('.schema.json')) {
+      return {
+        type: 'json'
+      }
+    }
     if (file.endsWith('index.template.html')) {
       return {
         type: 'vue',

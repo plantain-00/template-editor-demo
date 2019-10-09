@@ -25,6 +25,7 @@ module.exports = {
   build: [
     {
       js: [
+        `types-as-schema src/model.ts --json dist/`,
         templateCommand,
         tscCommand,
         webpackCommand
