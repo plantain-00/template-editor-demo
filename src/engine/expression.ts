@@ -1,8 +1,16 @@
 import { parseExpression, tokenizeExpression, evaluateExpression } from 'expression-engine'
 import { Size, SizeExpression, TemplateImageContent, TemplateTextContent, Position, PositionExpression } from '../model'
+import { PrecompiledStyleGuide } from './template-engine'
 
-export function evaluate(expression: string, model: { [key: string]: unknown }, level?: 'info' | 'error') {
+export function evaluate(expression: string, model: { [key: string]: unknown }, level?: 'info' | 'error', precompiledStyleGuide?: PrecompiledStyleGuide) {
   try {
+    if (precompiledStyleGuide) {
+      const ast = precompiledStyleGuide.ast[expression]
+      if (ast instanceof Error) {
+        throw ast
+      }
+      return evaluateExpression(ast, model)
+    }
     return evaluateExpression(parseExpression(tokenizeExpression(expression)), model)
   } catch (error) {
     if (level) {
@@ -12,11 +20,19 @@ export function evaluate(expression: string, model: { [key: string]: unknown }, 
   }
 }
 
-export function evaluateSizeExpression(kind: 'width' | 'height', content: Size & SizeExpression, model: { [key: string]: unknown }, level?: 'info' | 'error') {
+export function parseExpressionToAst(expression: string) {
+  try {
+    return parseExpression(tokenizeExpression(expression))
+  } catch (error) {
+    return error as Error
+  }
+}
+
+export function evaluateSizeExpression(kind: 'width' | 'height', content: Size & SizeExpression, model: { [key: string]: unknown }, level?: 'info' | 'error', precompiledStyleGuide?: PrecompiledStyleGuide) {
   const expressionField = (kind + 'Expression') as 'widthExpression' | 'heightExpression'
   const expression = content[expressionField]
   if (expression) {
-    const result = evaluate(expression, model, level)
+    const result = evaluate(expression, model, level, precompiledStyleGuide)
     if (typeof result === 'number') {
       return result
     }
@@ -24,11 +40,11 @@ export function evaluateSizeExpression(kind: 'width' | 'height', content: Size &
   return content[kind]
 }
 
-export function evaluatePositionExpression(kind: 'x' | 'y', content: Position & PositionExpression, model: { [key: string]: unknown }, level?: 'info' | 'error') {
+export function evaluatePositionExpression(kind: 'x' | 'y', content: Position & PositionExpression, model: { [key: string]: unknown }, level?: 'info' | 'error', precompiledStyleGuide?: PrecompiledStyleGuide) {
   const expressionField = (kind + 'Expression') as 'xExpression' | 'yExpression'
   const expression = content[expressionField]
   if (expression) {
-    const result = evaluate(expression, model, level)
+    const result = evaluate(expression, model, level, precompiledStyleGuide)
     if (typeof result === 'number') {
       return result
     }
@@ -36,9 +52,9 @@ export function evaluatePositionExpression(kind: 'x' | 'y', content: Position & 
   return content[kind]
 }
 
-export function evaluateUrlExpression(content: TemplateImageContent, model: { [key: string]: unknown }, level?: 'info' | 'error') {
+export function evaluateUrlExpression(content: TemplateImageContent, model: { [key: string]: unknown }, level?: 'info' | 'error', precompiledStyleGuide?: PrecompiledStyleGuide) {
   if (content.urlExpression) {
-    const result = evaluate(content.urlExpression, model, level)
+    const result = evaluate(content.urlExpression, model, level, precompiledStyleGuide)
     if (typeof result === 'string') {
       return result
     }
@@ -46,9 +62,9 @@ export function evaluateUrlExpression(content: TemplateImageContent, model: { [k
   return content.url
 }
 
-export function evaluateTextExpression(content: TemplateTextContent, model: { [key: string]: unknown }, level?: 'info' | 'error') {
+export function evaluateTextExpression(content: TemplateTextContent, model: { [key: string]: unknown }, level?: 'info' | 'error', precompiledStyleGuide?: PrecompiledStyleGuide) {
   if (content.textExpression) {
-    const result = evaluate(content.textExpression, model, level)
+    const result = evaluate(content.textExpression, model, level, precompiledStyleGuide)
     if (typeof result === 'string') {
       return result
     }
@@ -56,9 +72,9 @@ export function evaluateTextExpression(content: TemplateTextContent, model: { [k
   return content.text
 }
 
-export function evaluateFontSizeExpression(content: TemplateTextContent, model: { [key: string]: unknown }, level?: 'info' | 'error') {
+export function evaluateFontSizeExpression(content: TemplateTextContent, model: { [key: string]: unknown }, level?: 'info' | 'error', precompiledStyleGuide?: PrecompiledStyleGuide) {
   if (content.fontSizeExpression) {
-    const result = evaluate(content.fontSizeExpression, model, level)
+    const result = evaluate(content.fontSizeExpression, model, level, precompiledStyleGuide)
     if (typeof result === 'number') {
       return result
     }

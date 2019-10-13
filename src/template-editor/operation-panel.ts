@@ -185,12 +185,12 @@ export class OperationPanel extends Vue {
 
       const index = this.canvasState.selection.template.contents.findIndex((c) => c === content)
       if (index >= 0) {
-        this.canvasState.selection.template.contents[index] = {
+        Vue.set(this.canvasState.selection.template.contents, index, {
           kind: 'reference',
           id,
           x: content.x,
           y: content.y,
-        }
+        })
       }
 
       this.canvasState.selection = {

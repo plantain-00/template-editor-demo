@@ -3,7 +3,7 @@ import Component from 'vue-class-component'
 import Ajv from 'ajv'
 
 import { appPanelTemplateHtml, appPanelTemplateHtmlStatic, distStyleguideSchemaJson } from './variables'
-import { generate } from './engine/template-engine'
+import { generate, PrecompiledStyleGuide } from './engine/template-engine'
 import { StyleGuide } from './model'
 import { AppState } from './app-state'
 
@@ -21,6 +21,7 @@ export class AppPanel extends Vue {
   private appState!: AppState
   styleGuideKey = 'kfc.json'
   templateModelKey = 'kfc-model.json'
+  private precompiledStyleGuide?: PrecompiledStyleGuide
 
   async loadStyleGuide() {
     if (this.styleGuideKey) {
@@ -78,7 +79,14 @@ export class AppPanel extends Vue {
       return
     }
     if (this.appState.canvasState.selection.kind === 'template') {
-      this.appState.loadGraphicCanvas(await generate(this.appState.canvasState.selection.template, this.appState.canvasState.styleGuide, this.appState.templateModel))
+      const now = Date.now()
+      const result = await generate(this.appState.canvasState.selection.template, this.appState.canvasState.styleGuide, this.appState.templateModel, this.precompiledStyleGuide)
+      console.info(Date.now() - now)
+      this.appState.loadGraphicCanvas(result)
     }
+  }
+
+  precompile() {
+    this.precompiledStyleGuide = new PrecompiledStyleGuide(this.appState.canvasState.styleGuide)
   }
 }
