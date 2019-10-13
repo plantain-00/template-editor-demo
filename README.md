@@ -81,6 +81,7 @@ interface GenerationField {
 而循环的语法设计为
 
 ```txt
+commodities
 commodity in commodities
 (commodity, index) in commodities
 ```
@@ -99,7 +100,7 @@ commodity in commodities
 }
 ```
 
-表达式字段总是 optional 的，并在要设置的字段旁边，命名可以是 `要设置的字段名称 + "Expression"`，例如
+表达式字段总是 optional 的，并放在待设置的字段旁边，命名可以是 `要设置的字段名称 + "Expression"`，例如
 
 ```ts
 interface TemplateImageContent extends Region, RegionExpression {
@@ -148,6 +149,8 @@ interface TemplateSnapshotContent extends Position, PositionExpression {
 }
 ```
 
+模板中通过引用来使用组件后，一个六层嵌套的模板和使用的组件数据量之和只有 6.4KB。
+
 ### 布局引擎
 
 直接操作设计元素的 `x` 和 `y` 比较 low-level，受 css 里 flex 布局的启发，引入简单的 flex 布局，可以在 `Template` 上设置相关的参数
@@ -170,23 +173,25 @@ interface MarginField {
 
 布局引擎会根据 `Template` 上设置的 `FlexField`，修改里面所有内容的 `x` 和 `y`。
 
+有了表达式引擎、模板引擎、组件、布局引擎后，就可以实现一些比较复杂的海报效果的生成了 ![poster](./screenshots/result.jpg)
+
 ### 其它模版和海报数据结构不一致的地方
 
 有一些比较耗时的操作，例如文字排版、图片像素处理等，是希望把操作结果也保存在生成的海报中的，以避免海报使用时执行这些操作。
 
-但模版在使用（编辑、生吃海报）时，总是需要执行这些耗时操作的，所以这些字段不需要保存在模板中，以减少数据量。
+但模版在使用（编辑、生成海报）时，总是需要执行这些耗时操作的，所以这些字段不需要保存在模板中，以减少数据量。
 
 ### 模版编辑器和海报生成的特点
 
-编辑器里进行拖动等操作时会触发大量事件，如果每次都执行那些耗时操作会卡，所以需要缓存机制，可以使用 mobx 和 vue 的 computed 机制。
+编辑器里进行拖动等操作时会触发大量事件，如果每次都执行那些耗时操作会卡，所以需要缓存机制，可以使用 mobx 或 vuejs 的 computed 机制。
 
-海报生成时，则不希望有 computed，不然每次设置字段都会触发无效的代码执行，影响海报生成效率。
+海报生成时，则不希望有 computed 机制，不然每次设置字段都会触发无效的代码执行，影响海报生成效率。
 
-所以 computed 还是仅限于 UI 组件内，数据模型里不应该有 computed。
+所以 computed 机制还是仅限于 UI 组件内，数据模型里不应该有 computed。
 
 ### 渲染引擎
 
-渲染要支持 canvas 和 UI 组件，以生成图片，和用于在编辑器内显示、编辑时局部刷新。
+渲染要支持 canvas （用于生成海报图片）和 UI 组件（用于在编辑器内显示、编辑时局部刷新）。
 
 渲染成 UI 组件时，耗时操作、表达式计算等可以放在 UI 组件内的 computed 里。
 
@@ -199,10 +204,15 @@ interface MarginField {
 3. mask 层：用来方便接收用户操作事件的透明层
 4. 用户可以直接操作的 UI 层：例如快捷菜单
 
+### 模板预编辑
+
+在生成阶段，模板是只读的，且可能会多次使用在多个输入数据上，对模板进行预编辑，预先处理模板中的模板语法和表达式，可以提高生成时的效率。
+
+生成 19 个商品组成的海报，耗时由没有预编辑时的 26.8ms 减少到了加了预编辑时的 18.2 ms。
+
 ## todo
 
 + expression ui(json editor, tokenize)
 + image rotate
 + z and z expression
-+ symbol color
-+ precompile template?
++ color content

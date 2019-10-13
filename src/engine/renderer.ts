@@ -18,7 +18,7 @@ export function renderTemplate(template: Template, templates: Template[], images
     layoutFlex(template, templates)
     renderSymbol(ctx, template, templates, images)
   }
-  return canvas.toDataURL()
+  return canvas.toDataURL('image/jpeg')
 }
 
 export async function loadTemplateImages(
