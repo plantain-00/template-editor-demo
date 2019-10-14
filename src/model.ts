@@ -12,7 +12,7 @@ export interface Template extends Region, SizeExpression, FlexField {
   parameters?: string[]
 }
 
-export type TemplateContent = TemplateTextContent | TemplateImageContent | TemplateReferenceContent | TemplateSnapshotContent
+export type TemplateContent = TemplateTextContent | TemplateImageContent | TemplateColorContent | TemplateReferenceContent | TemplateSnapshotContent
 
 export interface TemplateTextContent extends Region, RegionExpression, GenerationField, Hidden {
   kind: 'text'
@@ -39,6 +39,11 @@ export interface TemplateImageContent extends Region, RegionExpression, Generati
   urlExpression?: string
   opacity?: number
   base64?: string
+}
+
+export interface TemplateColorContent extends Region, RegionExpression, GenerationField, Hidden {
+  kind: 'color'
+  color: string
 }
 
 export interface TemplateReferenceContent extends Position, PositionExpression, GenerationField, Hidden {

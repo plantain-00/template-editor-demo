@@ -46,7 +46,7 @@ export class CanvasState extends Vue {
   mouseupY = 0
   mousePressing = false
   isDraggingForMoving = false
-  addKind: 'template' | 'image' | 'text' | undefined
+  addKind: 'template' | 'image' | 'text' | 'color' | undefined
 
   contextMenuEnabled = false
   contextMenuX = 0

@@ -30,6 +30,10 @@
         <input type="number" :value="canvasState.selection.content.opacity" @change="changeOpacity" />
       </div>
     </div>
+    <div v-if="canvasState.selection.content.kind === 'color'">
+      color
+      <input type="color" :value="canvasState.selection.content.color" @change="changeColor" />
+    </div>
     <div>
       x
       <input type="number" :value="canvasState.selection.content.x" @change="changePosition($event, 'x')" />
@@ -48,7 +52,7 @@
       <input type="text" :value="canvasState.selection.content.yExpression"
         @change="changePositionExpression($event, 'y')" />
     </div>
-    <div v-if="canvasState.selection.content.kind === 'text' || canvasState.selection.content.kind === 'image'">
+    <div v-if="canvasState.selection.content.kind === 'text' || canvasState.selection.content.kind === 'image' || canvasState.selection.content.kind === 'color'">
       <div>
         width
         <input type="number" :value="canvasState.selection.content.width" @change="changeSize($event, 'width')" />
@@ -95,8 +99,8 @@
         </div>
       </div>
     </div>
-    <div v-if="canvasState.selection.content.kind === 'text' || canvasState.selection.content.kind === 'image'">
-      <button @click="extractAsSymbol()">extract as symbol</button>
+    <div v-if="canvasState.selection.content.kind === 'text' || canvasState.selection.content.kind === 'image' || canvasState.selection.content.kind === 'color'">
+      <button @click="extractAsComponent()">extract as component</button>
     </div>
   </div>
   <div v-if="canvasState.selection.kind === 'template'">
@@ -179,5 +183,6 @@
     <button @click="addTemplate()">add template</button>
     <button @click="addText()">add text</button>
     <button @click="addImage()">add image</button>
+    <button @click="addColor()">add color</button>
   </div>
 </div>

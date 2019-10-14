@@ -129,6 +129,21 @@ export class MaskLayer extends Vue {
               content: newContent,
               template,
             }
+          } else if (this.canvasState.addKind === 'color') {
+            const newContent: TemplateContent = {
+              kind: 'color',
+              color: '#000',
+              x: x - template.x - 50,
+              y: y - template.y - 50,
+              width: 100,
+              height: 100,
+            }
+            template.contents.push(newContent)
+            this.canvasState.selection = {
+              kind: 'content',
+              content: newContent,
+              template,
+            }
           }
         }
       }

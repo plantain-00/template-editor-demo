@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import { Template, TemplateTextContent, TemplateImageContent, TemplateReferenceContent, TemplateSnapshotContent } from '../model'
+import { Template, TemplateTextContent, TemplateImageContent, TemplateReferenceContent, TemplateSnapshotContent, TemplateColorContent } from '../model'
 import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression } from './expression'
 import { layoutFlex, getFlexPosition } from './layout-engine'
 import { applyImageOpacity, loadImage } from './image'
@@ -105,6 +105,14 @@ function renderSymbol(
         }
       }
       ctx.drawImage(image, x, y, width, height)
+    } else if (renderItem.kind === 'color') {
+      const content = renderItem.content
+
+      const width = props ? evaluateSizeExpression('width', content, { props }) : content.width
+      const height = props ? evaluateSizeExpression('height', content, { props }) : content.height
+
+      ctx.fillStyle = content.color
+      ctx.fillRect(x, y, width, height)
     } else if (renderItem.kind === 'symbol') {
       ctx.save()
       ctx.translate(x, y)
@@ -204,6 +212,18 @@ class SymbolRenderer extends Vue {
       } else if (renderItem.kind === 'image') {
         children.push(createElement(
           'image-renderer',
+          {
+            props: {
+              content: renderItem.content,
+              props: this.props,
+              container: this.template,
+              templates: this.templates,
+            }
+          },
+        ))
+      } else if (renderItem.kind === 'color') {
+        children.push(createElement(
+          'color-renderer',
           {
             props: {
               content: renderItem.content,
@@ -382,6 +402,56 @@ class ImageRenderer extends Vue {
 
 Vue.component('image-renderer', ImageRenderer)
 
+@Component({
+  props: ['content', 'props', 'container', 'templates']
+})
+class ColorRenderer extends Vue {
+  content!: TemplateColorContent
+  props!: unknown
+  container!: Template
+  templates!: Template[]
+
+  private get width() {
+    return this.props ? evaluateSizeExpression('width', this.content, { props: this.props }) : this.content.width
+  }
+
+  private get height() {
+    return this.props ? evaluateSizeExpression('height', this.content, { props: this.props }) : this.content.height
+  }
+
+  private get x() {
+    if (this.container.display === 'flex') {
+      return getFlexPosition(this.content, 'x', this.container, this.templates)
+    }
+    return this.props ? evaluatePositionExpression('x', this.content, { props: this.props }) : this.content.x
+  }
+
+  private get y() {
+    if (this.container.display === 'flex') {
+      return getFlexPosition(this.content, 'y', this.container, this.templates)
+    }
+    return this.props ? evaluatePositionExpression('y', this.content, { props: this.props }) : this.content.y
+  }
+
+  render(createElement: Vue.CreateElement): Vue.VNode {
+    return createElement(
+      'div',
+      {
+        style: {
+          width: `${this.width}px`,
+          height: `${this.height}px`,
+          position: 'absolute',
+          left: `${this.x}px`,
+          top: `${this.y}px`,
+          backgroundColor: this.content.color,
+        },
+      },
+    )
+  }
+}
+
+Vue.component('color-renderer', ColorRenderer)
+
 function* iterateSymbolRenderItem(template: Template, templates: Template[]) {
   for (const content of template.contents) {
     if (content.hidden) {
@@ -395,6 +465,11 @@ function* iterateSymbolRenderItem(template: Template, templates: Template[]) {
     } else if (content.kind === 'image') {
       yield {
         kind: 'image' as const,
+        content,
+      }
+    } else if (content.kind === 'color') {
+      yield {
+        kind: 'color' as const,
         content,
       }
     } else if (content.kind === 'reference') {
