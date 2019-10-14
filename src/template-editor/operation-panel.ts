@@ -37,7 +37,7 @@ export class OperationPanel extends Vue {
 
   changeSize(e: { target: { value: string } }, kind: 'width' | 'height') {
     if (this.canvasState.selection.kind === 'content'
-      && (this.canvasState.selection.content.kind === 'image' || this.canvasState.selection.content.kind === 'text')) {
+      && (this.canvasState.selection.content.kind === 'image' || this.canvasState.selection.content.kind === 'text' || this.canvasState.selection.content.kind === 'color')) {
       this.canvasState.selection.content[kind] = +e.target.value
     } else if (this.canvasState.selection.kind === 'template') {
       this.canvasState.selection.template[kind] = +e.target.value
@@ -52,7 +52,7 @@ export class OperationPanel extends Vue {
 
   changeSizeExpression(e: { target: { value: string } }, kind: 'width' | 'height') {
     if (this.canvasState.selection.kind === 'content'
-      && (this.canvasState.selection.content.kind === 'image' || this.canvasState.selection.content.kind === 'text')) {
+      && (this.canvasState.selection.content.kind === 'image' || this.canvasState.selection.content.kind === 'text' || this.canvasState.selection.content.kind === 'color')) {
       Vue.set(this.canvasState.selection.content, kind + 'Expression', e.target.value)
     } else if (this.canvasState.selection.kind === 'template') {
       Vue.set(this.canvasState.selection.template, kind + 'Expression', e.target.value)
@@ -114,7 +114,7 @@ export class OperationPanel extends Vue {
   }
 
   changeColor(e: { target: { value: string } }) {
-    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
+    if (this.canvasState.selection.kind === 'content' && (this.canvasState.selection.content.kind === 'text' || this.canvasState.selection.content.kind === 'color')) {
       this.canvasState.selection.content.color = e.target.value
     }
   }
@@ -151,6 +151,10 @@ export class OperationPanel extends Vue {
     this.canvasState.addKind = 'text'
   }
 
+  addColor() {
+    this.canvasState.addKind = 'color'
+  }
+
   selectContent(content: TemplateContent) {
     if (this.canvasState.selection.kind !== 'none') {
       this.canvasState.selection = {
@@ -161,10 +165,11 @@ export class OperationPanel extends Vue {
     }
   }
 
-  extractAsSymbol() {
+  extractAsComponent() {
     if (this.canvasState.selection.kind === 'content'
       && (this.canvasState.selection.content.kind === 'text'
-        || this.canvasState.selection.content.kind === 'image')) {
+        || this.canvasState.selection.content.kind === 'image'
+        || this.canvasState.selection.content.kind === 'color')) {
       const id = Math.random().toString()
       const content = this.canvasState.selection.content
       const newTemplate: Template = {
