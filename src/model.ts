@@ -60,11 +60,13 @@ export interface TemplateSnapshotContent extends Position, PositionExpression, H
 export interface Position {
   x: number
   y: number
+  z?: integer
 }
 
 export interface PositionExpression {
   xExpression?: string
   yExpression?: string
+  zExpression?: string
 }
 
 export interface Size {
@@ -113,3 +115,5 @@ export type CanvasSelection =
     content: TemplateContent,
     template: Template
   }
+
+type integer = number

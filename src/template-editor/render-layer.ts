@@ -3,6 +3,7 @@ import Component from 'vue-class-component'
 import { templateEditorRenderLayerTemplateHtml, templateEditorRenderLayerTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
 import { TemplateRenderer } from '../engine/renderer'
+import { Template } from '../model'
 
 @Component({
   render: templateEditorRenderLayerTemplateHtml,
@@ -29,6 +30,15 @@ export class RenderLayer extends Vue {
       transform: `scale(${this.canvasState.styleGuideScale}) translate(${this.canvasState.styleGuideTranslateX}px, ${this.canvasState.styleGuideTranslateY}px)`,
       width: this.canvasState.styleGuideWidth + 'px',
       height: this.canvasState.styleGuideHeight + 'px',
+    }
+  }
+
+  getTemplateStyle(template: Template) {
+    return {
+      left: template.x + 'px',
+      top: template.y + 'px',
+      position: 'absolute',
+      zIndex: Math.round(template.z || 0),
     }
   }
 }

@@ -13,7 +13,9 @@ export async function generate(template: Template, styleGuide: StyleGuide, model
     contents: (await Promise.all(template.contents.map((c) => generateContent(c, styleGuide, model, precompiledStyleGuide)))).flat()
   }
   result.width = evaluateSizeExpression('width', result, model, 'error', precompiledStyleGuide)
+  delete result.widthExpression
   result.height = evaluateSizeExpression('height', result, model, 'error', precompiledStyleGuide)
+  delete result.heightExpression
   layoutFlex(result, styleGuide.templates)
   return result
 }
@@ -97,7 +99,9 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
   }
   content = { ...content }
   content.x = evaluatePositionExpression('x', content, model, 'error', precompiledStyleGuide)
+  delete content.xExpression
   content.y = evaluatePositionExpression('y', content, model, 'error', precompiledStyleGuide)
+  delete content.yExpression
 
   if (content.kind === 'reference') {
     const id = content.id
@@ -105,6 +109,7 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
     if (reference) {
       if (content.props) {
         const result = evaluate(content.props, model, 'error', precompiledStyleGuide)
+        delete content.props
         model = { ...model, props: result }
       }
       return [
@@ -120,16 +125,21 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
   }
 
   content.width = evaluateSizeExpression('width', content, model, 'error', precompiledStyleGuide)
+  delete content.widthExpression
   content.height = evaluateSizeExpression('height', content, model, 'error', precompiledStyleGuide)
+  delete content.heightExpression
 
   if (content.kind === 'text') {
     content.text = evaluateTextExpression(content, model, 'error', precompiledStyleGuide)
+    delete content.textExpression
     content.characters = getCharacters(content.text)
 
     content.fontSize = evaluateFontSizeExpression(content, model, 'error', precompiledStyleGuide)
+    delete content.fontSizeExpression
   }
   if (content.kind === 'image') {
     content.url = evaluateUrlExpression(content, model, 'error', precompiledStyleGuide)
+    delete content.urlExpression
     if (content.opacity !== undefined) {
       const image = await loadImage(content.url)
       const canvas = applyImageOpacity(image, content.opacity)
@@ -138,11 +148,7 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
       }
     }
   }
-  return [
-    {
-      ...content
-    }
-  ]
+  return [content]
 }
 
 interface Repeat {

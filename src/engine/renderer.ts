@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import { Template, TemplateTextContent, TemplateImageContent, TemplateReferenceContent, TemplateSnapshotContent, TemplateColorContent } from '../model'
+import { Template, TemplateTextContent, TemplateImageContent, TemplateReferenceContent, TemplateSnapshotContent, Position, TemplateColorContent } from '../model'
 import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression } from './expression'
 import { layoutFlex, getFlexPosition } from './layout-engine'
 import { applyImageOpacity, loadImage } from './image'
@@ -16,7 +16,12 @@ export function renderTemplate(template: Template, templates: Template[], images
     ctx.fillStyle = 'white'
     ctx.fillRect(0, 0, template.width, template.height)
     layoutFlex(template, templates)
-    renderSymbol(ctx, template, templates, images)
+    const actions: Array<{ z: number, action: () => void }> = []
+    renderSymbol(ctx, template, templates, images, actions, { x: 0, y: 0, z: 0 })
+    actions.sort((a, b) => a.z - b.z)
+    for (const { action } of actions) {
+      action()
+    }
   }
   return canvas.toDataURL('image/jpeg')
 }
@@ -74,21 +79,27 @@ function renderSymbol(
   template: Template,
   templates: Template[],
   images: { [url: string]: HTMLImageElement },
+  actions: Array<{ z: number, action: () => void }>,
+  position: Required<Position>,
   props?: unknown,
 ) {
   for (const renderItem of iterateSymbolRenderItem(template, templates)) {
-    const x = evaluatePositionExpression('x', renderItem.content, { props })
-    const y = evaluatePositionExpression('y', renderItem.content, { props })
+    const x = position.x + evaluatePositionExpression('x', renderItem.content, { props })
+    const y = position.y + evaluatePositionExpression('y', renderItem.content, { props })
+    const z = position.z + evaluatePositionExpression('z', renderItem.content, { props })
     if (renderItem.kind === 'text') {
       const content = renderItem.content
-      ctx.fillStyle = content.color
-      ctx.textBaseline = 'top'
-
-      const fontSize = props ? evaluateFontSizeExpression(content, { props }) : content.fontSize
-      ctx.font = `${fontSize}px ${content.fontFamily}`
-
-      const characters = content.characters || getCharacters(props ? evaluateTextExpression(content, { props }) : content.text)
-      ctx.fillText(characters.map((c) => c.text).join(''), x, y)
+      actions.push({
+        z,
+        action: () => {
+          ctx.fillStyle = content.color
+          ctx.textBaseline = 'top'
+          const fontSize = props ? evaluateFontSizeExpression(content, { props }) : content.fontSize
+          ctx.font = `${fontSize}px ${content.fontFamily}`
+          const characters = content.characters || getCharacters(props ? evaluateTextExpression(content, { props }) : content.text)
+          ctx.fillText(characters.map((c) => c.text).join(''), x, y)
+        },
+      })
     } else if (renderItem.kind === 'image') {
       const content = renderItem.content
 
@@ -104,21 +115,26 @@ function renderSymbol(
           image = imageCanvas
         }
       }
-      ctx.drawImage(image, x, y, width, height)
+      actions.push({
+        z,
+        action: () => ctx.drawImage(image, x, y, width, height),
+      })
     } else if (renderItem.kind === 'color') {
       const content = renderItem.content
 
       const width = props ? evaluateSizeExpression('width', content, { props }) : content.width
       const height = props ? evaluateSizeExpression('height', content, { props }) : content.height
 
-      ctx.fillStyle = content.color
-      ctx.fillRect(x, y, width, height)
+      actions.push({
+        z,
+        action: () => {
+          ctx.fillStyle = content.color
+          ctx.fillRect(x, y, width, height)
+        },
+      })
     } else if (renderItem.kind === 'symbol') {
-      ctx.save()
-      ctx.translate(x, y)
       const newProps = renderItem.props ? evaluate(renderItem.props, { props }) : undefined
-      renderSymbol(ctx, renderItem.symbol, templates, images, newProps)
-      ctx.restore()
+      renderSymbol(ctx, renderItem.symbol, templates, images, actions, { x, y, z }, newProps)
     }
   }
 }
@@ -140,6 +156,7 @@ export class TemplateRenderer extends Vue {
           position: 'absolute',
           userSelect: 'none',
           backgroundColor: 'white',
+          zIndex: -2147483584,
         },
       },
       [
@@ -153,6 +170,7 @@ export class TemplateRenderer extends Vue {
                 x: 0,
                 y: 0,
               },
+              z: 0,
             }
           }
         )
@@ -162,7 +180,7 @@ export class TemplateRenderer extends Vue {
 }
 
 @Component({
-  props: ['template', 'templates', 'props', 'content', 'container', 'containerProps']
+  props: ['template', 'templates', 'props', 'content', 'container', 'containerProps', 'z']
 })
 class SymbolRenderer extends Vue {
   template!: Template
@@ -171,6 +189,7 @@ class SymbolRenderer extends Vue {
   content!: TemplateReferenceContent | TemplateSnapshotContent
   container?: Template
   containerProps!: unknown
+  z!: number
 
   private get width() {
     return this.props ? evaluateSizeExpression('width', this.template, { props: this.props }) : this.template.width
@@ -194,6 +213,10 @@ class SymbolRenderer extends Vue {
     return this.containerProps ? evaluatePositionExpression('y', this.content, { props: this.containerProps }) : this.content.y
   }
 
+  private get zValue() {
+    return this.z + (this.containerProps ? evaluatePositionExpression('z', this.content, { props: this.containerProps }) : this.content.z || 0)
+  }
+
   render(createElement: Vue.CreateElement): Vue.VNode {
     const children: Vue.VNode[] = []
     for (const renderItem of iterateSymbolRenderItem(this.template, this.templates)) {
@@ -206,6 +229,7 @@ class SymbolRenderer extends Vue {
               props: this.props,
               container: this.template,
               templates: this.templates,
+              z: this.zValue,
             }
           },
         ))
@@ -218,6 +242,7 @@ class SymbolRenderer extends Vue {
               props: this.props,
               container: this.template,
               templates: this.templates,
+              z: this.zValue,
             }
           },
         ))
@@ -230,6 +255,7 @@ class SymbolRenderer extends Vue {
               props: this.props,
               container: this.template,
               templates: this.templates,
+              z: this.zValue,
             }
           },
         ))
@@ -246,6 +272,7 @@ class SymbolRenderer extends Vue {
               content,
               container: this.template,
               containerProps: this.props,
+              z: this.zValue,
             }
           }
         ))
@@ -271,13 +298,14 @@ class SymbolRenderer extends Vue {
 Vue.component('symbol-renderer', SymbolRenderer)
 
 @Component({
-  props: ['content', 'props', 'container', 'templates']
+  props: ['content', 'props', 'container', 'templates', 'z']
 })
 class TextRenderer extends Vue {
   content!: TemplateTextContent
   props!: unknown
   container!: Template
   templates!: Template[]
+  z!: number
 
   private get text() {
     return this.props ? evaluateTextExpression(this.content, { props: this.props }) : this.content.text
@@ -305,6 +333,10 @@ class TextRenderer extends Vue {
     return this.props ? evaluatePositionExpression('y', this.content, { props: this.props }) : this.content.y
   }
 
+  private get zValue() {
+    return this.z + (this.props ? evaluatePositionExpression('z', this.content, { props: this.props }) : this.content.z || 0)
+  }
+
   render(createElement: Vue.CreateElement): Vue.VNode {
     return createElement(
       'div',
@@ -316,6 +348,7 @@ class TextRenderer extends Vue {
           position: 'absolute',
           left: `${this.x}px`,
           top: `${this.y}px`,
+          zIndex: this.zValue,
         }
       },
       this.characters.map((c) => c.text).join('')
@@ -326,13 +359,14 @@ class TextRenderer extends Vue {
 Vue.component('text-renderer', TextRenderer)
 
 @Component({
-  props: ['content', 'props', 'container', 'templates']
+  props: ['content', 'props', 'container', 'templates', 'z']
 })
 class ImageRenderer extends Vue {
   content!: TemplateImageContent
   props!: unknown
   container!: Template
   templates!: Template[]
+  z!: number
 
   private get url() {
     return this.props ? evaluateUrlExpression(this.content, { props: this.props }) : this.content.url
@@ -358,6 +392,10 @@ class ImageRenderer extends Vue {
       return getFlexPosition(this.content, 'y', this.container, this.templates)
     }
     return this.props ? evaluatePositionExpression('y', this.content, { props: this.props }) : this.content.y
+  }
+
+  private get zValue() {
+    return this.z + (this.props ? evaluatePositionExpression('z', this.content, { props: this.props }) : this.content.z || 0)
   }
 
   private get imageLoader() {
@@ -391,6 +429,7 @@ class ImageRenderer extends Vue {
           position: 'absolute',
           left: `${this.x}px`,
           top: `${this.y}px`,
+          zIndex: this.zValue,
         },
         attrs: {
           src: this.base64,
@@ -403,13 +442,14 @@ class ImageRenderer extends Vue {
 Vue.component('image-renderer', ImageRenderer)
 
 @Component({
-  props: ['content', 'props', 'container', 'templates']
+  props: ['content', 'props', 'container', 'templates', 'z']
 })
 class ColorRenderer extends Vue {
   content!: TemplateColorContent
   props!: unknown
   container!: Template
   templates!: Template[]
+  z!: number
 
   private get width() {
     return this.props ? evaluateSizeExpression('width', this.content, { props: this.props }) : this.content.width
@@ -433,6 +473,10 @@ class ColorRenderer extends Vue {
     return this.props ? evaluatePositionExpression('y', this.content, { props: this.props }) : this.content.y
   }
 
+  private get zValue() {
+    return this.z + (this.props ? evaluatePositionExpression('z', this.content, { props: this.props }) : this.content.z || 0)
+  }
+
   render(createElement: Vue.CreateElement): Vue.VNode {
     return createElement(
       'div',
@@ -444,6 +488,7 @@ class ColorRenderer extends Vue {
           left: `${this.x}px`,
           top: `${this.y}px`,
           backgroundColor: this.content.color,
+          zIndex: this.zValue,
         },
       },
     )

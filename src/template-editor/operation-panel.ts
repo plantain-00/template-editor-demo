@@ -24,14 +24,18 @@ export class OperationPanel extends Vue {
     }
   }
 
-  changePosition(e: { target: { value: string } }, kind: 'x' | 'y') {
+  changePosition(e: { target: { value: string } }, kind: 'x' | 'y' | 'z') {
+    let value = +e.target.value
+    if (kind === 'z') {
+      value = Math.round(value)
+    }
     if (this.canvasState.selection.kind === 'content') {
       if (this.canvasState.selection.template.display === 'flex') {
         return
       }
-      this.canvasState.selection.content[kind] = +e.target.value
+      Vue.set(this.canvasState.selection.content, kind, value)
     } else if (this.canvasState.selection.kind === 'template') {
-      this.canvasState.selection.template[kind] = +e.target.value
+      Vue.set(this.canvasState.selection.template, kind, value)
     }
   }
 
@@ -44,7 +48,7 @@ export class OperationPanel extends Vue {
     }
   }
 
-  changePositionExpression(e: { target: { value: string } }, kind: 'x' | 'y') {
+  changePositionExpression(e: { target: { value: string } }, kind: 'x' | 'y' | 'z') {
     if (this.canvasState.selection.kind === 'content') {
       Vue.set(this.canvasState.selection.content, kind + 'Expression', e.target.value)
     }

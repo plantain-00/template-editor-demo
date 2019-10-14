@@ -1,7 +1,7 @@
 <div :style="canvasStyle">
   <div :style="styleGuideStyle">
     <template v-for="r in canvasState.styleGuide.templates">
-      <div :style="{ left: r.x + 'px', top: r.y + 'px', position: 'absolute' }">
+      <div :style="getTemplateStyle(r)">
         <template-renderer :template="r" :templates="canvasState.styleGuide.templates"></template-renderer>
       </div>
     </template>

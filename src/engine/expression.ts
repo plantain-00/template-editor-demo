@@ -33,23 +33,23 @@ export function evaluateSizeExpression(kind: 'width' | 'height', content: Size &
   const expression = content[expressionField]
   if (expression) {
     const result = evaluate(expression, model, level, precompiledStyleGuide)
-    if (typeof result === 'number') {
+    if (typeof result === 'number' && !isNaN(result)) {
       return result
     }
   }
   return content[kind]
 }
 
-export function evaluatePositionExpression(kind: 'x' | 'y', content: Position & PositionExpression, model: { [key: string]: unknown }, level?: 'info' | 'error', precompiledStyleGuide?: PrecompiledStyleGuide) {
-  const expressionField = (kind + 'Expression') as 'xExpression' | 'yExpression'
+export function evaluatePositionExpression(kind: 'x' | 'y' | 'z', content: Position & PositionExpression, model: { [key: string]: unknown }, level?: 'info' | 'error', precompiledStyleGuide?: PrecompiledStyleGuide) {
+  const expressionField = (kind + 'Expression') as 'xExpression' | 'yExpression' | 'zExpression'
   const expression = content[expressionField]
   if (expression) {
     const result = evaluate(expression, model, level, precompiledStyleGuide)
-    if (typeof result === 'number') {
-      return result
+    if (typeof result === 'number' && !isNaN(result)) {
+      return kind === 'z' ? Math.round(result) : result
     }
   }
-  return content[kind]
+  return content[kind] || 0
 }
 
 export function evaluateUrlExpression(content: TemplateImageContent, model: { [key: string]: unknown }, level?: 'info' | 'error', precompiledStyleGuide?: PrecompiledStyleGuide) {
@@ -75,7 +75,7 @@ export function evaluateTextExpression(content: TemplateTextContent, model: { [k
 export function evaluateFontSizeExpression(content: TemplateTextContent, model: { [key: string]: unknown }, level?: 'info' | 'error', precompiledStyleGuide?: PrecompiledStyleGuide) {
   if (content.fontSizeExpression) {
     const result = evaluate(content.fontSizeExpression, model, level, precompiledStyleGuide)
-    if (typeof result === 'number') {
+    if (typeof result === 'number' && !isNaN(result)) {
       return result
     }
   }

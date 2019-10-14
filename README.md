@@ -210,8 +210,25 @@ interface MarginField {
 
 生成 19 个商品组成的海报，耗时由没有预编辑时的 26.8ms 减少到了加了预编辑时的 18.2 ms。
 
+### 内容的 z 轴顺序
+
+```ts
+interface Position {
+  x: number
+  y: number
+  z?: integer
+}
+```
+
+渲染为 canvas 时，按内容的 z 从小到大绘制。
+
+渲染为 UI 组件时，通过 css z-index 来实现。
+
+z 未设置时是 0。
+
+组件中，和 x y 的逻辑一样，内容的 z 值是一个相对值。
+
 ## todo
 
 + expression ui(json editor, tokenize)
 + image rotate
-+ z and z expression
