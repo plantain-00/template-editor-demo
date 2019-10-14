@@ -52,6 +52,15 @@
       <input type="text" :value="canvasState.selection.content.yExpression"
         @change="changePositionExpression($event, 'y')" />
     </div>
+    <div>
+      z
+      <input type="number" :value="canvasState.selection.content.z" @change="changePosition($event, 'z')" />
+    </div>
+    <div>
+      z f(x)
+      <input type="text" :value="canvasState.selection.content.zExpression"
+        @change="changePositionExpression($event, 'z')" />
+    </div>
     <div v-if="canvasState.selection.content.kind === 'text' || canvasState.selection.content.kind === 'image' || canvasState.selection.content.kind === 'color'">
       <div>
         width
@@ -111,6 +120,10 @@
     <div>
       y
       <input type="number" :value="canvasState.selection.template.y" @change="changePosition($event, 'y')" />
+    </div>
+    <div>
+      z
+      <input type="number" :value="canvasState.selection.template.z" @change="changePosition($event, 'z')" />
     </div>
     <div>
       width

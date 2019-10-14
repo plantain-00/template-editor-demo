@@ -24,6 +24,7 @@ export class MaskLayer extends Vue {
   private clipboard: CanvasSelection = {
     kind: 'none'
   }
+  private mouseIsDown = false
 
   get maskStyle() {
     let cursor: string
@@ -73,6 +74,7 @@ export class MaskLayer extends Vue {
   }
 
   mousedown(e: MouseEvent) {
+    this.mouseIsDown = true
     // add content
     if (this.canvasState.addKind) {
       this.canvasState.action()
@@ -199,6 +201,10 @@ export class MaskLayer extends Vue {
   }
 
   mouseup(e: MouseEvent) {
+    if (!this.mouseIsDown) {
+      return
+    }
+    this.mouseIsDown = false
     this.canvasState.mouseupX = e.offsetX
     this.canvasState.mouseupY = e.offsetY
 
@@ -206,7 +212,7 @@ export class MaskLayer extends Vue {
       // contants before and after moving
       const constantsX = (this.canvasState.styleGuideTranslateX - this.canvasState.styleGuideWidth / 2) * this.canvasState.styleGuideScale + this.canvasState.styleGuideWidth / 2
       const constantsY = (this.canvasState.styleGuideTranslateY - this.canvasState.styleGuideHeight / 2) * this.canvasState.styleGuideScale + this.canvasState.styleGuideHeight / 2
-      
+
       this.canvasState.isDraggingForMoving = false
       // keep canvas stable
       this.canvasState.styleGuideTranslateX = (constantsX - this.canvasState.styleGuideWidth / 2) / this.canvasState.styleGuideScale + this.canvasState.styleGuideWidth / 2
@@ -339,6 +345,7 @@ function selectTemplate(styleGuide: StyleGuide, position1: Position, position2: 
     width: Math.abs(position1.x - position2.x),
     height: Math.abs(position1.y - position2.y),
   }
+  let potentialTemplateRegion: Required<Region> & { parent?: { content: TemplateReferenceContent, template: Template, index: number }, template: Template } | undefined
   for (const templateRegion of iterateAllTemplateRegions(undefined, styleGuide)) {
     const positions: Position[] = [
       {
@@ -350,18 +357,30 @@ function selectTemplate(styleGuide: StyleGuide, position1: Position, position2: 
         y: templateRegion.y + templateRegion.height,
       },
     ]
-    if (isInRegion(positions, region)) {
-      return templateRegion.template
+    if ((!potentialTemplateRegion || templateRegion.z >= potentialTemplateRegion.z) && isInRegion(positions, region)) {
+      potentialTemplateRegion = templateRegion
     }
+  }
+  if (potentialTemplateRegion) {
+    return potentialTemplateRegion.template
   }
   return null
 }
 
 function selectContent(styleGuide: StyleGuide, position: Position): { kind: 'content', content: TemplateContent, template: Template } | { kind: 'template', template: Template } | null {
+  let potentialTemplateRegion: Required<Region> & {
+    index: number;
+    contents: TemplateContent[];
+    content: TemplateContent;
+    template: Template;
+  } | undefined
   for (const templateRegion of iterateAllContentRegions(undefined, styleGuide)) {
-    if (isInRegion(position, templateRegion)) {
-      return { kind: 'content', content: templateRegion.content, template: templateRegion.template }
+    if ((!potentialTemplateRegion || templateRegion.z >= potentialTemplateRegion.z) && isInRegion(position, templateRegion)) {
+      potentialTemplateRegion = templateRegion
     }
+  }
+  if (potentialTemplateRegion) {
+    return { kind: 'content', content: potentialTemplateRegion.content, template: potentialTemplateRegion.template }
   }
   const t = selectPositionTemplate(styleGuide, position)
   if (t) {
@@ -371,10 +390,11 @@ function selectContent(styleGuide: StyleGuide, position: Position): { kind: 'con
 }
 
 function selectPositionTemplate(styleGuide: StyleGuide, position: Position): Template | null {
+  let result: Template | null = null
   for (const template of styleGuide.templates) {
-    if (isInRegion(position, template)) {
-      return template
+    if ((!result || (template.z || 0) >= (result.z || 0)) && isInRegion(position, template)) {
+      result = template
     }
   }
-  return null
+  return result
 }
