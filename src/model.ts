@@ -18,9 +18,11 @@ export interface TemplateTextContent extends Region, RegionExpression, Generatio
   kind: 'text'
   text: string
   textExpression?: string
+  textExpressionId?: string
   fontFamily: string
   fontSize: number
   fontSizeExpression?: string
+  fontSizeExpressionId?: string
   color: string
   characters?: TextCharacter[]
 }
@@ -37,6 +39,7 @@ export interface TemplateImageContent extends Region, RegionExpression, Generati
   kind: 'image'
   url: string
   urlExpression?: string
+  urlExpressionId?: string
   opacity?: number
   base64?: string
 }
@@ -50,6 +53,7 @@ export interface TemplateReferenceContent extends Position, PositionExpression, 
   kind: 'reference'
   id: string
   props?: string
+  propsIds?: { [key: string]: string }
 }
 
 export interface TemplateSnapshotContent extends Position, PositionExpression, Hidden {
@@ -67,6 +71,9 @@ export interface PositionExpression {
   xExpression?: string
   yExpression?: string
   zExpression?: string
+  xExpressionId?: string
+  yExpressionId?: string
+  zExpressionId?: string
 }
 
 export interface Size {
@@ -77,6 +84,8 @@ export interface Size {
 export interface SizeExpression {
   widthExpression?: string
   heightExpression?: string
+  widthExpressionId?: string
+  heightExpressionId?: string
 }
 
 export interface Region extends Position, Size { }
@@ -85,7 +94,9 @@ interface RegionExpression extends PositionExpression, SizeExpression { }
 
 interface GenerationField {
   if?: string
+  ifId?: string
   repeat?: string
+  repeatId?: string
 }
 
 interface FlexField extends MarginField {
@@ -117,3 +128,15 @@ export type CanvasSelection =
   }
 
 type integer = number
+
+export interface PresetExpression {
+  id: string
+  name: string
+  expression: string
+  variables: (string | PresetExpressionVariable)[]
+}
+
+interface PresetExpressionVariable {
+  tokenIndex: number
+  enum?: string[]
+}
