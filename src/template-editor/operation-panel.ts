@@ -6,6 +6,7 @@ import { templateEditorOperationPanelTemplateHtml, templateEditorOperationPanelT
 import { CanvasState } from './canvas-state'
 import { TemplateContent, Template } from '../model'
 import { renderTemplate, loadTemplateImages } from '../engine/renderer'
+import { ExpressionInputChangeData } from './expression-input'
 
 @Component({
   render: templateEditorOperationPanelTemplateHtml,
@@ -25,41 +26,43 @@ export class OperationPanel extends Vue {
   }
 
   changePosition(e: { target: { value: string } }, kind: 'x' | 'y' | 'z') {
-    let value = +e.target.value
-    if (kind === 'z') {
-      value = Math.round(value)
-    }
-    if (this.canvasState.selection.kind === 'content') {
-      if (this.canvasState.selection.template.display === 'flex') {
-        return
+    if (this.canvasState.selection.kind === 'template') {
+      let value = +e.target.value
+      if (kind === 'z') {
+        value = Math.round(value)
       }
-      Vue.set(this.canvasState.selection.content, kind, value)
-    } else if (this.canvasState.selection.kind === 'template') {
       Vue.set(this.canvasState.selection.template, kind, value)
     }
   }
 
-  changeSize(e: { target: { value: string } }, kind: 'width' | 'height') {
-    if (this.canvasState.selection.kind === 'content'
-      && (this.canvasState.selection.content.kind === 'image' || this.canvasState.selection.content.kind === 'text' || this.canvasState.selection.content.kind === 'color')) {
-      this.canvasState.selection.content[kind] = +e.target.value
-    } else if (this.canvasState.selection.kind === 'template') {
-      this.canvasState.selection.template[kind] = +e.target.value
-    }
-  }
-
-  changePositionExpression(e: { target: { value: string } }, kind: 'x' | 'y' | 'z') {
+  changePositionExpression(e: ExpressionInputChangeData, kind: 'x' | 'y' | 'z') {
     if (this.canvasState.selection.kind === 'content') {
-      Vue.set(this.canvasState.selection.content, kind + 'Expression', e.target.value)
+      if (e.literal !== undefined && (this.canvasState.selection.template.display !== 'flex' || kind === 'z')) {
+        let value = +e.literal
+        if (kind === 'z') {
+          value = Math.round(value)
+        }
+        Vue.set(this.canvasState.selection.content, kind, value)
+      }
+      Vue.set(this.canvasState.selection.content, kind + 'Expression', e.expression)
+      Vue.set(this.canvasState.selection.content, kind + 'ExpressionId', e.expressionId)
     }
   }
 
-  changeSizeExpression(e: { target: { value: string } }, kind: 'width' | 'height') {
+  changeSizeExpression(e: ExpressionInputChangeData, kind: 'width' | 'height') {
     if (this.canvasState.selection.kind === 'content'
       && (this.canvasState.selection.content.kind === 'image' || this.canvasState.selection.content.kind === 'text' || this.canvasState.selection.content.kind === 'color')) {
-      Vue.set(this.canvasState.selection.content, kind + 'Expression', e.target.value)
+      if (e.literal !== undefined) {
+        this.canvasState.selection.content[kind] = +e.literal
+      }
+      Vue.set(this.canvasState.selection.content, kind + 'Expression', e.expression)
+      Vue.set(this.canvasState.selection.content, kind + 'ExpressionId', e.expressionId)
     } else if (this.canvasState.selection.kind === 'template') {
-      Vue.set(this.canvasState.selection.template, kind + 'Expression', e.target.value)
+      if (e.literal !== undefined) {
+        this.canvasState.selection.template[kind] = +e.literal
+      }
+      Vue.set(this.canvasState.selection.template, kind + 'Expression', e.expression)
+      Vue.set(this.canvasState.selection.template, kind + 'ExpressionId', e.expressionId)
     }
   }
 
@@ -75,9 +78,10 @@ export class OperationPanel extends Vue {
     }
   }
 
-  changeIf(e: { target: { value: string } }) {
+  changeIf(e: { expression: string, expressionId?: string }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
-      Vue.set(this.canvasState.selection.content, 'if', e.target.value)
+      Vue.set(this.canvasState.selection.content, 'if', e.expression)
+      Vue.set(this.canvasState.selection.content, 'ifId', e.expressionId)
     }
   }
 
@@ -87,15 +91,13 @@ export class OperationPanel extends Vue {
     }
   }
 
-  changeText(e: { target: { value: string } }) {
+  changeTextExpression(e: ExpressionInputChangeData) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
-      this.canvasState.selection.content.text = e.target.value
-    }
-  }
-
-  changeTextExpression(e: { target: { value: string } }) {
-    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
-      Vue.set(this.canvasState.selection.content, 'textExpression', e.target.value)
+      if (e.literal !== undefined) {
+        this.canvasState.selection.content.text = e.literal
+      }
+      Vue.set(this.canvasState.selection.content, 'textExpression', e.expression)
+      Vue.set(this.canvasState.selection.content, 'textExpressionId', e.expressionId)
     }
   }
 
@@ -105,15 +107,13 @@ export class OperationPanel extends Vue {
     }
   }
 
-  changeFontSize(e: { target: { value: string } }) {
+  changeFontSizeExpression(e: ExpressionInputChangeData) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
-      this.canvasState.selection.content.fontSize = +e.target.value
-    }
-  }
-
-  changeFontSizeExpression(e: { target: { value: string } }) {
-    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
-      Vue.set(this.canvasState.selection.content, 'fontSizeExpression', e.target.value)
+      if (e.literal !== undefined) {
+        this.canvasState.selection.content.fontSize = +e.literal
+      }
+      Vue.set(this.canvasState.selection.content, 'fontSizeExpression', e.expression)
+      Vue.set(this.canvasState.selection.content, 'fontSizeExpressionId', e.expressionId)
     }
   }
 
@@ -123,15 +123,13 @@ export class OperationPanel extends Vue {
     }
   }
 
-  changeImageUrl(e: { target: { value: string } }) {
+  changeImageUrlExpression(e: ExpressionInputChangeData) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'image') {
-      this.canvasState.selection.content.url = e.target.value
-    }
-  }
-
-  changeImageUrlExpression(e: { target: { value: string } }) {
-    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'image') {
-      Vue.set(this.canvasState.selection.content, 'urlExpression', e.target.value)
+      if (e.literal !== undefined) {
+        this.canvasState.selection.content.url = e.literal
+      }
+      Vue.set(this.canvasState.selection.content, 'urlExpression', e.expression)
+      Vue.set(this.canvasState.selection.content, 'urlExpressionId', e.expressionId)
     }
   }
 
@@ -274,9 +272,16 @@ export class OperationPanel extends Vue {
     return ''
   }
 
-  changeParameterValue(e: { target: { value: string } }, parameter: string) {
+  getParameterExpressionId(parameter: string) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'reference' && this.canvasState.selection.content.propsIds) {
+      return this.canvasState.selection.content.propsIds[parameter]
+    }
+    return undefined
+  }
+
+  changeParameterValue(e: ExpressionInputChangeData, parameter: string) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'reference') {
-      const value = e.target.value
+      const value = e.expression
       let propertyAst: Expression | undefined
       if (value) {
         try {
@@ -309,6 +314,10 @@ export class OperationPanel extends Vue {
           range: [0, 0],
         }))
       }
+      Vue.set(this.canvasState.selection.content, 'propsIds', {
+        ...this.canvasState.selection.content.propsIds,
+        [parameter]: e.expressionId,
+      })
     }
   }
 }

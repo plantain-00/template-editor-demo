@@ -230,5 +230,7 @@ z 未设置时是 0。
 
 ## todo
 
-+ expression ui(json editor, tokenize)
-+ image rotate
++ preset expression(get part of array)
++ intellisense(props)
++ repeat expression ui
++ expression ast ui

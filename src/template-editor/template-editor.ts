@@ -10,6 +10,7 @@ import { SelectionLayer } from './selection-layer'
 import { MaskLayer } from './mask-layer'
 import { ContextMenu } from './context-menu'
 import { OperationPanel } from './operation-panel'
+import { ExpressionInput } from './expression-input'
 
 @Component({
   render: templateEditorTemplateEditorTemplateHtml,
@@ -36,3 +37,4 @@ Vue.component('selection-layer', SelectionLayer)
 Vue.component('mask-layer', MaskLayer)
 Vue.component('context-menu', ContextMenu)
 Vue.component('operation-panel', OperationPanel)
+Vue.component('expression-input', ExpressionInput)

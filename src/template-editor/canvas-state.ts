@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import { CanvasSelection, StyleGuide } from '../model'
+import { CanvasSelection, StyleGuide, PresetExpression } from '../model'
 import { iterateAllTemplateRegions, iterateAllContentRegions } from '../utils'
 
 @Component
@@ -136,6 +136,49 @@ export class CanvasState extends Vue {
     }
     return []
   }
+
+  presetExpressions: PresetExpression[] = [
+    {
+      id: '1',
+      name: 'price count',
+      expression: 'commodity.prices.length == 3',
+      variables: [
+        {
+          tokenIndex: 6
+        },
+        'prices'
+      ]
+    },
+    {
+      id: '2',
+      name: 'commodity property',
+      expression: 'commodity.name',
+      variables: [
+        'commodity',
+        {
+          tokenIndex: 2,
+          enum: [
+            'name',
+            'id',
+            'description',
+            'image'
+          ]
+        }
+      ]
+    },
+    {
+      id: '3',
+      name: 'price index',
+      expression: 'commodity?.prices?.[0]',
+      variables: [
+        'the',
+        {
+          tokenIndex: 5
+        },
+        'th price'
+      ]
+    }
+  ]
 }
 
 function equal(n1: number, n2: number) {
