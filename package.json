@@ -31,6 +31,7 @@
     "@typescript-eslint/eslint-plugin": "2.3.3",
     "@typescript-eslint/parser": "2.3.3",
     "autoprefixer": "9.6.4",
+    "ava": "^2.4.0",
     "clean-css-cli": "4.3.0",
     "clean-scripts": "1.12.1",
     "cross-env": "6.0.3",

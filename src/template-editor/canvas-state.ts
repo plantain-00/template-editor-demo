@@ -132,7 +132,7 @@ export class CanvasState extends Vue {
 
   get allContentRegions() {
     if (this.selection.kind === 'content') {
-      return Array.from(iterateAllContentRegions(this.selection.content, this.styleGuide))
+      return Array.from(iterateAllContentRegions(this.selection.content, this.styleGuide, this.selection.template))
     }
     return []
   }

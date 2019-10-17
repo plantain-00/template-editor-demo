@@ -3,7 +3,7 @@ import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
 import { templateEditorContextMenuTemplateHtml, templateEditorContextMenuTemplateHtmlStatic } from '../variables'
-import { isInRegion, iterateAllContentRegions } from '../utils'
+import { isInRegion } from '../utils'
 
 @Component({
   render: templateEditorContextMenuTemplateHtml,
@@ -70,11 +70,7 @@ export class ContextMenu extends Vue {
         }
       }
     } else if (this.canvasState.selection.kind === 'content') {
-      for (const contentRegion of iterateAllContentRegions(
-        this.canvasState.selection.content,
-        this.canvasState.styleGuide,
-        this.canvasState.selection.template
-      )) {
+      for (const contentRegion of this.canvasState.allContentRegions) {
         contentRegion.contents.splice(contentRegion.index, 1)
         return
       }
