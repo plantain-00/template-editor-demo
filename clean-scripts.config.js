@@ -45,6 +45,8 @@ module.exports = {
     typeCoverage: 'type-coverage -p . --ignore-files src/variables.ts --ignore-catch'
   },
   test: [
+    'tsc -p tsconfig.test.json',
+    'ava',
     'tsc -p spec',
     'karma start spec/karma.config.js'
   ],

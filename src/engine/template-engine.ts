@@ -6,11 +6,12 @@ import { getCharacters } from './mock'
 import { Expression } from 'expression-engine'
 
 export async function generate(template: Template, styleGuide: StyleGuide, model: { [key: string]: unknown }, precompiledStyleGuide?: PrecompiledStyleGuide): Promise<Template> {
+  const contents = await Promise.all(template.contents.map((c) => generateContent(c, styleGuide, model, precompiledStyleGuide)))
   const result: Template = {
     ...template,
     x: 0,
     y: 0,
-    contents: (await Promise.all(template.contents.map((c) => generateContent(c, styleGuide, model, precompiledStyleGuide)))).flat()
+    contents: contents.reduce((p, c) => p.concat(c), [])
   }
   result.width = evaluateSizeExpression('width', result, model, 'error', precompiledStyleGuide)
   delete result.widthExpression

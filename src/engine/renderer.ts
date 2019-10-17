@@ -14,17 +14,35 @@ export function renderTemplate(template: Template, templates: Template[], images
   canvas.height = template.height
   const ctx = canvas.getContext('2d')
   if (ctx) {
-    ctx.fillStyle = 'white'
-    ctx.fillRect(0, 0, template.width, template.height)
     layoutFlex(template, templates)
-    const actions: Array<{ z: number, action: () => void }> = []
-    renderSymbol(ctx, template, templates, images, actions, { x: 0, y: 0, z: 0 })
-    actions.sort((a, b) => a.z - b.z)
-    for (const { action } of actions) {
-      action()
-    }
+    renderTemplateOnCanvas(ctx, template, templates, images)
   }
   return canvas.toDataURL('image/jpeg')
+}
+
+/**
+ * @internal
+ */
+export function renderTemplateOnCanvas(ctx: CanvasRenderingContext2D | undefined, template: Template, templates: Template[], images: { [url: string]: HTMLImageElement }, sort = true) {
+  const infos: string[] = []
+  if (ctx) {
+    ctx.fillStyle = 'white'
+    ctx.fillRect(0, 0, template.width, template.height)
+  } else {
+    infos.push(
+      `ctx.fillStyle = 'white'`,
+      `ctx.fillRect(0, 0, ${template.width}, ${template.height})`,
+    )
+  }
+  const actions: Array<{ z: number, action: (ctx: CanvasRenderingContext2D | undefined) => string[] }> = []
+  renderSymbol(template, templates, images, actions, { x: 0, y: 0, z: 0 })
+  if (sort) {
+    actions.sort((a, b) => a.z - b.z)
+  }
+  for (const { action } of actions) {
+    infos.push(...action(ctx))
+  }
+  return infos
 }
 
 export async function loadTemplateImages(
@@ -76,11 +94,10 @@ function collectTemplateImages(
 }
 
 function renderSymbol(
-  ctx: CanvasRenderingContext2D,
   template: Template,
   templates: Template[],
   images: { [url: string]: HTMLImageElement },
-  actions: Array<{ z: number, action: () => void }>,
+  actions: Array<{ z: number, action: (ctx: CanvasRenderingContext2D | undefined) => string[] }>,
   position: Required<Position>,
   props?: unknown,
 ) {
@@ -92,13 +109,22 @@ function renderSymbol(
       const content = renderItem.content
       actions.push({
         z,
-        action: () => {
-          ctx.fillStyle = content.color
-          ctx.textBaseline = 'top'
+        action: (ctx) => {
           const fontSize = props ? evaluateFontSizeExpression(content, { props }) : content.fontSize
-          ctx.font = `${fontSize}px ${content.fontFamily}`
           const characters = content.characters || getCharacters(props ? evaluateTextExpression(content, { props }) : content.text)
-          ctx.fillText(characters.map((c) => c.text).join(''), x, y)
+          if (ctx) {
+            ctx.fillStyle = content.color
+            ctx.textBaseline = 'top'
+            ctx.font = `${fontSize}px ${content.fontFamily}`
+            ctx.fillText(characters.map((c) => c.text).join(''), x, y)
+            return []
+          }
+          return [
+            `ctx.fillStyle = ${content.color}`,
+            `ctx.textBaseline = 'top'`,
+            `ctx.font = ${fontSize}px ${content.fontFamily}`,
+            `ctx.fillText(${characters.map((c) => c.text).join('')}, ${x}, ${y})`,
+          ]
         },
       })
     } else if (renderItem.kind === 'image') {
@@ -118,7 +144,13 @@ function renderSymbol(
       }
       actions.push({
         z,
-        action: () => ctx.drawImage(image, x, y, width, height),
+        action: (ctx) => {
+          if (ctx) {
+            ctx.drawImage(image, x, y, width, height)
+            return []
+          }
+          return [`ctx.drawImage(${url}, ${x}, ${y}, ${width}, ${height})`]
+        },
       })
     } else if (renderItem.kind === 'color') {
       const content = renderItem.content
@@ -128,14 +160,21 @@ function renderSymbol(
 
       actions.push({
         z,
-        action: () => {
-          ctx.fillStyle = content.color
-          ctx.fillRect(x, y, width, height)
+        action: (ctx) => {
+          if (ctx) {
+            ctx.fillStyle = content.color
+            ctx.fillRect(x, y, width, height)
+            return []
+          }
+          return [
+            `ctx.fillStyle = ${content.color}`,
+            `ctx.fillRect(${x}, ${y}, ${width}, ${height})`,
+          ]
         },
       })
     } else if (renderItem.kind === 'symbol') {
       const newProps = renderItem.props ? evaluate(renderItem.props, { props }) : undefined
-      renderSymbol(ctx, renderItem.symbol, templates, images, actions, { x, y, z }, newProps)
+      renderSymbol(renderItem.symbol, templates, images, actions, { x, y, z }, newProps)
     }
   }
 }
