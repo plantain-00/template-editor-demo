@@ -3,9 +3,10 @@ import Component from 'vue-class-component'
 
 import { Template, TemplateTextContent, TemplateImageContent, TemplateReferenceContent, TemplateSnapshotContent, Position, TemplateColorContent } from '../model'
 import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression } from './expression'
-import { layoutFlex, getFlexPosition } from './layout-engine'
+import { layoutFlex } from './layout-engine'
 import { applyImageOpacity, loadImage } from './image'
 import { getCharacters } from './mock'
+import { getPosition } from '../utils'
 
 export function renderTemplate(template: Template, templates: Template[], images: { [url: string]: HTMLImageElement }) {
   const canvas = document.createElement('canvas')
@@ -164,7 +165,7 @@ export class TemplateRenderer extends Vue {
           'symbol-renderer',
           {
             props: {
-              template: this.template,
+              reference: this.template,
               templates: this.templates,
               content: {
                 x: 0,
@@ -180,54 +181,48 @@ export class TemplateRenderer extends Vue {
 }
 
 @Component({
-  props: ['template', 'templates', 'props', 'content', 'container', 'containerProps', 'z']
+  props: ['reference', 'templates', 'referenceProps', 'content', 'template', 'props', 'z']
 })
 class SymbolRenderer extends Vue {
-  template!: Template
+  reference!: Template
   templates!: Template[]
-  props!: unknown
+  referenceProps!: unknown
   content!: TemplateReferenceContent | TemplateSnapshotContent
-  container?: Template
-  containerProps!: unknown
+  template?: Template
+  props!: unknown
   z!: number
 
   private get width() {
-    return this.props ? evaluateSizeExpression('width', this.template, { props: this.props }) : this.template.width
+    return this.referenceProps ? evaluateSizeExpression('width', this.reference, { props: this.referenceProps }) : this.reference.width
   }
 
   private get height() {
-    return this.props ? evaluateSizeExpression('height', this.template, { props: this.props }) : this.template.height
+    return this.referenceProps ? evaluateSizeExpression('height', this.reference, { props: this.referenceProps }) : this.reference.height
   }
 
   private get x() {
-    if (this.container && this.container.display === 'flex') {
-      return getFlexPosition(this.content, 'x', this.container, this.templates)
-    }
-    return this.containerProps ? evaluatePositionExpression('x', this.content, { props: this.containerProps }) : this.content.x
+    return getPosition(this.props, 'x', this.content, this.template, this.templates)
   }
 
   private get y() {
-    if (this.container && this.container.display === 'flex') {
-      return getFlexPosition(this.content, 'y', this.container, this.templates)
-    }
-    return this.containerProps ? evaluatePositionExpression('y', this.content, { props: this.containerProps }) : this.content.y
+    return getPosition(this.props, 'y', this.content, this.template, this.templates)
   }
 
   private get zValue() {
-    return this.z + (this.containerProps ? evaluatePositionExpression('z', this.content, { props: this.containerProps }) : this.content.z || 0)
+    return this.z + getPosition(this.props, 'z', this.content, this.template, this.templates)
   }
 
   render(createElement: Vue.CreateElement): Vue.VNode {
     const children: Vue.VNode[] = []
-    for (const renderItem of iterateSymbolRenderItem(this.template, this.templates)) {
+    for (const renderItem of iterateSymbolRenderItem(this.reference, this.templates)) {
       if (renderItem.kind === 'text') {
         children.push(createElement(
           'text-renderer',
           {
             props: {
               content: renderItem.content,
-              props: this.props,
-              container: this.template,
+              props: this.referenceProps,
+              template: this.reference,
               templates: this.templates,
               z: this.zValue,
             }
@@ -239,8 +234,8 @@ class SymbolRenderer extends Vue {
           {
             props: {
               content: renderItem.content,
-              props: this.props,
-              container: this.template,
+              props: this.referenceProps,
+              template: this.reference,
               templates: this.templates,
               z: this.zValue,
             }
@@ -252,8 +247,8 @@ class SymbolRenderer extends Vue {
           {
             props: {
               content: renderItem.content,
-              props: this.props,
-              container: this.template,
+              props: this.referenceProps,
+              template: this.reference,
               templates: this.templates,
               z: this.zValue,
             }
@@ -261,17 +256,17 @@ class SymbolRenderer extends Vue {
         ))
       } else if (renderItem.kind === 'symbol') {
         const content = renderItem.content
-        const props = renderItem.props ? evaluate(renderItem.props, { props: this.props }) : undefined
+        const props = renderItem.props ? evaluate(renderItem.props, { props: this.referenceProps }) : undefined
         children.push(createElement(
           'symbol-renderer',
           {
             props: {
-              template: renderItem.symbol,
+              reference: renderItem.symbol,
               templates: this.templates,
-              props,
+              referenceProps: props,
               content,
-              container: this.template,
-              containerProps: this.props,
+              template: this.reference,
+              props: this.referenceProps,
               z: this.zValue,
             }
           }
@@ -298,12 +293,12 @@ class SymbolRenderer extends Vue {
 Vue.component('symbol-renderer', SymbolRenderer)
 
 @Component({
-  props: ['content', 'props', 'container', 'templates', 'z']
+  props: ['content', 'props', 'template', 'templates', 'z']
 })
 class TextRenderer extends Vue {
   content!: TemplateTextContent
   props!: unknown
-  container!: Template
+  template!: Template
   templates!: Template[]
   z!: number
 
@@ -320,21 +315,15 @@ class TextRenderer extends Vue {
   }
 
   private get x() {
-    if (this.container.display === 'flex') {
-      return getFlexPosition(this.content, 'x', this.container, this.templates)
-    }
-    return this.props ? evaluatePositionExpression('x', this.content, { props: this.props }) : this.content.x
+    return getPosition(this.props, 'x', this.content, this.template, this.templates)
   }
 
   private get y() {
-    if (this.container.display === 'flex') {
-      return getFlexPosition(this.content, 'y', this.container, this.templates)
-    }
-    return this.props ? evaluatePositionExpression('y', this.content, { props: this.props }) : this.content.y
+    return getPosition(this.props, 'y', this.content, this.template, this.templates)
   }
 
   private get zValue() {
-    return this.z + (this.props ? evaluatePositionExpression('z', this.content, { props: this.props }) : this.content.z || 0)
+    return this.z + getPosition(this.props, 'z', this.content, this.template, this.templates)
   }
 
   render(createElement: Vue.CreateElement): Vue.VNode {
@@ -359,12 +348,12 @@ class TextRenderer extends Vue {
 Vue.component('text-renderer', TextRenderer)
 
 @Component({
-  props: ['content', 'props', 'container', 'templates', 'z']
+  props: ['content', 'props', 'template', 'templates', 'z']
 })
 class ImageRenderer extends Vue {
   content!: TemplateImageContent
   props!: unknown
-  container!: Template
+  template!: Template
   templates!: Template[]
   z!: number
 
@@ -381,21 +370,15 @@ class ImageRenderer extends Vue {
   }
 
   private get x() {
-    if (this.container.display === 'flex') {
-      return getFlexPosition(this.content, 'x', this.container, this.templates)
-    }
-    return this.props ? evaluatePositionExpression('x', this.content, { props: this.props }) : this.content.x
+    return getPosition(this.props, 'x', this.content, this.template, this.templates)
   }
 
   private get y() {
-    if (this.container.display === 'flex') {
-      return getFlexPosition(this.content, 'y', this.container, this.templates)
-    }
-    return this.props ? evaluatePositionExpression('y', this.content, { props: this.props }) : this.content.y
+    return getPosition(this.props, 'y', this.content, this.template, this.templates)
   }
 
   private get zValue() {
-    return this.z + (this.props ? evaluatePositionExpression('z', this.content, { props: this.props }) : this.content.z || 0)
+    return this.z + getPosition(this.props, 'z', this.content, this.template, this.templates)
   }
 
   private get imageLoader() {
@@ -442,12 +425,12 @@ class ImageRenderer extends Vue {
 Vue.component('image-renderer', ImageRenderer)
 
 @Component({
-  props: ['content', 'props', 'container', 'templates', 'z']
+  props: ['content', 'props', 'template', 'templates', 'z']
 })
 class ColorRenderer extends Vue {
   content!: TemplateColorContent
   props!: unknown
-  container!: Template
+  template!: Template
   templates!: Template[]
   z!: number
 
@@ -460,21 +443,15 @@ class ColorRenderer extends Vue {
   }
 
   private get x() {
-    if (this.container.display === 'flex') {
-      return getFlexPosition(this.content, 'x', this.container, this.templates)
-    }
-    return this.props ? evaluatePositionExpression('x', this.content, { props: this.props }) : this.content.x
+    return getPosition(this.props, 'x', this.content, this.template, this.templates)
   }
 
   private get y() {
-    if (this.container.display === 'flex') {
-      return getFlexPosition(this.content, 'y', this.container, this.templates)
-    }
-    return this.props ? evaluatePositionExpression('y', this.content, { props: this.props }) : this.content.y
+    return getPosition(this.props, 'y', this.content, this.template, this.templates)
   }
 
   private get zValue() {
-    return this.z + (this.props ? evaluatePositionExpression('z', this.content, { props: this.props }) : this.content.z || 0)
+    return this.z + getPosition(this.props, 'z', this.content, this.template, this.templates)
   }
 
   render(createElement: Vue.CreateElement): Vue.VNode {

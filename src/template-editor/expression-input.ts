@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { tokenizeExpression } from 'expression-engine'
+import { tokenizeExpression, Token } from 'expression-engine'
 
 import { CanvasState } from './canvas-state'
+import { PresetExpression } from '../model'
 
 @Component({
   props: ['literal', 'literalType', 'expression', 'expressionId', 'canvasState']
@@ -68,10 +69,17 @@ export class ExpressionInput extends Vue {
                 } else {
                   const presetExpression = this.canvasState.presetExpressions.find((p) => p.id === id)
                   if (presetExpression) {
-                    this.emitChange({
-                      expression: presetExpression.expression,
-                      expressionId: id,
-                    })
+                    if (this.expression && matchPattern(presetExpression, this.currentTokens)) {
+                      this.emitChange({
+                        expression: this.expression,
+                        expressionId: id,
+                      })
+                    } else {
+                      this.emitChange({
+                        expression: presetExpression.expression,
+                        expressionId: id,
+                      })
+                    }
                   }
                 }
               },
@@ -154,6 +162,9 @@ export class ExpressionInput extends Vue {
               },
               domProps: {
                 value: currentToken.value
+              },
+              style: {
+                width: '50px',
               },
               on: {
                 change: (e: { target: { value: string } }) => {
@@ -287,6 +298,47 @@ export class ExpressionInput extends Vue {
     }
     return input
   }
+}
+
+function matchPattern(presetExpression: PresetExpression, currentTokens: Token[]) {
+  const tokens = tokenizeExpression(presetExpression.expression)
+  if (tokens.length !== currentTokens.length) {
+    return false
+  }
+  const tokenIndexes: number[] = []
+  for (const v of presetExpression.variables) {
+    if (typeof v !== 'string') {
+      tokenIndexes.push(v.tokenIndex)
+    }
+  }
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i]
+    const currentToken = currentTokens[i]
+    if (token.type !== currentToken.type) {
+      return false
+    }
+    if (!tokenIndexes.includes(i)) {
+      if (token.type === 'Identifier' && currentToken.type === 'Identifier' && token.name !== currentToken.name) {
+        return false
+      }
+      if (token.type === 'BooleanLiteral' && currentToken.type === 'BooleanLiteral' && token.value !== currentToken.value) {
+        return false
+      }
+      if (token.type === 'KeywordToken' && currentToken.type === 'KeywordToken' && token.name !== currentToken.name) {
+        return false
+      }
+      if (token.type === 'NumericLiteral' && currentToken.type === 'NumericLiteral' && token.value !== currentToken.value) {
+        return false
+      }
+      if (token.type === 'PunctuatorToken' && currentToken.type === 'PunctuatorToken' && token.value !== currentToken.value) {
+        return false
+      }
+      if (token.type === 'StringLiteral' && currentToken.type === 'StringLiteral' && token.value !== currentToken.value) {
+        return false
+      }
+    }
+  }
+  return true
 }
 
 function replaceNonStringToken(expression: string, value: string, range: [number, number]) {

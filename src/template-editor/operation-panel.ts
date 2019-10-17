@@ -167,6 +167,15 @@ export class OperationPanel extends Vue {
     }
   }
 
+  changeFlex(field: string, value: unknown) {
+    if (this.canvasState.selection.kind === 'template') {
+      if (field === 'display' && value === '') {
+        value = undefined
+      }
+      Vue.set(this.canvasState.selection.template, field, value)
+    }
+  }
+
   extractAsComponent() {
     if (this.canvasState.selection.kind === 'content'
       && (this.canvasState.selection.content.kind === 'text'
