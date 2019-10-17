@@ -17,11 +17,11 @@ export function* iterateAllContentRegions(
   targetTemplate?: Template,
 ) {
   if (targetTemplate) {
-    yield* iterateAllContent(target, targetTemplate, { x: targetTemplate.x, y: targetTemplate.y, z: targetTemplate.z || 0 }, styleGuide, undefined, undefined)
+    yield* iterateAllContent(target, targetTemplate, { x: targetTemplate.x, y: targetTemplate.y, z: targetTemplate.z || 0 }, styleGuide, undefined)
     return
   }
   for (const template of styleGuide.templates) {
-    yield* iterateAllContent(target, template, { x: template.x, y: template.y, z: template.z || 0 }, styleGuide, undefined, undefined)
+    yield* iterateAllContent(target, template, { x: template.x, y: template.y, z: template.z || 0 }, styleGuide, undefined)
   }
 }
 
@@ -59,13 +59,9 @@ function* iterateAllTemplate(
       if (content.kind === 'reference') {
         const reference = styleGuide.templates.find((t) => t.id === content.id)
         if (reference) {
-          const x = template.display === 'flex'
-            ? getFlexPosition(content, 'x', template, styleGuide.templates)
-            : props ? evaluatePositionExpression('x', content, { props }) : content.x
-          const y = template.display === 'flex'
-            ? getFlexPosition(content, 'y', template, styleGuide.templates)
-            : props ? evaluatePositionExpression('y', content, { props }) : content.y
-          const z = props ? evaluatePositionExpression('z', content, { props }) : content.z || 0
+          const x = getPosition(props, 'x', content, template, styleGuide.templates)
+          const y = getPosition(props, 'y', content, template, styleGuide.templates)
+          const z = getPosition(props, 'z', content, template, styleGuide.templates)
           const targetProps = content.props ? evaluate(content.props, { props }) : undefined
           yield* iterateAllTemplate(
             target,
@@ -91,18 +87,13 @@ function* iterateAllContent(
   position: Required<Position>,
   styleGuide: StyleGuide,
   props: unknown,
-  container: Template | undefined,
 ): Generator<Required<Region> & { index: number, contents: TemplateContent[], content: TemplateContent, template: Template }, void, unknown> {
   for (let i = 0; i < template.contents.length; i++) {
     const content = template.contents[i]
     if (content === target || target === undefined) {
-      const x = container && container.display === 'flex'
-        ? getFlexPosition(content, 'x', container, styleGuide.templates)
-        : props ? evaluatePositionExpression('x', content, { props }) : content.x
-      const y = container && container.display === 'flex'
-        ? getFlexPosition(content, 'y', container, styleGuide.templates)
-        : props ? evaluatePositionExpression('y', content, { props }) : content.y
-      const z = props ? evaluatePositionExpression('z', content, { props }) : content.z || 0
+      const x = getPosition(props, 'x', content, template, styleGuide.templates)
+      const y = getPosition(props, 'y', content, template, styleGuide.templates)
+      const z = getPosition(props, 'z', content, template, styleGuide.templates)
       const targetProps = content.kind === 'reference' && content.props ? evaluate(content.props, { props }) : undefined
       const size = getContentSize(content, styleGuide.templates)
       const width = targetProps ? evaluateSizeExpression('width', size, { props: targetProps }) : size.width
@@ -118,38 +109,13 @@ function* iterateAllContent(
         content,
         template,
       }
-    } else if (content !== target) {
-      if (content.kind === 'reference') {
-        const reference = styleGuide.templates.find((t) => t.id === content.id)
-        if (reference) {
-          const targetProps = content.props ? evaluate(content.props, { props }) : undefined
-          yield* iterateAllContent(
-            target,
-            reference,
-            {
-              x: content.x + position.x,
-              y: content.y + position.y,
-              z: (content.z || 0) + position.z,
-            },
-            styleGuide,
-            targetProps,
-            template,
-          )
-        }
-      } else if (content.kind === 'snapshot') {
-        yield* iterateAllContent(
-          target,
-          content.snapshot,
-          {
-            x: content.x + position.x,
-            y: content.y + position.y,
-            z: (content.z || 0) + position.z,
-          },
-          styleGuide,
-          undefined,
-          template,
-        )
-      }
     }
   }
+}
+
+export function getPosition(props: unknown, type: 'x' | 'y' | 'z', content: TemplateContent, template: Template | undefined, templates: Template[]) {
+  if (type !== 'z' && template && template.display === 'flex') {
+    return getFlexPosition(content, type, template, templates)
+  }
+  return props ? evaluatePositionExpression(type, content, { props }) : content[type] || 0
 }
