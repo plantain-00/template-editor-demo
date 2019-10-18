@@ -7,6 +7,6 @@ const title = 'render every template'
 const styleGuide = require('./case')
 
 test(title, async (t) => {
-  const infos = styleGuide.templates.map((t) => renderTemplateOnCanvas(undefined, t, styleGuide.templates, {}, false))
+  const infos = styleGuide.templates.map((t) => renderTemplateOnCanvas(undefined, t, styleGuide.templates, {}))
   t.snapshot({ infos }, { id: title })
 })

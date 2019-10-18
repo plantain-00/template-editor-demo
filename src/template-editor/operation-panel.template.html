@@ -82,7 +82,10 @@
     </div>
     <div>
       repeat
-      <input type="text" :value="canvasState.selection.content.repeat" @change="changeRepeat" />
+      <expression-input :canvasState="canvasState" :expression="repeat.expression"
+        :expressionId="canvasState.selection.content.repeatId" @change="changeRepeatExpression" />
+      <input type="text" :value="repeat.itemName" @change="changeRepeatItemName" style="width: 150px;" />
+      <input type="text" :value="repeat.indexName" @change="changeRepeatIndexName" style="width: 50px;" />
     </div>
     <div v-if="canvasState.selection.content.kind === 'reference'">
       props
@@ -101,6 +104,10 @@
     </div>
   </div>
   <div v-if="canvasState.selection.kind === 'template'">
+    <div>
+      name
+      <input type="text" :value="canvasState.selection.template.name" @change="changeName" />
+    </div>
     <div>
       x
       <input type="number" :value="canvasState.selection.template.x" @change="changePosition($event, 'x')" />

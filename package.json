@@ -63,6 +63,7 @@
     "types-as-schema": "^1.29.1",
     "typescript": "3.6.4",
     "uglify-js": "3",
+    "vue-server-renderer": "^2.6.10",
     "watch-then-execute": "1.1.1",
     "webpack": "4.41.1",
     "webpack-cli": "3.3.9"

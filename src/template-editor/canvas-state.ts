@@ -177,6 +177,33 @@ export class CanvasState extends Vue {
         },
         'th price'
       ]
+    },
+    {
+      id: '4',
+      name: 'component parameter',
+      expression: 'props.name',
+      variables: [
+        'component parameter',
+        {
+          tokenIndex: 2,
+          internal: 'component parameters'
+        }
+      ]
+    },
+    {
+      id: '5',
+      name: 'categories range',
+      expression: 'categories.slice(0, 1)',
+      variables: [
+        'categories',
+        {
+          tokenIndex: 4
+        },
+        'until',
+        {
+          tokenIndex: 6
+        }
+      ]
     }
   ]
 }
