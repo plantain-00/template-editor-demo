@@ -54,7 +54,8 @@
       "parameters": [
         "width"
       ],
-      "widthExpression": "props.width"
+      "widthExpression": "props.width",
+      "widthExpressionId": "4"
     },
     {
       "id": "0.1354899940204275",
@@ -170,8 +171,7 @@
           "ifId": "1"
         }
       ],
-      "heightExpression": "commodity.prices.length === 1 ? 54 : 108",
-      "widthExpression": ""
+      "heightExpression": "commodity.prices.length === 1 ? 54 : 108"
     },
     {
       "id": "0.24088140356898147",
@@ -188,7 +188,8 @@
           "height": 54,
           "textExpression": "commodity.name",
           "fontSizeExpression": "props.fontSize",
-          "textExpressionId": "2"
+          "textExpressionId": "2",
+          "fontSizeExpressionId": "4"
         }
       ],
       "x": 92.87037037037038,
@@ -199,7 +200,8 @@
         "fontSize",
         "width"
       ],
-      "widthExpression": "props.width"
+      "widthExpression": "props.width",
+      "widthExpressionId": "4"
     },
     {
       "id": "0.15280541103512402",
@@ -214,7 +216,8 @@
           "y": 0,
           "width": 400,
           "height": 80,
-          "textExpression": "props.name"
+          "textExpression": "props.name",
+          "textExpressionId": "4"
         }
       ],
       "x": 117.24338355811147,
@@ -296,8 +299,7 @@
           "ifId": "1"
         }
       ],
-      "heightExpression": "commodity.prices.length === 1 ? 54 : 216",
-      "widthExpression": ""
+      "heightExpression": "commodity.prices.length === 1 ? 54 : 216"
     },
     {
       "id": "0.5221493338129481",
@@ -312,7 +314,8 @@
           "x": 0,
           "y": 270,
           "props": "",
-          "repeat": "category in categories.slice(2, 5)"
+          "repeat": "category in categories.slice(2, 5)",
+          "repeatId": "5"
         }
       ],
       "display": "flex",
@@ -412,7 +415,10 @@
           "id": "0.9587802549007682",
           "x": 0,
           "y": 0,
-          "props": "{count: props.count}"
+          "props": "{ count: props.count }",
+          "propsIds": {
+            "count": "4"
+          }
         },
         {
           "kind": "reference",
@@ -428,7 +434,8 @@
         "price",
         "count"
       ],
-      "widthExpression": "props.width"
+      "widthExpression": "props.width",
+      "widthExpressionId": "4"
     },
     {
       "id": "0.9175113630675271",

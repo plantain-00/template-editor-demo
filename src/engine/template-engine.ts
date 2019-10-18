@@ -152,13 +152,13 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
   return [content]
 }
 
-interface Repeat {
+export interface Repeat {
   expression: string
   itemName?: string
   indexName?: string
 }
 
-function analyseRepeat(repeat: string, precompiledStyleGuide?: PrecompiledStyleGuide): Repeat {
+export function analyseRepeat(repeat: string, precompiledStyleGuide?: PrecompiledStyleGuide): Repeat {
   if (precompiledStyleGuide) {
     return precompiledStyleGuide.repeat[repeat]
   }
@@ -179,4 +179,17 @@ function analyseRepeat(repeat: string, precompiledStyleGuide?: PrecompiledStyleG
     return { expression, itemName: declarations[0].trim(), indexName: declarations[1].trim() }
   }
   return { expression, itemName: declaration }
+}
+
+export function composeRepeat(repeat: Repeat) {
+  if (repeat.expression) {
+    if (repeat.itemName) {
+      if (repeat.indexName) {
+        return `(${repeat.itemName}, ${repeat.indexName}) in ${repeat.expression}`
+      }
+      return `${repeat.itemName} in ${repeat.expression}`
+    }
+    return repeat.expression
+  }
+  return undefined
 }

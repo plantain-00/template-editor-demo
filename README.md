@@ -230,7 +230,9 @@ z 未设置时是 0。
 
 ## todo
 
-+ preset expression(get part of array)
 + intellisense(props)
-+ repeat expression ui
 + expression ast ui
++ component parameter clear
++ template name layer
++ show template name when generation errored
++ select template when click the name

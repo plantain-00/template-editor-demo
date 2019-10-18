@@ -201,7 +201,15 @@ export class ExpressionInput extends Vue {
           )
         }
         if (currentToken.type === 'Identifier') {
-          if (v.enum) {
+          if (v.enum || v.internal) {
+            let enums: string[]
+            if (this.canvasState.selection.kind === 'content' || this.canvasState.selection.kind === 'template') {
+              enums = this.canvasState.selection.template.parameters || []
+            } else if (v.enum) {
+              enums = v.enum
+            } else {
+              enums = []
+            }
             return createElement(
               'select',
               {
@@ -218,7 +226,7 @@ export class ExpressionInput extends Vue {
                   }
                 }
               },
-              v.enum.map((p) => createElement(
+              enums.map((p) => createElement(
                 'option',
                 {
                   key: p,

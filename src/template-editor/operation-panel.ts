@@ -7,6 +7,7 @@ import { CanvasState } from './canvas-state'
 import { TemplateContent, Template } from '../model'
 import { renderTemplate, loadTemplateImages } from '../engine/renderer'
 import { ExpressionInputChangeData } from './expression-input'
+import { analyseRepeat, Repeat, composeRepeat } from '../engine/template-engine'
 
 @Component({
   render: templateEditorOperationPanelTemplateHtml,
@@ -22,6 +23,12 @@ export class OperationPanel extends Vue {
     return {
       height: this.canvasState.canvasHeight + 'px',
       overflow: 'auto',
+    }
+  }
+
+  changeName(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'template') {
+      Vue.set(this.canvasState.selection.template, 'name', e.target.value || undefined)
     }
   }
 
@@ -55,13 +62,13 @@ export class OperationPanel extends Vue {
       if (e.literal !== undefined) {
         this.canvasState.selection.content[kind] = +e.literal
       }
-      Vue.set(this.canvasState.selection.content, kind + 'Expression', e.expression)
+      Vue.set(this.canvasState.selection.content, kind + 'Expression', e.expression || undefined)
       Vue.set(this.canvasState.selection.content, kind + 'ExpressionId', e.expressionId)
     } else if (this.canvasState.selection.kind === 'template') {
       if (e.literal !== undefined) {
         this.canvasState.selection.template[kind] = +e.literal
       }
-      Vue.set(this.canvasState.selection.template, kind + 'Expression', e.expression)
+      Vue.set(this.canvasState.selection.template, kind + 'Expression', e.expression || undefined)
       Vue.set(this.canvasState.selection.template, kind + 'ExpressionId', e.expressionId)
     }
   }
@@ -85,10 +92,33 @@ export class OperationPanel extends Vue {
     }
   }
 
-  changeRepeat(e: { target: { value: string } }) {
+  changeRepeatExpression(e: { expression: string, expressionId?: string }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
-      Vue.set(this.canvasState.selection.content, 'repeat', e.target.value)
+      const repeat = composeRepeat({ ...this.repeat, expression: e.expression })
+      Vue.set(this.canvasState.selection.content, 'repeat', repeat)
+      Vue.set(this.canvasState.selection.content, 'repeatId', e.expressionId)
     }
+  }
+
+  changeRepeatItemName(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
+      const repeat = composeRepeat({ ...this.repeat, itemName: e.target.value })
+      Vue.set(this.canvasState.selection.content, 'repeat', repeat)
+    }
+  }
+
+  changeRepeatIndexName(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
+      const repeat = composeRepeat({ ...this.repeat, indexName: e.target.value })
+      Vue.set(this.canvasState.selection.content, 'repeat', repeat)
+    }
+  }
+
+  get repeat(): Repeat {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot' && this.canvasState.selection.content.repeat) {
+      return analyseRepeat(this.canvasState.selection.content.repeat)
+    }
+    return { expression: '' }
   }
 
   changeTextExpression(e: ExpressionInputChangeData) {
@@ -309,24 +339,30 @@ export class OperationPanel extends Vue {
           } else {
             this.propsAst.properties.splice(propertyIndex, 1)
           }
-          this.canvasState.selection.content.props = printExpression(this.propsAst)
+          const newExpression = printExpression(this.propsAst)
+          Vue.set(this.canvasState.selection.content, 'props', newExpression === '{}' ? undefined : newExpression)
         } else if (propertyAst) {
           this.propsAst.properties.push(getNewProperty(parameter, propertyAst))
-          this.canvasState.selection.content.props = printExpression(this.propsAst)
+          const newExpression = printExpression(this.propsAst)
+          Vue.set(this.canvasState.selection.content, 'props', newExpression === '{}' ? undefined : newExpression)
         }
       } else if (propertyAst) {
-        Vue.set(this.canvasState.selection.content, 'props', printExpression({
+        const newExpression = printExpression({
           type: 'ObjectExpression',
           properties: [
             getNewProperty(parameter, propertyAst)
           ],
           range: [0, 0],
-        }))
+        })
+        Vue.set(this.canvasState.selection.content, 'props', newExpression === '{}' ? undefined : newExpression)
+      } else {
+        Vue.set(this.canvasState.selection.content, 'props', undefined)
       }
-      Vue.set(this.canvasState.selection.content, 'propsIds', {
+      const newPropsIds: { [name: string]: string | undefined } = {
         ...this.canvasState.selection.content.propsIds,
         [parameter]: e.expressionId,
-      })
+      }
+      Vue.set(this.canvasState.selection.content, 'propsIds', Object.keys(newPropsIds).filter((p) => newPropsIds[p] !== undefined).length > 0 ? newPropsIds : undefined)
     }
   }
 }

@@ -23,7 +23,7 @@ export function renderTemplate(template: Template, templates: Template[], images
 /**
  * @internal
  */
-export function renderTemplateOnCanvas(ctx: CanvasRenderingContext2D | undefined, template: Template, templates: Template[], images: { [url: string]: HTMLImageElement }, sort = true) {
+export function renderTemplateOnCanvas(ctx: CanvasRenderingContext2D | undefined, template: Template, templates: Template[], images: { [url: string]: HTMLImageElement }) {
   const infos: string[] = []
   if (ctx) {
     ctx.fillStyle = 'white'
@@ -34,11 +34,14 @@ export function renderTemplateOnCanvas(ctx: CanvasRenderingContext2D | undefined
       `ctx.fillRect(0, 0, ${template.width}, ${template.height})`,
     )
   }
-  const actions: Array<{ z: number, action: (ctx: CanvasRenderingContext2D | undefined) => string[] }> = []
+  const actions: Array<{ z: number, index: number, action: (ctx: CanvasRenderingContext2D | undefined) => string[] }> = []
   renderSymbol(template, templates, images, actions, { x: 0, y: 0, z: 0 })
-  if (sort) {
-    actions.sort((a, b) => a.z - b.z)
-  }
+  actions.sort((a, b) => {
+    if (a.z !== b.z) {
+      return a.z - b.z
+    }
+    return a.index - b.index
+  })
   for (const { action } of actions) {
     infos.push(...action(ctx))
   }
@@ -97,7 +100,7 @@ function renderSymbol(
   template: Template,
   templates: Template[],
   images: { [url: string]: HTMLImageElement },
-  actions: Array<{ z: number, action: (ctx: CanvasRenderingContext2D | undefined) => string[] }>,
+  actions: Array<{ z: number, index: number, action: (ctx: CanvasRenderingContext2D | undefined) => string[] }>,
   position: Required<Position>,
   props?: unknown,
 ) {
@@ -109,6 +112,7 @@ function renderSymbol(
       const content = renderItem.content
       actions.push({
         z,
+        index: actions.length,
         action: (ctx) => {
           const fontSize = props ? evaluateFontSizeExpression(content, { props }) : content.fontSize
           const characters = content.characters || getCharacters(props ? evaluateTextExpression(content, { props }) : content.text)
@@ -144,6 +148,7 @@ function renderSymbol(
       }
       actions.push({
         z,
+        index: actions.length,
         action: (ctx) => {
           if (ctx) {
             ctx.drawImage(image, x, y, width, height)
@@ -160,6 +165,7 @@ function renderSymbol(
 
       actions.push({
         z,
+        index: actions.length,
         action: (ctx) => {
           if (ctx) {
             ctx.fillStyle = content.color

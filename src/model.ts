@@ -8,6 +8,7 @@ export interface StyleGuide {
 
 export interface Template extends Region, SizeExpression, FlexField {
   id: string
+  name?: string
   contents: TemplateContent[]
   parameters?: string[]
 }
@@ -139,4 +140,5 @@ export interface PresetExpression {
 interface PresetExpressionVariable {
   tokenIndex: number
   enum?: string[]
+  internal?: 'component parameters'
 }
