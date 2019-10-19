@@ -232,4 +232,3 @@ z 未设置时是 0。
 
 + intellisense(props)
 + expression ast ui
-+ show errors in canvas when generation errored

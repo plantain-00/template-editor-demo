@@ -6,6 +6,7 @@ import { appPanelTemplateHtml, appPanelTemplateHtmlStatic, distStyleguideSchemaJ
 import { generate, PrecompiledStyleGuide } from './engine/template-engine'
 import { StyleGuide } from './model'
 import { AppState } from './app-state'
+import { ExpressionErrorReason } from './engine/expression'
 
 const ajv = new Ajv()
 const validateStyleGuide = ajv.compile(distStyleguideSchemaJson)
@@ -80,8 +81,21 @@ export class AppPanel extends Vue {
     }
     if (this.appState.canvasState.selection.kind === 'template') {
       const now = Date.now()
-      const result = await generate(this.appState.canvasState.selection.template, this.appState.canvasState.styleGuide, this.appState.templateModel, this.precompiledStyleGuide)
+      const reasons: ExpressionErrorReason[] = []
+      const result = await generate(
+        this.appState.canvasState.selection.template,
+        this.appState.canvasState.styleGuide,
+        this.appState.templateModel,
+        {
+          errorHandler: (reason) => reasons.push(reason),
+          precompiledStyleGuide: this.precompiledStyleGuide,
+          stack: [this.appState.canvasState.selection.template.name || this.appState.canvasState.selection.template.id]
+        }
+      )
       console.info(Date.now() - now)
+      for (const reason of reasons) {
+        console.info(reason.stack ? reason.stack.join(' ') : '', reason.expression, reason.error.message, reason.model)
+      }
       this.appState.loadGraphicCanvas(result)
     }
   }
