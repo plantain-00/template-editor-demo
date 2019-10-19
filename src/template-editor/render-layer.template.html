@@ -2,6 +2,7 @@
   <div :style="styleGuideStyle">
     <template v-for="r in canvasState.styleGuide.templates">
       <div :style="getTemplateStyle(r)">
+        <div v-if="r.name" :style="getNameStyle(r)">{{r.name}}</div>
         <template-renderer :template="r" :templates="canvasState.styleGuide.templates"></template-renderer>
       </div>
     </template>

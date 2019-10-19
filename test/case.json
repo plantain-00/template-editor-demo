@@ -23,7 +23,8 @@
       ],
       "parameters": [
         "price"
-      ]
+      ],
+      "name": "价格"
     },
     {
       "id": "0.3543923342551776",
@@ -55,7 +56,8 @@
         "width"
       ],
       "widthExpression": "props.width",
-      "widthExpressionId": "4"
+      "widthExpressionId": "4",
+      "name": "一价格商品"
     },
     {
       "id": "0.1354899940204275",
@@ -96,7 +98,8 @@
       "display": "flex",
       "flexDirection": "column",
       "justifyContent": "start",
-      "alignItems": "start"
+      "alignItems": "start",
+      "name": "多品类"
     },
     {
       "id": "0.5154665917693448",
@@ -142,7 +145,8 @@
             "price": "3"
           }
         }
-      ]
+      ],
+      "name": "906px宽三价格商品"
     },
     {
       "id": "0.7719683197096188",
@@ -171,7 +175,8 @@
           "ifId": "1"
         }
       ],
-      "heightExpression": "commodity.prices.length === 1 ? 54 : 108"
+      "heightExpression": "commodity.prices.length === 1 ? 54 : 108",
+      "name": "906px宽商品"
     },
     {
       "id": "0.24088140356898147",
@@ -201,7 +206,8 @@
         "width"
       ],
       "widthExpression": "props.width",
-      "widthExpressionId": "4"
+      "widthExpressionId": "4",
+      "name": "商品名称"
     },
     {
       "id": "0.15280541103512402",
@@ -226,7 +232,8 @@
       "height": 80,
       "parameters": [
         "name"
-      ]
+      ],
+      "name": "品类名称"
     },
     {
       "id": "0.37992718643373746",
@@ -272,7 +279,8 @@
             "price": "3"
           }
         }
-      ]
+      ],
+      "name": "553px宽三价格商品"
     },
     {
       "id": "0.14261638357931328",
@@ -299,7 +307,8 @@
           "ifId": "1"
         }
       ],
-      "heightExpression": "commodity.prices.length === 1 ? 54 : 216"
+      "heightExpression": "commodity.prices.length === 1 ? 54 : 216",
+      "name": "553px宽商品"
     },
     {
       "id": "0.5221493338129481",
@@ -320,7 +329,8 @@
       "display": "flex",
       "flexDirection": "column",
       "justifyContent": "center",
-      "alignItems": "center"
+      "alignItems": "center",
+      "name": "多行有图商品"
     },
     {
       "id": "0.286787897677816",
@@ -356,7 +366,8 @@
           "urlExpression": "commodity.image",
           "urlExpressionId": "2"
         }
-      ]
+      ],
+      "name": "有图商品"
     },
     {
       "id": "0.4520673784851612",
@@ -376,7 +387,8 @@
       "display": "flex",
       "flexDirection": "row",
       "alignItems": "center",
-      "justifyContent": "between"
+      "justifyContent": "between",
+      "name": "一行有图商品"
     },
     {
       "id": "0.9587802549007682",
@@ -400,7 +412,8 @@
       "height": 54,
       "parameters": [
         "count"
-      ]
+      ],
+      "name": "价格描述"
     },
     {
       "id": "0.34988078104422415",
@@ -434,7 +447,8 @@
         "count"
       ],
       "widthExpression": "props.width",
-      "widthExpressionId": "4"
+      "widthExpressionId": "4",
+      "name": "价格和价格描述"
     },
     {
       "id": "0.9175113630675271",
@@ -455,7 +469,8 @@
           "x": 960,
           "y": 0
         }
-      ]
+      ],
+      "name": "模板1"
     }
   ]
 }

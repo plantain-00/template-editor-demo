@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { CanvasSelection, StyleGuide, PresetExpression } from '../model'
-import { iterateAllTemplateRegions, iterateAllContentRegions } from '../utils'
+import { iterateAllTemplateRegions, iterateAllContentRegions, iterateAllNameRegions } from '../utils'
 
 @Component
 export class CanvasState extends Vue {
@@ -133,6 +133,13 @@ export class CanvasState extends Vue {
   get allContentRegions() {
     if (this.selection.kind === 'content') {
       return Array.from(iterateAllContentRegions(this.selection.content, this.styleGuide, this.selection.template))
+    }
+    return []
+  }
+
+  get allNameRegions() {
+    if (this.selection.kind === 'template') {
+      return Array.from(iterateAllNameRegions(this.selection.template, this.styleGuide))
     }
     return []
   }

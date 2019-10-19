@@ -5,6 +5,7 @@ export const styleGuide: StyleGuide = {
   templates: [
     {
       id: '1',
+      name: '组件',
       x: 0,
       y: 0,
       width: 500,
@@ -36,6 +37,7 @@ export const styleGuide: StyleGuide = {
     },
     {
       id: '2',
+      name: '模板',
       x: 600,
       y: 0,
       width: 1100,
