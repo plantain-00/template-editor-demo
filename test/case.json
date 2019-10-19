@@ -313,7 +313,6 @@
           "id": "0.4520673784851612",
           "x": 0,
           "y": 270,
-          "props": "",
           "repeat": "category in categories.slice(2, 5)",
           "repeatId": "5"
         }
