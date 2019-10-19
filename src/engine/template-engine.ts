@@ -1,21 +1,22 @@
-import { Template, TemplateContent, StyleGuide } from '../model'
-import { layoutFlex } from './layout-engine'
-import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression, parseExpressionToAst } from './expression'
-import { applyImageOpacity, loadImage } from './image'
-import { getCharacters } from './mock'
 import { Expression } from 'expression-engine'
 
-export async function generate(template: Template, styleGuide: StyleGuide, model: { [key: string]: unknown }, precompiledStyleGuide?: PrecompiledStyleGuide): Promise<Template> {
-  const contents = await Promise.all(template.contents.map((c) => generateContent(c, styleGuide, model, precompiledStyleGuide)))
+import { Template, TemplateContent, StyleGuide } from '../model'
+import { layoutFlex } from './layout-engine'
+import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression, parseExpressionToAst, ExpressionOptions, getExpressionOptions } from './expression'
+import { applyImageOpacity, loadImage } from './image'
+import { getCharacters } from './mock'
+
+export async function generate(template: Template, styleGuide: StyleGuide, model: { [key: string]: unknown }, options?: ExpressionOptions): Promise<Template> {
+  const contents = await Promise.all(template.contents.map((c, i) => generateContent(c, styleGuide, model, getExpressionOptions(options, i))))
   const result: Template = {
     ...template,
     x: 0,
     y: 0,
     contents: contents.reduce((p, c) => p.concat(c), [])
   }
-  result.width = evaluateSizeExpression('width', result, model, 'error', precompiledStyleGuide)
+  result.width = evaluateSizeExpression('width', result, model, options)
   delete result.widthExpression
-  result.height = evaluateSizeExpression('height', result, model, 'error', precompiledStyleGuide)
+  result.height = evaluateSizeExpression('height', result, model, options)
   delete result.heightExpression
   layoutFlex(result, styleGuide.templates)
   return result
@@ -70,13 +71,13 @@ export class PrecompiledStyleGuide {
   }
 }
 
-async function generateContent(content: TemplateContent, styleGuide: StyleGuide, model: { [key: string]: unknown }, precompiledStyleGuide?: PrecompiledStyleGuide): Promise<TemplateContent[]> {
+async function generateContent(content: TemplateContent, styleGuide: StyleGuide, model: { [key: string]: unknown }, options?: ExpressionOptions): Promise<TemplateContent[]> {
   if (content.kind === 'snapshot') {
     return [content]
   }
   if (content.repeat) {
-    const { expression, itemName, indexName } = analyseRepeat(content.repeat, precompiledStyleGuide)
-    const result = evaluate(expression, model, 'error', precompiledStyleGuide)
+    const { expression, itemName, indexName } = analyseRepeat(content.repeat, options)
+    const result = evaluate(expression, model, getExpressionOptions(options, 'repeat'))
     if (Array.isArray(result)) {
       const contents: TemplateContent[] = []
       for (let i = 0; i < result.length; i++) {
@@ -87,21 +88,21 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
             newModel[indexName] = i
           }
         }
-        contents.push(...(await generateContent({ ...content, repeat: undefined }, styleGuide, newModel, precompiledStyleGuide)))
+        contents.push(...(await generateContent({ ...content, repeat: undefined }, styleGuide, newModel, options)))
       }
       return contents
     }
   }
   if (content.if) {
-    const result = evaluate(content.if, model, 'error', precompiledStyleGuide)
+    const result = evaluate(content.if, model, getExpressionOptions(options, 'if'))
     if (result === false) {
       return []
     }
   }
   content = { ...content }
-  content.x = evaluatePositionExpression('x', content, model, 'error', precompiledStyleGuide)
+  content.x = evaluatePositionExpression('x', content, model, options)
   delete content.xExpression
-  content.y = evaluatePositionExpression('y', content, model, 'error', precompiledStyleGuide)
+  content.y = evaluatePositionExpression('y', content, model, options)
   delete content.yExpression
 
   if (content.kind === 'reference') {
@@ -109,7 +110,7 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
     const reference = styleGuide.templates.find((t) => t.id === id)
     if (reference) {
       if (content.props) {
-        const result = evaluate(content.props, model, 'error', precompiledStyleGuide)
+        const result = evaluate(content.props, model, getExpressionOptions(options, 'props'))
         delete content.props
         model = { ...model, props: result }
       }
@@ -118,28 +119,28 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
           kind: 'snapshot',
           x: content.x,
           y: content.y,
-          snapshot: await generate(reference, styleGuide, model, precompiledStyleGuide)
+          snapshot: await generate(reference, styleGuide, model, getExpressionOptions(options, reference.name || reference.id))
         },
       ]
     }
     return []
   }
 
-  content.width = evaluateSizeExpression('width', content, model, 'error', precompiledStyleGuide)
+  content.width = evaluateSizeExpression('width', content, model, options)
   delete content.widthExpression
-  content.height = evaluateSizeExpression('height', content, model, 'error', precompiledStyleGuide)
+  content.height = evaluateSizeExpression('height', content, model, options)
   delete content.heightExpression
 
   if (content.kind === 'text') {
-    content.text = evaluateTextExpression(content, model, 'error', precompiledStyleGuide)
+    content.text = evaluateTextExpression(content, model, options)
     delete content.textExpression
     content.characters = getCharacters(content.text)
 
-    content.fontSize = evaluateFontSizeExpression(content, model, 'error', precompiledStyleGuide)
+    content.fontSize = evaluateFontSizeExpression(content, model, options)
     delete content.fontSizeExpression
   }
   if (content.kind === 'image') {
-    content.url = evaluateUrlExpression(content, model, 'error', precompiledStyleGuide)
+    content.url = evaluateUrlExpression(content, model, options)
     delete content.urlExpression
     if (content.opacity !== undefined) {
       const image = await loadImage(content.url)
@@ -158,9 +159,9 @@ export interface Repeat {
   indexName?: string
 }
 
-export function analyseRepeat(repeat: string, precompiledStyleGuide?: PrecompiledStyleGuide): Repeat {
-  if (precompiledStyleGuide) {
-    return precompiledStyleGuide.repeat[repeat]
+export function analyseRepeat(repeat: string, options?: ExpressionOptions): Repeat {
+  if (options && options.precompiledStyleGuide) {
+    return options.precompiledStyleGuide.repeat[repeat]
   }
   const index = repeat.indexOf(' in ')
   if (index === -1) {
