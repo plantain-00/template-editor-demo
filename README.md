@@ -232,6 +232,4 @@ z 未设置时是 0。
 
 + intellisense(props)
 + expression ast ui
-+ template name layer
-+ show template name when generation errored
-+ select template when click the name
++ show errors in canvas when generation errored

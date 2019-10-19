@@ -3,7 +3,7 @@ import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
 import { StyleGuide, Region, Position, TemplateContent, Template, TemplateReferenceContent, CanvasSelection } from '../model'
-import { isInRegion, iterateAllTemplateRegions, iterateAllContentRegions } from '../utils'
+import { isInRegion, iterateAllTemplateRegions, iterateAllContentRegions, iterateAllNameRegions, nameSize } from '../utils'
 import { templateEditorMaskLayerTemplateHtml, templateEditorMaskLayerTemplateHtmlStatic } from '../variables'
 
 @Component({
@@ -305,6 +305,15 @@ export class MaskLayer extends Vue {
 
   private getSelectionAreaRelation(position: Position) {
     if (this.canvasState.selection.kind === 'template') {
+      for (const nameRegion of this.canvasState.allNameRegions) {
+        const isInSelectionRegion = isInRegion(position, nameRegion)
+        if (isInSelectionRegion) {
+          return {
+            offsetX: position.x - nameRegion.x,
+            offsetY: position.y - nameRegion.y - nameSize,
+          }
+        }
+      }
       for (const templateRegion of this.canvasState.allTemplateRegions) {
         const isInSelectionRegion = isInRegion(position, templateRegion)
         if (isInSelectionRegion) {
@@ -368,6 +377,18 @@ function selectTemplate(styleGuide: StyleGuide, position1: Position, position2: 
 }
 
 function selectContent(styleGuide: StyleGuide, position: Position): { kind: 'content', content: TemplateContent, template: Template } | { kind: 'template', template: Template } | null {
+  let potentialNameRegion: Required<Region> & {
+    template: Template;
+  } | undefined
+  for (const nameRegion of iterateAllNameRegions(undefined, styleGuide)) {
+    if ((!potentialNameRegion || nameRegion.z >= potentialNameRegion.z) && isInRegion(position, nameRegion)) {
+      potentialNameRegion = nameRegion
+    }
+  }
+  if (potentialNameRegion) {
+    return { kind: 'template', template: potentialNameRegion.template }
+  }
+
   let potentialTemplateRegion: Required<Region> & {
     index: number;
     contents: TemplateContent[];
@@ -382,6 +403,7 @@ function selectContent(styleGuide: StyleGuide, position: Position): { kind: 'con
   if (potentialTemplateRegion) {
     return { kind: 'content', content: potentialTemplateRegion.content, template: potentialTemplateRegion.template }
   }
+
   const t = selectPositionTemplate(styleGuide, position)
   if (t) {
     return { kind: 'template', template: t }

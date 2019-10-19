@@ -119,3 +119,25 @@ export function getPosition(props: unknown, type: 'x' | 'y' | 'z', content: Temp
   }
   return props ? evaluatePositionExpression(type, content, { props }) : content[type] || 0
 }
+
+export function* iterateAllNameRegions(target: Template | undefined, styleGuide: StyleGuide) {
+  for (const template of styleGuide.templates) {
+    if ((target === undefined || target === template) && template.name) {
+      yield {
+        x: template.x,
+        y: template.y - nameSize,
+        z: template.z || 0,
+        width: nameSize * template.name.length,
+        height: nameSize,
+        template,
+        parent: undefined as {
+          content: TemplateReferenceContent;
+          template: Template;
+          index: number;
+        } | undefined,
+      }
+    }
+  }
+}
+
+export const nameSize = 25

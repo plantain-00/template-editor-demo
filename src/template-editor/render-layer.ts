@@ -4,6 +4,7 @@ import { templateEditorRenderLayerTemplateHtml, templateEditorRenderLayerTemplat
 import { CanvasState } from './canvas-state'
 import { TemplateRenderer } from '../engine/renderer'
 import { Template } from '../model'
+import { nameSize } from '../utils'
 
 @Component({
   render: templateEditorRenderLayerTemplateHtml,
@@ -38,6 +39,16 @@ export class RenderLayer extends Vue {
       left: template.x + 'px',
       top: template.y + 'px',
       position: 'absolute',
+      zIndex: Math.round(template.z || 0),
+    }
+  }
+
+  getNameStyle(template: Template) {
+    return {
+      position: 'absolute',
+      top: `-${nameSize}px`,
+      fontSize: '20px',
+      width: `${template.name ? template.name.length * nameSize : 0}px`,
       zIndex: Math.round(template.z || 0),
     }
   }
