@@ -258,7 +258,14 @@ export class OperationPanel extends Vue {
 
   changeParameter(e: { target: { value: string } }, i: number) {
     if (this.canvasState.selection.kind === 'template' && this.canvasState.selection.template.parameters) {
-      this.canvasState.selection.template.parameters[i] = e.target.value
+      if (e.target.value) {
+        this.canvasState.selection.template.parameters[i] = e.target.value
+      } else {
+        this.canvasState.selection.template.parameters.splice(i, 1)
+        if (this.canvasState.selection.template.parameters.length === 0) {
+          this.canvasState.selection.template.parameters = undefined
+        }
+      }
     }
   }
 
