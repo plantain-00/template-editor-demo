@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { Template, TemplateTextContent, TemplateImageContent, TemplateReferenceContent, TemplateSnapshotContent, Position, TemplateColorContent } from '../model'
-import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression } from './expression'
+import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression, evaluateColorExpression } from './expression'
 import { layoutFlex } from './layout-engine'
 import { applyImageOpacity, loadImage } from './image'
 import { getCharacters } from './mock'
@@ -115,16 +115,17 @@ function renderSymbol(
         index: actions.length,
         action: (ctx) => {
           const fontSize = props ? evaluateFontSizeExpression(content, { props }) : content.fontSize
+          const color = props ? evaluateColorExpression(content, { props }) : content.color
           const characters = content.characters || getCharacters(props ? evaluateTextExpression(content, { props }) : content.text)
           if (ctx) {
-            ctx.fillStyle = content.color
+            ctx.fillStyle = color
             ctx.textBaseline = 'top'
             ctx.font = `${fontSize}px ${content.fontFamily}`
             ctx.fillText(characters.map((c) => c.text).join(''), x, y)
             return []
           }
           return [
-            `ctx.fillStyle = ${content.color}`,
+            `ctx.fillStyle = ${color}`,
             `ctx.textBaseline = 'top'`,
             `ctx.font = ${fontSize}px ${content.fontFamily}`,
             `ctx.fillText(${characters.map((c) => c.text).join('')}, ${x}, ${y})`,
@@ -162,13 +163,14 @@ function renderSymbol(
 
       const width = props ? evaluateSizeExpression('width', content, { props }) : content.width
       const height = props ? evaluateSizeExpression('height', content, { props }) : content.height
+      const color = props ? evaluateColorExpression(content, { props }) : content.color
 
       actions.push({
         z,
         index: actions.length,
         action: (ctx) => {
           if (ctx) {
-            ctx.fillStyle = content.color
+            ctx.fillStyle = color
             ctx.fillRect(x, y, width, height)
             return []
           }
@@ -359,6 +361,10 @@ class TextRenderer extends Vue {
     return this.props ? evaluateFontSizeExpression(this.content, { props: this.props }) : this.content.fontSize
   }
 
+  private get color() {
+    return this.props ? evaluateColorExpression(this.content, { props: this.props }) : this.content.color
+  }
+
   private get x() {
     return getPosition(this.props, 'x', this.content, this.template, this.templates)
   }
@@ -376,7 +382,7 @@ class TextRenderer extends Vue {
       'div',
       {
         style: {
-          color: this.content.color,
+          color: this.color,
           fontSize: `${this.fontSize}px`,
           fontFamily: this.content.fontFamily,
           position: 'absolute',
@@ -499,6 +505,10 @@ class ColorRenderer extends Vue {
     return this.z + getPosition(this.props, 'z', this.content, this.template, this.templates)
   }
 
+  private get color() {
+    return this.props ? evaluateColorExpression(this.content, { props: this.props }) : this.content.color
+  }
+
   render(createElement: Vue.CreateElement): Vue.VNode {
     return createElement(
       'div',
@@ -509,7 +519,7 @@ class ColorRenderer extends Vue {
           position: 'absolute',
           left: `${this.x}px`,
           top: `${this.y}px`,
-          backgroundColor: this.content.color,
+          backgroundColor: this.color,
           zIndex: this.zValue,
         },
       },
