@@ -15,7 +15,9 @@
         :expressionId="canvasState.selection.content.fontSizeExpressionId" @change="changeFontSizeExpression" />
       <br />
       color
-      <input type="color" :value="canvasState.selection.content.color" @change="changeColor" />
+      <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.color" literalType="color"
+        :expression="canvasState.selection.content.colorExpression"
+        :expressionId="canvasState.selection.content.colorExpressionId" @change="changeColorExpression" />
     </div>
     <div v-if="canvasState.selection.content.kind === 'image'">
       url
@@ -29,7 +31,9 @@
     </div>
     <div v-if="canvasState.selection.content.kind === 'color'">
       color
-      <input type="color" :value="canvasState.selection.content.color" @change="changeColor" />
+      <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.color" literalType="color"
+        :expression="canvasState.selection.content.colorExpression"
+        :expressionId="canvasState.selection.content.colorExpressionId" @change="changeColorExpression" />
     </div>
     <div>
       x
@@ -84,13 +88,15 @@
       repeat
       <expression-input :canvasState="canvasState" :expression="repeat.expression"
         :expressionId="canvasState.selection.content.repeatId" @change="changeRepeatExpression" />
-      <input type="text" :value="repeat.itemName" @change="changeRepeatItemName" style="width: 150px;" />
-      <input type="text" :value="repeat.indexName" @change="changeRepeatIndexName" style="width: 50px;" />
+      <input type="text" :value="repeat.itemName" @change="changeRepeatItemName" placeholder="item name"
+        style="width: 150px; margin-left: 25px;" />
+      <input type="text" :value="repeat.indexName" @change="changeRepeatIndexName" placeholder="index name"
+        style="width: 50px;" />
     </div>
     <div v-if="canvasState.selection.content.kind === 'reference'">
       props
       <span style="opacity: 0.5">{{canvasState.selection.content.props}}</span>
-      <div v-if="parameters">
+      <div v-if="parameters" style="margin-left: 10px;">
         <div v-for="parameter of parameters">
           {{parameter}}
           <expression-input :canvasState="canvasState" :expression="getParameterValue(parameter)"

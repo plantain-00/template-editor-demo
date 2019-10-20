@@ -1,5 +1,5 @@
 import { parseExpression, tokenizeExpression, evaluateExpression } from 'expression-engine'
-import { Size, SizeExpression, TemplateImageContent, TemplateTextContent, Position, PositionExpression } from '../model'
+import { Size, SizeExpression, TemplateImageContent, TemplateTextContent, Position, PositionExpression, TemplateColorContent } from '../model'
 import { PrecompiledStyleGuide } from './template-engine'
 
 export function evaluate(expression: string, model: { [key: string]: unknown }, options?: ExpressionOptions) {
@@ -93,6 +93,16 @@ export function evaluateFontSizeExpression(content: TemplateTextContent, model: 
     }
   }
   return content.fontSize
+}
+
+export function evaluateColorExpression(content: TemplateTextContent | TemplateColorContent, model: { [key: string]: unknown }, options?: ExpressionOptions) {
+  if (content.colorExpression) {
+    const result = evaluate(content.colorExpression, model, getExpressionOptions(options, 'colorExpression'))
+    if (typeof result === 'string') {
+      return result
+    }
+  }
+  return content.color
 }
 
 export function getExpressionOptions(options: ExpressionOptions | undefined, item: string | number) {

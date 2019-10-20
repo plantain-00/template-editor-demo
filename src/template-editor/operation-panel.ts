@@ -147,9 +147,13 @@ export class OperationPanel extends Vue {
     }
   }
 
-  changeColor(e: { target: { value: string } }) {
+  changeColorExpression(e: ExpressionInputChangeData) {
     if (this.canvasState.selection.kind === 'content' && (this.canvasState.selection.content.kind === 'text' || this.canvasState.selection.content.kind === 'color')) {
-      this.canvasState.selection.content.color = e.target.value
+      if (e.literal !== undefined) {
+        this.canvasState.selection.content.color = e.literal
+      }
+      Vue.set(this.canvasState.selection.content, 'colorExpression', e.expression)
+      Vue.set(this.canvasState.selection.content, 'colorExpressionId', e.expressionId)
     }
   }
 

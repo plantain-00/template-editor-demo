@@ -17,14 +17,21 @@ export type TemplateContent = TemplateTextContent | TemplateImageContent | Templ
 
 export interface TemplateTextContent extends Region, RegionExpression, GenerationField, Hidden {
   kind: 'text'
+
   text: string
   textExpression?: string
   textExpressionId?: string
+
   fontFamily: string
+
   fontSize: number
   fontSizeExpression?: string
   fontSizeExpressionId?: string
+
   color: string
+  colorExpression?: string
+  colorExpressionId?: string
+
   characters?: TextCharacter[]
 }
 
@@ -38,16 +45,21 @@ interface Hidden {
 
 export interface TemplateImageContent extends Region, RegionExpression, GenerationField, Hidden {
   kind: 'image'
+
   url: string
   urlExpression?: string
   urlExpressionId?: string
+
   opacity?: number
   base64?: string
 }
 
 export interface TemplateColorContent extends Region, RegionExpression, GenerationField, Hidden {
   kind: 'color'
+
   color: string
+  colorExpression?: string
+  colorExpressionId?: string
 }
 
 export interface TemplateReferenceContent extends Position, PositionExpression, GenerationField, Hidden {

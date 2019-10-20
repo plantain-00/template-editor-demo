@@ -2,7 +2,7 @@ import { Expression } from 'expression-engine'
 
 import { Template, TemplateContent, StyleGuide } from '../model'
 import { layoutFlex } from './layout-engine'
-import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression, parseExpressionToAst, ExpressionOptions, getExpressionOptions } from './expression'
+import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression, parseExpressionToAst, ExpressionOptions, getExpressionOptions, evaluateColorExpression } from './expression'
 import { applyImageOpacity, loadImage } from './image'
 import { getCharacters } from './mock'
 
@@ -50,10 +50,11 @@ export class PrecompiledStyleGuide {
         if (content.kind === 'text') {
           this.collectExpression(content.textExpression)
           this.collectExpression(content.fontSizeExpression)
-          continue
-        }
-        if (content.kind === 'image') {
+          this.collectExpression(content.colorExpression)
+        } else if (content.kind === 'image') {
           this.collectExpression(content.urlExpression)
+        } else if (content.kind === 'color') {
+          this.collectExpression(content.colorExpression)
         }
       }
     }
@@ -138,6 +139,9 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
 
     content.fontSize = evaluateFontSizeExpression(content, model, options)
     delete content.fontSizeExpression
+
+    content.color = evaluateColorExpression(content, model, options)
+    delete content.colorExpression
   }
   if (content.kind === 'image') {
     content.url = evaluateUrlExpression(content, model, options)
@@ -149,6 +153,10 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
         content.base64 = canvas.toDataURL()
       }
     }
+  }
+  if (content.kind === 'color') {
+    content.color = evaluateColorExpression(content, model, options)
+    delete content.colorExpression
   }
   return [content]
 }
