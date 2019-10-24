@@ -8,6 +8,7 @@ import { AppPanel } from "./app-panel"
 import { App } from "./index"
 import { ContextMenu } from "./template-editor/context-menu"
 import { DraggingForSelectionLayer } from "./template-editor/dragging-for-selection-layer"
+import { ExpressionEditor } from "./template-editor/expression-editor"
 import { MaskLayer } from "./template-editor/mask-layer"
 import { OperationPanel } from "./template-editor/operation-panel"
 import { RenderLayer } from "./template-editor/render-layer"
@@ -601,6 +602,10 @@ export var templateEditorContextMenuTemplateHtmlStatic = [  ]
 export function templateEditorDraggingForSelectionLayerTemplateHtml(this: DraggingForSelectionLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.canvasState.isDraggingForSelection)?_c('div',{style:(_vm.draggingAreaStyle)}):_vm._e()}
 // @ts-ignore
 export var templateEditorDraggingForSelectionLayerTemplateHtmlStatic = [  ]
+// @ts-ignore
+export function templateEditorExpressionEditorTemplateHtml(this: ExpressionEditor) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.editorStyle)},[_c('json-editor',{attrs:{"schema":_vm.schema,"initial-value":_vm.ast},on:{"update-value":function($event){return _vm.updateValue($event)}}})],1)}
+// @ts-ignore
+export var templateEditorExpressionEditorTemplateHtmlStatic = [  ]
 // @ts-ignore
 export function templateEditorMaskLayerTemplateHtml(this: MaskLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.maskStyle),attrs:{"tabindex":"0"},on:{"wheel":_vm.wheel,"mousedown":_vm.mousedown,"mouseup":_vm.mouseup,"mousemove":_vm.mousemove,"contextmenu":_vm.contextmenu,"keydown":_vm.keydown}})}
 // @ts-ignore

@@ -12,9 +12,7 @@ import { analyseRepeat, Repeat, composeRepeat } from '../engine/template-engine'
 @Component({
   render: templateEditorOperationPanelTemplateHtml,
   staticRenderFns: templateEditorOperationPanelTemplateHtmlStatic,
-  props: {
-    canvasState: CanvasState
-  }
+  props: ['canvasState']
 })
 export class OperationPanel extends Vue {
   canvasState!: CanvasState

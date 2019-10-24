@@ -4,6 +4,7 @@ import { tokenizeExpression, Token } from 'expression-engine'
 
 import { CanvasState } from './canvas-state'
 import { PresetExpression } from '../model'
+import { ExpressionEditor } from './expression-editor'
 
 @Component({
   props: ['literal', 'literalType', 'expression', 'expressionId', 'canvasState']
@@ -14,6 +15,8 @@ export class ExpressionInput extends Vue {
   expression?: string
   canvasState!: CanvasState
   expressionId?: string
+
+  private editingAst = false
 
   private get id() {
     return this.expressionId || ''
@@ -280,8 +283,39 @@ export class ExpressionInput extends Vue {
               }
             }
           }
+        ),
+        createElement(
+          'button',
+          {
+            on: {
+              click: () => {
+                this.editingAst = !this.editingAst
+              }
+            }
+          },
+          'ast'
         )
       ]
+      if (this.editingAst) {
+        input.push(
+          createElement(
+            'expression-editor',
+            {
+              props: {
+                canvasState: this.canvasState,
+                expression: this.expression
+              },
+              on: {
+                change: (value: string) => {
+                  this.emitChange({
+                    expression: value,
+                  })
+                }
+              }
+            }
+          )
+        )
+      }
     } else {
       input = [
         createElement(
@@ -307,6 +341,8 @@ export class ExpressionInput extends Vue {
     return input
   }
 }
+
+Vue.component('expression-editor', ExpressionEditor)
 
 function matchPattern(presetExpression: PresetExpression, currentTokens: Token[]) {
   const tokens = tokenizeExpression(presetExpression.expression)

@@ -9,9 +9,7 @@ import { templateEditorMaskLayerTemplateHtml, templateEditorMaskLayerTemplateHtm
 @Component({
   render: templateEditorMaskLayerTemplateHtml,
   staticRenderFns: templateEditorMaskLayerTemplateHtmlStatic,
-  props: {
-    canvasState: CanvasState
-  }
+  props: ['canvasState']
 })
 export class MaskLayer extends Vue {
   private canvasState!: CanvasState

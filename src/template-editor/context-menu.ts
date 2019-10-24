@@ -8,9 +8,7 @@ import { isInRegion } from '../utils'
 @Component({
   render: templateEditorContextMenuTemplateHtml,
   staticRenderFns: templateEditorContextMenuTemplateHtmlStatic,
-  props: {
-    canvasState: CanvasState
-  }
+  props: ['canvasState']
 })
 export class ContextMenu extends Vue {
   canvasState!: CanvasState

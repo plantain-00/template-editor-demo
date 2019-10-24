@@ -14,7 +14,7 @@ const revStaticCommand = 'rev-static'
 const cssCommand = [
   'lessc index.less > index.css',
   'postcss index.css -o index.postcss.css',
-  'cleancss -o index.bundle.css index.css ./node_modules/github-fork-ribbon-css/gh-fork-ribbon.css'
+  'cleancss -o index.bundle.css index.css ./node_modules/github-fork-ribbon-css/gh-fork-ribbon.css ./node_modules/select2-component/dist/select2.min.css'
 ]
 const swCommand = isDev ? undefined : [
   'sw-precache --config sw-precache.config.js --verbose',

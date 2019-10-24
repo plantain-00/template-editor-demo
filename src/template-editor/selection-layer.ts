@@ -7,9 +7,7 @@ import { Region } from '../model'
 @Component({
   render: templateEditorSelectionLayerTemplateHtml,
   staticRenderFns: templateEditorSelectionLayerTemplateHtmlStatic,
-  props: {
-    canvasState: CanvasState
-  }
+  props: ['canvasState']
 })
 export class SelectionLayer extends Vue {
   private canvasState!: CanvasState

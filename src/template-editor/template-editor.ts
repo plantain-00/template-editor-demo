@@ -15,9 +15,7 @@ import { ExpressionInput } from './expression-input'
 @Component({
   render: templateEditorTemplateEditorTemplateHtml,
   staticRenderFns: templateEditorTemplateEditorTemplateHtmlStatic,
-  props: {
-    canvasState: CanvasState,
-  }
+  props: ['canvasState']
 })
 export class TemplateEditor extends Vue {
   private canvasState!: CanvasState

@@ -17,6 +17,8 @@ export const styleGuide: StyleGuide = {
           fontFamily: 'serif',
           fontSize: 50,
           color: '#FF0000',
+          colorExpression: 'props.color',
+          colorExpressionId: '4',
           width: 100,
           height: 100,
           x: 10,
@@ -32,8 +34,9 @@ export const styleGuide: StyleGuide = {
           xExpression: 'props.width - 300',
         }
       ],
-      parameters: ['width'],
-      widthExpression: 'props.width'
+      parameters: ['width', 'color'],
+      widthExpression: 'props.width',
+      widthExpressionId: '4'
     },
     {
       id: '2',
@@ -48,13 +51,14 @@ export const styleGuide: StyleGuide = {
           id: '1',
           x: 10,
           y: 10,
-          props: '{width: 400}'
+          props: '{ width: 400 }'
         },
         {
           kind: 'reference',
           id: '1',
           x: 550,
           y: 10,
+          props: '{ color: "blue" }'
         }
       ]
     }
