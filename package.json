@@ -70,10 +70,10 @@
   },
   "dependencies": {
     "ajv": "^6.10.2",
-    "expression-engine": "1.7.0",
+    "expression-engine": "1.7.2",
     "vue": "2.6.10",
     "vue-class-component": "7.1.0",
-    "vue-schema-based-json-editor": "^7.23.0"
+    "vue-schema-based-json-editor": "^7.25.1"
   },
   "typeCoverage": {
     "atLeast": 100

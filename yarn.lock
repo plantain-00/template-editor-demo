@@ -3262,10 +3262,10 @@ expand-tilde@^2.0.0, expand-tilde@^2.0.2:
   dependencies:
     homedir-polyfill "^1.0.1"
 
-expression-engine@1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/expression-engine/-/expression-engine-1.7.0.tgz#409f3c5ce14171d41994dc42dfa77360362fdd06"
-  integrity sha512-4XacqLmeBw4tgAknMcHfW7shbkHUAqr5FNsnF5iDd7Iw6d4vLTUEsWXLLrj/MTAcLw/fWIqO4bKbmwkmPCUbyw==
+expression-engine@1.7.2:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/expression-engine/-/expression-engine-1.7.2.tgz#881a7a910724037363772343c6cb5bc11d9e63b3"
+  integrity sha512-vougpSbgF0KRLlr6DOy/uXU9Cq7Aei3IZ7Pa5edhn2NMcHkDiXD3LGAcgL+p39y4lCEWYtu1Ur/GrY3ktiL4Eg==
 
 extend-shallow@^2.0.1:
   version "2.0.1"
@@ -7583,10 +7583,10 @@ sax@^1.2.4:
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
   integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
 
-schema-based-json-editor@^7.23.0:
-  version "7.23.0"
-  resolved "https://registry.yarnpkg.com/schema-based-json-editor/-/schema-based-json-editor-7.23.0.tgz#82e859c419cae011fb13e9654c19f8a644803853"
-  integrity sha512-+vtWI1Zt1JMEu5Qc2jCD4HKNO7g8/KYMS9qJ78L+VKLwa1tEwIy34yTt30a1754zB1hXsQoFNKmpc32OUCPF5A==
+schema-based-json-editor@^7.25.0:
+  version "7.25.0"
+  resolved "https://registry.npm.taobao.org/schema-based-json-editor/download/schema-based-json-editor-7.25.0.tgz#0617015c7d3342bafa4caa901aa2548b58b25994"
+  integrity sha1-BhcBXH0zQrr6TKqQGqJUi1iyWZQ=
   dependencies:
     "@types/dragula" "*"
     "@types/highlight.js" "*"
@@ -9008,10 +9008,10 @@ vue-class-component@7, vue-class-component@7.1.0:
   resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-7.1.0.tgz#b33efcb10e17236d684f70b1e96f1946ec793e87"
   integrity sha512-G9152NzUkz0i0xTfhk0Afc8vzdXxDR1pfN4dTwE72cskkgJtdXfrKBkMfGvDuxUh35U500g5Ve4xL8PEGdWeHg==
 
-vue-schema-based-json-editor@^7.23.0:
-  version "7.23.0"
-  resolved "https://registry.yarnpkg.com/vue-schema-based-json-editor/-/vue-schema-based-json-editor-7.23.0.tgz#6e545e3dd218afddf9e93d831d338db04ebece79"
-  integrity sha512-UtJlI+PhgIGWBuddnd4Vz3C9+SfE4SbE3X0Vyg+08UcimruGjk3vpk/nYRwXOtCZbBHd4RAMqNQpmvsyCvoKyg==
+vue-schema-based-json-editor@^7.25.1:
+  version "7.25.1"
+  resolved "https://registry.yarnpkg.com/vue-schema-based-json-editor/-/vue-schema-based-json-editor-7.25.1.tgz#88a7eb5d5e71fefa32915d29259e1806909071b7"
+  integrity sha512-2BguXAseYWtyYsJ2E73PNTXkl2MjgADHXjjKXYCtv+M02FC+RKVm7hWw7KdnYdpdcYJWZg7Qvsi0tDr2/ETZiw==
   dependencies:
     "@types/dragula" "*"
     "@types/highlight.js" "*"
@@ -9020,7 +9020,7 @@ vue-schema-based-json-editor@^7.23.0:
     file-uploader-vue-component "7"
     json5 "2"
     markdown-tip-vue "6"
-    schema-based-json-editor "^7.23.0"
+    schema-based-json-editor "^7.25.0"
     select2-vue-component "5"
     vue "2"
     vue-class-component "7"

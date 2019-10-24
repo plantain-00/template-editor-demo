@@ -7,9 +7,7 @@ import { templateEditorDraggingForSelectionLayerTemplateHtml, templateEditorDrag
 @Component({
   render: templateEditorDraggingForSelectionLayerTemplateHtml,
   staticRenderFns: templateEditorDraggingForSelectionLayerTemplateHtmlStatic,
-  props: {
-    canvasState: CanvasState
-  }
+  props: ['canvasState']
 })
 export class DraggingForSelectionLayer extends Vue {
   canvasState!: CanvasState
