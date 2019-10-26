@@ -17,11 +17,11 @@ export function* iterateAllContentRegions(
   targetTemplate?: Template,
 ) {
   if (targetTemplate) {
-    yield* iterateAllContent(target, targetTemplate, { x: targetTemplate.x, y: targetTemplate.y, z: targetTemplate.z || 0 }, styleGuide, undefined)
+    yield* iterateAllContent(target, targetTemplate, targetTemplate, { x: targetTemplate.x, y: targetTemplate.y, z: targetTemplate.z || 0 }, styleGuide, undefined)
     return
   }
   for (const template of styleGuide.templates) {
-    yield* iterateAllContent(target, template, { x: template.x, y: template.y, z: template.z || 0 }, styleGuide, undefined)
+    yield* iterateAllContent(target, template, template, { x: template.x, y: template.y, z: template.z || 0 }, styleGuide, undefined)
   }
 }
 
@@ -83,17 +83,18 @@ function* iterateAllTemplate(
 
 function* iterateAllContent(
   target: TemplateContent | undefined,
+  parent: Template,
   template: Template,
   position: Required<Position>,
   styleGuide: StyleGuide,
   props: unknown,
-): Generator<Required<Region> & { index: number, contents: TemplateContent[], content: TemplateContent, template: Template }, void, unknown> {
-  for (let i = 0; i < template.contents.length; i++) {
-    const content = template.contents[i]
+): Generator<Required<Region> & { index: number, contents: TemplateContent[], content: TemplateContent, parent: Template, template: Template }, void, unknown> {
+  for (let i = 0; i < parent.contents.length; i++) {
+    const content = parent.contents[i]
     if (content === target || target === undefined) {
-      const x = getPosition(props, 'x', content, template, styleGuide.templates)
-      const y = getPosition(props, 'y', content, template, styleGuide.templates)
-      const z = getPosition(props, 'z', content, template, styleGuide.templates)
+      const x = getPosition(props, 'x', content, parent, styleGuide.templates)
+      const y = getPosition(props, 'y', content, parent, styleGuide.templates)
+      const z = getPosition(props, 'z', content, parent, styleGuide.templates)
       const targetProps = content.kind === 'reference' && content.props ? evaluate(content.props, { props }) : undefined
       const size = getContentSize(content, styleGuide.templates)
       const width = targetProps ? evaluateSizeExpression('width', size, { props: targetProps }) : size.width
@@ -105,10 +106,25 @@ function* iterateAllContent(
         width,
         height,
         index: i,
-        contents: template.contents,
+        contents: parent.contents,
         content,
+        parent,
         template,
       }
+    }
+    if (content.kind === 'snapshot') {
+      yield * iterateAllContent(
+        target,
+        content.snapshot,
+        template,
+        {
+          x: position.x + content.x,
+          y: position.y + content.y,
+          z: position.z + (content.z || 0),
+        },
+        styleGuide,
+        undefined
+      )
     }
   }
 }
