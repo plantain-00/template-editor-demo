@@ -147,7 +147,7 @@ export class ExpressionInput extends Vue {
   private renderInput(createElement: Vue.CreateElement) {
     let input: (string | Vue.VNode)[]
     const presetExpression = this.presetExpression
-    if (presetExpression) {
+    if (presetExpression && presetExpression.variables.every((v) => typeof v === 'string' || v.tokenIndex < this.currentTokens.length)) {
       input = presetExpression.variables.map((v) => {
         if (typeof v === 'string') {
           return createElement(

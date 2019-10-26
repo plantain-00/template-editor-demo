@@ -16,8 +16,10 @@ export async function generate(template: Template, styleGuide: StyleGuide, model
   }
   result.width = evaluateSizeExpression('width', result, model, options)
   delete result.widthExpression
+  delete result.widthExpressionId
   result.height = evaluateSizeExpression('height', result, model, options)
   delete result.heightExpression
+  delete result.heightExpressionId
   layoutFlex(result, styleGuide.templates)
   return result
 }
@@ -103,8 +105,10 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
   content = { ...content }
   content.x = evaluatePositionExpression('x', content, model, options)
   delete content.xExpression
+  delete content.xExpressionId
   content.y = evaluatePositionExpression('y', content, model, options)
   delete content.yExpression
+  delete content.yExpressionId
 
   if (content.kind === 'reference') {
     const id = content.id
@@ -113,6 +117,7 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
       if (content.props) {
         const result = evaluate(content.props, model, getExpressionOptions(options, 'props'))
         delete content.props
+        delete content.propsIds
         model = { ...model, props: result }
       }
       return [
@@ -129,23 +134,29 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
 
   content.width = evaluateSizeExpression('width', content, model, options)
   delete content.widthExpression
+  delete content.widthExpressionId
   content.height = evaluateSizeExpression('height', content, model, options)
   delete content.heightExpression
+  delete content.heightExpressionId
 
   if (content.kind === 'text') {
     content.text = evaluateTextExpression(content, model, options)
     delete content.textExpression
+    delete content.textExpressionId
     content.characters = getCharacters(content.text)
 
     content.fontSize = evaluateFontSizeExpression(content, model, options)
     delete content.fontSizeExpression
+    delete content.fontSizeExpressionId
 
     content.color = evaluateColorExpression(content, model, options)
     delete content.colorExpression
+    delete content.colorExpressionId
   }
   if (content.kind === 'image') {
     content.url = evaluateUrlExpression(content, model, options)
     delete content.urlExpression
+    delete content.urlExpressionId
     if (content.opacity !== undefined) {
       const image = await loadImage(content.url)
       const canvas = applyImageOpacity(image, content.opacity)
@@ -157,6 +168,7 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
   if (content.kind === 'color') {
     content.color = evaluateColorExpression(content, model, options)
     delete content.colorExpression
+    delete content.colorExpressionId
   }
   return [content]
 }
