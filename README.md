@@ -232,5 +232,4 @@ z 未设置时是 0。
 
 + intellisense?
 + content rotate
-+ hover style
 + resize on canvas

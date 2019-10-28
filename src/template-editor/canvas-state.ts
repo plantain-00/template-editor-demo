@@ -47,6 +47,8 @@ export class CanvasState extends Vue {
   mousePressing = false
   isDraggingForMoving = false
   addKind: 'template' | 'image' | 'text' | 'color' | undefined
+  x = 0
+  y = 0
 
   contextMenuEnabled = false
   contextMenuX = 0
@@ -100,6 +102,12 @@ export class CanvasState extends Vue {
   get mouseupMappedY() {
     return this.mapY(this.mouseupY)
   }
+  get mappedX() {
+    return this.mapX(this.x)
+  }
+  get mappedY() {
+    return this.mapY(this.y)
+  }
 
   mapX(x: number) {
     return (x - ((this.styleGuideTranslateX - this.styleGuideWidth / 2) * this.styleGuideScale + this.styleGuideWidth / 2)) / this.styleGuideScale
@@ -142,6 +150,18 @@ export class CanvasState extends Vue {
       return Array.from(iterateAllNameRegions(this.selection.template, this.styleGuide))
     }
     return []
+  }
+
+  get targetTemplateRegions() {
+    return Array.from(iterateAllTemplateRegions(undefined, this.styleGuide))
+  }
+
+  get targetContentRegions() {
+    return Array.from(iterateAllContentRegions(undefined, this.styleGuide))
+  }
+
+  get targetNameRegions() {
+    return Array.from(iterateAllNameRegions(undefined, this.styleGuide))
   }
 
   presetExpressions: PresetExpression[] = [

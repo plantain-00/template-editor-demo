@@ -7,6 +7,7 @@ import { CanvasState } from './canvas-state'
 import { RenderLayer } from './render-layer'
 import { DraggingForSelectionLayer } from './dragging-for-selection-layer'
 import { SelectionLayer } from './selection-layer'
+import { HoverLayer } from './hover-layer'
 import { MaskLayer } from './mask-layer'
 import { ContextMenu } from './context-menu'
 import { OperationPanel } from './operation-panel'
@@ -32,6 +33,7 @@ export class TemplateEditor extends Vue {
 Vue.component('render-layer', RenderLayer)
 Vue.component('dragging-for-selection-layer', DraggingForSelectionLayer)
 Vue.component('selection-layer', SelectionLayer)
+Vue.component('hover-layer', HoverLayer)
 Vue.component('mask-layer', MaskLayer)
 Vue.component('context-menu', ContextMenu)
 Vue.component('operation-panel', OperationPanel)

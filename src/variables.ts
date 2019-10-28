@@ -9,6 +9,7 @@ import { App } from "./index"
 import { ContextMenu } from "./template-editor/context-menu"
 import { DraggingForSelectionLayer } from "./template-editor/dragging-for-selection-layer"
 import { ExpressionEditor } from "./template-editor/expression-editor"
+import { HoverLayer } from "./template-editor/hover-layer"
 import { MaskLayer } from "./template-editor/mask-layer"
 import { OperationPanel } from "./template-editor/operation-panel"
 import { RenderLayer } from "./template-editor/render-layer"
@@ -607,6 +608,10 @@ export function templateEditorExpressionEditorTemplateHtml(this: ExpressionEdito
 // @ts-ignore
 export var templateEditorExpressionEditorTemplateHtmlStatic = [  ]
 // @ts-ignore
+export function templateEditorHoverLayerTemplateHtml(this: HoverLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.canvasStyle)},[_c('div',{style:(_vm.styleGuideStyle)},[(_vm.hoverStyle)?_c('div',{style:(_vm.hoverStyle)}):_vm._e()])])}
+// @ts-ignore
+export var templateEditorHoverLayerTemplateHtmlStatic = [  ]
+// @ts-ignore
 export function templateEditorMaskLayerTemplateHtml(this: MaskLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.maskStyle),attrs:{"tabindex":"0"},on:{"wheel":_vm.wheel,"mousedown":_vm.mousedown,"mouseup":_vm.mouseup,"mousemove":_vm.mousemove,"contextmenu":_vm.contextmenu,"keydown":_vm.keydown}})}
 // @ts-ignore
 export var templateEditorMaskLayerTemplateHtmlStatic = [  ]
@@ -623,7 +628,7 @@ export function templateEditorSelectionLayerTemplateHtml(this: SelectionLayer) {
 // @ts-ignore
 export var templateEditorSelectionLayerTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function templateEditorTemplateEditorTemplateHtml(this: TemplateEditor) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticStyle:{"display":"flex"}},[_c('div',{style:(_vm.canvasStyle)},[_c('render-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('dragging-for-selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('mask-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('context-menu',{attrs:{"canvasState":_vm.canvasState}})],1),_vm._v(" "),_c('div',{staticStyle:{"width":"300px","right":"0","position":"absolute"}},[_c('operation-panel',{attrs:{"canvasState":_vm.canvasState}})],1)])}
+export function templateEditorTemplateEditorTemplateHtml(this: TemplateEditor) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticStyle:{"display":"flex"}},[_c('div',{style:(_vm.canvasStyle)},[_c('render-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('hover-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('dragging-for-selection-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('mask-layer',{attrs:{"canvasState":_vm.canvasState}}),_vm._v(" "),_c('context-menu',{attrs:{"canvasState":_vm.canvasState}})],1),_vm._v(" "),_c('div',{staticStyle:{"width":"300px","right":"0","position":"absolute"}},[_c('operation-panel',{attrs:{"canvasState":_vm.canvasState}})],1)])}
 // @ts-ignore
 export var templateEditorTemplateEditorTemplateHtmlStatic = [  ]
 // @ts-ignore
