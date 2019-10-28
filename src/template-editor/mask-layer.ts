@@ -3,7 +3,7 @@ import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
 import { StyleGuide, Region, Position, TemplateContent, Template, TemplateReferenceContent, CanvasSelection } from '../model'
-import { isInRegion, iterateAllTemplateRegions, iterateAllContentRegions, iterateAllNameRegions, nameSize } from '../utils'
+import { isInRegion, iterateAllTemplateRegions, nameSize } from '../utils'
 import { templateEditorMaskLayerTemplateHtml, templateEditorMaskLayerTemplateHtmlStatic } from '../variables'
 
 @Component({
@@ -17,8 +17,6 @@ export class MaskLayer extends Vue {
   private draggingSelectionOffsetX = 0
   private draggingSelectionOffsetY = 0
   private draggingSelectionContent: TemplateReferenceContent | undefined
-  private x = 0
-  private y = 0
   private clipboard: CanvasSelection = {
     kind: 'none'
   }
@@ -28,8 +26,8 @@ export class MaskLayer extends Vue {
     let cursor: string
 
     const relation = this.getSelectionAreaRelation({
-      x: this.canvasState.mapX(this.x),
-      y: this.canvasState.mapY(this.y)
+      x: this.canvasState.mappedX,
+      y: this.canvasState.mappedY
     })
 
     if (relation || this.canvasState.isDraggingForMoving) {
@@ -93,8 +91,8 @@ export class MaskLayer extends Vue {
           template: newTemplate,
         }
       } else {
-        const template = selectPositionTemplate(this.canvasState.styleGuide, { x, y })
-        if (template) {
+        const templateRegion = selectPositionTemplate(this.canvasState, { x, y })
+        if (templateRegion) {
           if (this.canvasState.addKind === 'text') {
             const newContent: TemplateContent = {
               kind: 'text',
@@ -102,47 +100,47 @@ export class MaskLayer extends Vue {
               color: '#000000',
               fontFamily: 'Aria',
               fontSize: 12,
-              x: x - template.x - 50,
-              y: y - template.y - 50,
+              x: x - templateRegion.template.x - 50,
+              y: y - templateRegion.template.y - 50,
               width: 100,
               height: 100,
               characters: [],
             }
-            template.contents.push(newContent)
+            templateRegion.template.contents.push(newContent)
             this.canvasState.selection = {
               kind: 'content',
               content: newContent,
-              template,
+              template: templateRegion.template,
             }
           } else if (this.canvasState.addKind === 'image') {
             const newContent: TemplateContent = {
               kind: 'image',
               url: '',
-              x: x - template.x - 50,
-              y: y - template.y - 50,
+              x: x - templateRegion.template.x - 50,
+              y: y - templateRegion.template.y - 50,
               width: 100,
               height: 100,
             }
-            template.contents.push(newContent)
+            templateRegion.template.contents.push(newContent)
             this.canvasState.selection = {
               kind: 'content',
               content: newContent,
-              template,
+              template: templateRegion.template,
             }
           } else if (this.canvasState.addKind === 'color') {
             const newContent: TemplateContent = {
               kind: 'color',
               color: '#000',
-              x: x - template.x - 50,
-              y: y - template.y - 50,
+              x: x - templateRegion.template.x - 50,
+              y: y - templateRegion.template.y - 50,
               width: 100,
               height: 100,
             }
-            template.contents.push(newContent)
+            templateRegion.template.contents.push(newContent)
             this.canvasState.selection = {
               kind: 'content',
               content: newContent,
-              template,
+              template: templateRegion.template,
             }
           }
         }
@@ -170,8 +168,8 @@ export class MaskLayer extends Vue {
   }
 
   mousemove(e: MouseEvent) {
-    this.x = e.offsetX
-    this.y = e.offsetY
+    this.canvasState.x = e.offsetX
+    this.canvasState.y = e.offsetY
 
     if (this.canvasState.mousePressing) {
       this.canvasState.mouseupX = e.offsetX
@@ -229,18 +227,18 @@ export class MaskLayer extends Vue {
       const template = selectTemplate(this.canvasState.styleGuide, { x, y }, { x: this.canvasState.mousedownMappedX, y: this.canvasState.mousedownMappedY })
       this.canvasState.selection = template ? { kind: 'template', template } : { kind: 'none' }
     } else {
-      const content = selectContent(this.canvasState.styleGuide, { x, y })
+      const content = selectContent(this.canvasState, { x, y })
       if (content) {
         if (content.kind === 'content') {
           this.canvasState.selection = {
             kind: 'content',
-            content: content.content,
-            template: content.template
+            content: content.region.content,
+            template: content.region.template
           }
         } else if (content.kind === 'template') {
           this.canvasState.selection = {
             kind: 'template',
-            template: content.template
+            template: content.region.template
           }
         }
       } else {
@@ -374,17 +372,17 @@ function selectTemplate(styleGuide: StyleGuide, position1: Position, position2: 
   return null
 }
 
-function selectContent(styleGuide: StyleGuide, position: Position): { kind: 'content', content: TemplateContent, template: Template } | { kind: 'template', template: Template } | null {
+export function selectContent(canvasState: CanvasState, position: Position) {
   let potentialNameRegion: Required<Region> & {
     template: Template;
   } | undefined
-  for (const nameRegion of iterateAllNameRegions(undefined, styleGuide)) {
+  for (const nameRegion of canvasState.targetNameRegions) {
     if ((!potentialNameRegion || nameRegion.z >= potentialNameRegion.z) && isInRegion(position, nameRegion)) {
       potentialNameRegion = nameRegion
     }
   }
   if (potentialNameRegion) {
-    return { kind: 'template', template: potentialNameRegion.template }
+    return { kind: 'template' as const, region: potentialNameRegion }
   }
 
   let potentialTemplateRegion: Required<Region> & {
@@ -393,28 +391,30 @@ function selectContent(styleGuide: StyleGuide, position: Position): { kind: 'con
     content: TemplateContent;
     template: Template;
   } | undefined
-  for (const templateRegion of iterateAllContentRegions(undefined, styleGuide)) {
-    if ((!potentialTemplateRegion || templateRegion.z >= potentialTemplateRegion.z) && isInRegion(position, templateRegion)) {
-      potentialTemplateRegion = templateRegion
+  for (const contentRegion of canvasState.targetContentRegions) {
+    if ((!potentialTemplateRegion || contentRegion.z >= potentialTemplateRegion.z) && isInRegion(position, contentRegion)) {
+      potentialTemplateRegion = contentRegion
     }
   }
   if (potentialTemplateRegion) {
-    return { kind: 'content', content: potentialTemplateRegion.content, template: potentialTemplateRegion.template }
+    return { kind: 'content' as const, region: potentialTemplateRegion }
   }
 
-  const t = selectPositionTemplate(styleGuide, position)
+  const t = selectPositionTemplate(canvasState, position)
   if (t) {
-    return { kind: 'template', template: t }
+    return { kind: 'template' as const, region: t }
   }
-  return null
+  return undefined
 }
 
-function selectPositionTemplate(styleGuide: StyleGuide, position: Position): Template | null {
-  let result: Template | null = null
-  for (const template of styleGuide.templates) {
-    if ((!result || (template.z || 0) >= (result.z || 0)) && isInRegion(position, template)) {
-      result = template
+function selectPositionTemplate(canvasState: CanvasState, position: Position) {
+  let potentialTemplateRegion: Required<Region> & {
+    template: Template;
+  } | undefined
+  for (const templateRegion of canvasState.targetTemplateRegions) {
+    if ((!potentialTemplateRegion || (templateRegion.z || 0) >= (potentialTemplateRegion.z || 0)) && isInRegion(position, templateRegion)) {
+      potentialTemplateRegion = templateRegion
     }
   }
-  return result
+  return potentialTemplateRegion
 }
