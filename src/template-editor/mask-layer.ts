@@ -2,8 +2,8 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
-import { StyleGuide, Region, Position, TemplateContent, Template, TemplateReferenceContent, CanvasSelection } from '../model'
-import { isInRegion, iterateAllTemplateRegions, nameSize } from '../utils'
+import { TemplateContent, Template, TemplateReferenceContent, CanvasSelection } from '../model'
+import { selectTemplateByPosition, selectContentOrTemplateByPosition, getPositionAndSelectionAreaRelation, selectTemplateByArea, RegionSide } from './utils'
 import { templateEditorMaskLayerTemplateHtml, templateEditorMaskLayerTemplateHtmlStatic } from '../variables'
 
 @Component({
@@ -21,17 +21,26 @@ export class MaskLayer extends Vue {
     kind: 'none'
   }
   private mouseIsDown = false
+  private draggingSelectionKind: 'move' | RegionSide | undefined
+  private draggingSelectionWidth = 0
+  private draggingSelectionHeight = 0
 
   get maskStyle() {
     let cursor: string
 
-    const relation = this.getSelectionAreaRelation({
+    const relation = getPositionAndSelectionAreaRelation(this.canvasState, {
       x: this.canvasState.mappedX,
       y: this.canvasState.mappedY
     })
 
-    if (relation || this.canvasState.isDraggingForMoving) {
-      cursor = 'move'
+    if (this.canvasState.isDraggingForMoving) {
+      if (this.draggingSelectionKind) {
+        cursor = this.draggingSelectionKind
+      } else {
+        cursor = 'move'
+      }
+    } else if (relation) {
+      cursor = relation.kind
     } else if (this.canvasState.isDraggingForSelection) {
       cursor = 'crosshair'
     } else {
@@ -91,7 +100,7 @@ export class MaskLayer extends Vue {
           template: newTemplate,
         }
       } else {
-        const templateRegion = selectPositionTemplate(this.canvasState, { x, y })
+        const templateRegion = selectTemplateByPosition(this.canvasState, { x, y })
         if (templateRegion) {
           if (this.canvasState.addKind === 'text') {
             const newContent: TemplateContent = {
@@ -155,7 +164,7 @@ export class MaskLayer extends Vue {
     this.canvasState.mouseupY = e.offsetY
     this.canvasState.mousePressing = true
 
-    const relation = this.getSelectionAreaRelation({
+    const relation = getPositionAndSelectionAreaRelation(this.canvasState, {
       x: this.canvasState.mousedownMappedX,
       y: this.canvasState.mousedownMappedY
     })
@@ -164,6 +173,21 @@ export class MaskLayer extends Vue {
       this.draggingSelectionOffsetX = relation.offsetX
       this.draggingSelectionOffsetY = relation.offsetY
       this.draggingSelectionContent = relation.content
+      this.draggingSelectionKind = relation.kind
+      if (this.canvasState.selection.kind === 'template') {
+        this.draggingSelectionWidth = this.canvasState.selection.template.width
+        this.draggingSelectionHeight = this.canvasState.selection.template.height
+      } else if (this.canvasState.selection.kind === 'content') {
+        if (this.canvasState.selection.content.kind !== 'reference') {
+          if (this.canvasState.selection.content.kind === 'snapshot') {
+            this.draggingSelectionWidth = this.canvasState.selection.content.snapshot.width
+            this.draggingSelectionHeight = this.canvasState.selection.content.snapshot.height
+          } else {
+            this.draggingSelectionWidth = this.canvasState.selection.content.width
+            this.draggingSelectionHeight = this.canvasState.selection.content.height
+          }
+        }
+      }
     }
   }
 
@@ -178,20 +202,82 @@ export class MaskLayer extends Vue {
 
     // move content or template
     if (this.canvasState.isDraggingForMoving) {
+      const x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
+      const y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
       if (this.canvasState.selection.kind === 'template') {
         if (this.draggingSelectionContent) {
-          this.draggingSelectionContent.x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
-          this.draggingSelectionContent.y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
+          this.draggingSelectionContent.x = x
+          this.draggingSelectionContent.y = y
         } else {
-          this.canvasState.selection.template.x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
-          this.canvasState.selection.template.y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
+          const deltaX = x - this.canvasState.selection.template.x
+          const deltaY = y - this.canvasState.selection.template.y
+          if (this.draggingSelectionKind === 'move') {
+            this.canvasState.selection.template.x = x
+            this.canvasState.selection.template.y = y
+          }
+          if (this.draggingSelectionKind === 'w-resize' || this.draggingSelectionKind === 'nw-resize' || this.draggingSelectionKind === 'sw-resize') {
+            this.canvasState.selection.template.width -= deltaX
+            this.canvasState.selection.template.x = x
+          }
+          if (this.draggingSelectionKind === 'e-resize' || this.draggingSelectionKind === 'ne-resize' || this.draggingSelectionKind === 'se-resize') {
+            this.canvasState.selection.template.width = this.draggingSelectionWidth + deltaX
+          }
+          if (this.draggingSelectionKind === 'n-resize' || this.draggingSelectionKind === 'nw-resize' || this.draggingSelectionKind === 'ne-resize') {
+            this.canvasState.selection.template.height -= deltaY
+            this.canvasState.selection.template.y = y
+          }
+          if (this.draggingSelectionKind === 's-resize' || this.draggingSelectionKind === 'sw-resize' || this.draggingSelectionKind === 'se-resize') {
+            this.canvasState.selection.template.height = this.draggingSelectionHeight + deltaY
+          }
         }
       } else if (this.canvasState.selection.kind === 'content') {
         if (this.canvasState.selection.template.display === 'flex') {
           return
         }
-        this.canvasState.selection.content.x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
-        this.canvasState.selection.content.y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
+        const deltaX = x - this.canvasState.selection.content.x
+        const deltaY = y - this.canvasState.selection.content.y
+        if (this.draggingSelectionKind === 'move') {
+          this.canvasState.selection.content.x = x
+          this.canvasState.selection.content.y = y
+        }
+        if (this.draggingSelectionKind === 'w-resize' || this.draggingSelectionKind === 'nw-resize' || this.draggingSelectionKind === 'sw-resize') {
+          if (this.canvasState.selection.content.kind !== 'reference') {
+            if (this.canvasState.selection.content.kind === 'snapshot') {
+              this.canvasState.selection.content.snapshot.width -= deltaX
+            } else {
+              this.canvasState.selection.content.width -= deltaX
+            }
+          }
+          this.canvasState.selection.content.x = x
+        }
+        if (this.draggingSelectionKind === 'e-resize' || this.draggingSelectionKind === 'ne-resize' || this.draggingSelectionKind === 'se-resize') {
+          if (this.canvasState.selection.content.kind !== 'reference') {
+            if (this.canvasState.selection.content.kind === 'snapshot') {
+              this.canvasState.selection.content.snapshot.width = this.draggingSelectionWidth + deltaX
+            } else {
+              this.canvasState.selection.content.width = this.draggingSelectionWidth + deltaX
+            }
+          }
+        }
+        if (this.draggingSelectionKind === 'n-resize' || this.draggingSelectionKind === 'nw-resize' || this.draggingSelectionKind === 'ne-resize') {
+          if (this.canvasState.selection.content.kind !== 'reference') {
+            if (this.canvasState.selection.content.kind === 'snapshot') {
+              this.canvasState.selection.content.snapshot.height -= deltaY
+            } else {
+              this.canvasState.selection.content.height -= deltaY
+            }
+          }
+          this.canvasState.selection.content.y = y
+        }
+        if (this.draggingSelectionKind === 's-resize' || this.draggingSelectionKind === 'sw-resize' || this.draggingSelectionKind === 'se-resize') {
+          if (this.canvasState.selection.content.kind !== 'reference') {
+            if (this.canvasState.selection.content.kind === 'snapshot') {
+              this.canvasState.selection.content.snapshot.height = this.draggingSelectionHeight + deltaY
+            } else {
+              this.canvasState.selection.content.height = this.draggingSelectionHeight + deltaY
+            }
+          }
+        }
       }
     }
   }
@@ -224,10 +310,10 @@ export class MaskLayer extends Vue {
     const x = this.canvasState.mouseupMappedX
     const y = this.canvasState.mouseupMappedY
     if (this.canvasState.isDraggingForSelection) {
-      const template = selectTemplate(this.canvasState.styleGuide, { x, y }, { x: this.canvasState.mousedownMappedX, y: this.canvasState.mousedownMappedY })
+      const template = selectTemplateByArea(this.canvasState, { x, y }, { x: this.canvasState.mousedownMappedX, y: this.canvasState.mousedownMappedY })
       this.canvasState.selection = template ? { kind: 'template', template } : { kind: 'none' }
     } else {
-      const content = selectContent(this.canvasState, { x, y })
+      const content = selectContentOrTemplateByPosition(this.canvasState, { x, y })
       if (content) {
         if (content.kind === 'content') {
           this.canvasState.selection = {
@@ -298,123 +384,4 @@ export class MaskLayer extends Vue {
       }
     }
   }
-
-  private getSelectionAreaRelation(position: Position) {
-    if (this.canvasState.selection.kind === 'template') {
-      for (const nameRegion of this.canvasState.allNameRegions) {
-        const isInSelectionRegion = isInRegion(position, nameRegion)
-        if (isInSelectionRegion) {
-          return {
-            offsetX: position.x - nameRegion.x,
-            offsetY: position.y - nameRegion.y - nameSize,
-          }
-        }
-      }
-      for (const templateRegion of this.canvasState.allTemplateRegions) {
-        const isInSelectionRegion = isInRegion(position, templateRegion)
-        if (isInSelectionRegion) {
-          if (templateRegion.parent) {
-            return {
-              offsetX: position.x - templateRegion.parent.content.x,
-              offsetY: position.y - templateRegion.parent.content.y,
-              content: templateRegion.parent.content
-            }
-          }
-          return {
-            offsetX: position.x - templateRegion.x,
-            offsetY: position.y - templateRegion.y,
-          }
-        }
-      }
-    } else if (this.canvasState.selection.kind === 'content') {
-      const content = this.canvasState.selection.content
-      for (const contentRegion of this.canvasState.allContentRegions) {
-        const isInSelectionRegion = isInRegion(position, contentRegion)
-        if (isInSelectionRegion) {
-          return {
-            offsetX: position.x - content.x,
-            offsetY: position.y - content.y,
-            content: undefined
-          }
-        }
-      }
-    }
-    return undefined
-  }
-}
-
-function selectTemplate(styleGuide: StyleGuide, position1: Position, position2: Position) {
-  const region: Region = {
-    x: Math.min(position1.x, position2.x),
-    y: Math.min(position1.y, position2.y),
-    width: Math.abs(position1.x - position2.x),
-    height: Math.abs(position1.y - position2.y),
-  }
-  let potentialTemplateRegion: Required<Region> & { parent?: { content: TemplateReferenceContent, template: Template, index: number }, template: Template } | undefined
-  for (const templateRegion of iterateAllTemplateRegions(undefined, styleGuide)) {
-    const positions: Position[] = [
-      {
-        x: templateRegion.x,
-        y: templateRegion.y,
-      },
-      {
-        x: templateRegion.x + templateRegion.width,
-        y: templateRegion.y + templateRegion.height,
-      },
-    ]
-    if ((!potentialTemplateRegion || templateRegion.z >= potentialTemplateRegion.z) && isInRegion(positions, region)) {
-      potentialTemplateRegion = templateRegion
-    }
-  }
-  if (potentialTemplateRegion) {
-    return potentialTemplateRegion.template
-  }
-  return null
-}
-
-export function selectContent(canvasState: CanvasState, position: Position) {
-  let potentialNameRegion: Required<Region> & {
-    template: Template;
-  } | undefined
-  for (const nameRegion of canvasState.targetNameRegions) {
-    if ((!potentialNameRegion || nameRegion.z >= potentialNameRegion.z) && isInRegion(position, nameRegion)) {
-      potentialNameRegion = nameRegion
-    }
-  }
-  if (potentialNameRegion) {
-    return { kind: 'template' as const, region: potentialNameRegion }
-  }
-
-  let potentialTemplateRegion: Required<Region> & {
-    index: number;
-    contents: TemplateContent[];
-    content: TemplateContent;
-    template: Template;
-  } | undefined
-  for (const contentRegion of canvasState.targetContentRegions) {
-    if ((!potentialTemplateRegion || contentRegion.z >= potentialTemplateRegion.z) && isInRegion(position, contentRegion)) {
-      potentialTemplateRegion = contentRegion
-    }
-  }
-  if (potentialTemplateRegion) {
-    return { kind: 'content' as const, region: potentialTemplateRegion }
-  }
-
-  const t = selectPositionTemplate(canvasState, position)
-  if (t) {
-    return { kind: 'template' as const, region: t }
-  }
-  return undefined
-}
-
-function selectPositionTemplate(canvasState: CanvasState, position: Position) {
-  let potentialTemplateRegion: Required<Region> & {
-    template: Template;
-  } | undefined
-  for (const templateRegion of canvasState.targetTemplateRegions) {
-    if ((!potentialTemplateRegion || (templateRegion.z || 0) >= (potentialTemplateRegion.z || 0)) && isInRegion(position, templateRegion)) {
-      potentialTemplateRegion = templateRegion
-    }
-  }
-  return potentialTemplateRegion
 }

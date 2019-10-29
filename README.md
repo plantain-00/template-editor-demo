@@ -232,4 +232,4 @@ z 未设置时是 0。
 
 + intellisense?
 + content rotate
-+ resize on canvas
++ 0.01px precision for size and position
