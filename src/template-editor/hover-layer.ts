@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { templateEditorHoverLayerTemplateHtml, templateEditorHoverLayerTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
-import { selectContent } from './mask-layer'
+import { selectContentOrTemplateByPosition } from './utils'
 
 @Component({
   render: templateEditorHoverLayerTemplateHtml,
@@ -30,7 +30,7 @@ export class HoverLayer extends Vue {
   }
 
   get hoverStyle() {
-    const content = selectContent(this.canvasState, { x: this.canvasState.mappedX, y: this.canvasState.mappedY })
+    const content = selectContentOrTemplateByPosition(this.canvasState, { x: this.canvasState.mappedX, y: this.canvasState.mappedY })
     if (content) {
       const region = content.kind === 'content' ? content.region : content.region.template
       return {
