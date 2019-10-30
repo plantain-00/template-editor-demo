@@ -6,7 +6,7 @@ import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextEx
 import { layoutFlex } from './layout-engine'
 import { applyImageOpacity, loadImage } from './image'
 import { getCharacters } from './mock'
-import { getPosition } from '../utils'
+import { getPosition, formatPixel } from '../utils'
 
 export function renderTemplate(template: Template, templates: Template[], images: { [url: string]: HTMLImageElement }) {
   const canvas = document.createElement('canvas')
@@ -105,9 +105,9 @@ function renderSymbol(
   props?: unknown,
 ) {
   for (const renderItem of iterateSymbolRenderItem(template, templates)) {
-    const x = position.x + evaluatePositionExpression('x', renderItem.content, { props })
-    const y = position.y + evaluatePositionExpression('y', renderItem.content, { props })
-    const z = position.z + evaluatePositionExpression('z', renderItem.content, { props })
+    const x = formatPixel(position.x + evaluatePositionExpression('x', renderItem.content, { props }))
+    const y = formatPixel(position.y + evaluatePositionExpression('y', renderItem.content, { props }))
+    const z = Math.round(position.z + evaluatePositionExpression('z', renderItem.content, { props }))
     if (renderItem.kind === 'text') {
       const content = renderItem.content
       actions.push({

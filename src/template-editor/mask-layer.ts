@@ -3,8 +3,9 @@ import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
 import { TemplateContent, Template, TemplateReferenceContent, CanvasSelection } from '../model'
-import { selectTemplateByPosition, selectContentOrTemplateByPosition, getPositionAndSelectionAreaRelation, selectTemplateByArea, RegionSide } from './utils'
+import { selectTemplateByPosition, selectContentOrTemplateByPosition, getPositionAndSelectionAreaRelation, selectTemplateByArea, RegionSide, decreaseContentSize, setContentSize, decreaseTemplateSize } from './utils'
 import { templateEditorMaskLayerTemplateHtml, templateEditorMaskLayerTemplateHtmlStatic } from '../variables'
+import { formatPixel } from '../utils'
 
 @Component({
   render: templateEditorMaskLayerTemplateHtml,
@@ -88,8 +89,8 @@ export class MaskLayer extends Vue {
       if (this.canvasState.addKind === 'template') {
         const newTemplate: Template = {
           id: Math.random().toString(),
-          x: x - 250,
-          y: y - 150,
+          x: formatPixel(x - 250),
+          y: formatPixel(y - 150),
           width: 500,
           height: 300,
           contents: [],
@@ -102,6 +103,8 @@ export class MaskLayer extends Vue {
       } else {
         const templateRegion = selectTemplateByPosition(this.canvasState, { x, y })
         if (templateRegion) {
+          const newContentX = formatPixel(x - templateRegion.template.x - 50)
+          const newContentY = formatPixel(y - templateRegion.template.y - 50)
           if (this.canvasState.addKind === 'text') {
             const newContent: TemplateContent = {
               kind: 'text',
@@ -109,8 +112,8 @@ export class MaskLayer extends Vue {
               color: '#000000',
               fontFamily: 'Aria',
               fontSize: 12,
-              x: x - templateRegion.template.x - 50,
-              y: y - templateRegion.template.y - 50,
+              x: newContentX,
+              y: newContentY,
               width: 100,
               height: 100,
               characters: [],
@@ -125,8 +128,8 @@ export class MaskLayer extends Vue {
             const newContent: TemplateContent = {
               kind: 'image',
               url: '',
-              x: x - templateRegion.template.x - 50,
-              y: y - templateRegion.template.y - 50,
+              x: newContentX,
+              y: newContentY,
               width: 100,
               height: 100,
             }
@@ -140,8 +143,8 @@ export class MaskLayer extends Vue {
             const newContent: TemplateContent = {
               kind: 'color',
               color: '#000',
-              x: x - templateRegion.template.x - 50,
-              y: y - templateRegion.template.y - 50,
+              x: newContentX,
+              y: newContentY,
               width: 100,
               height: 100,
             }
@@ -206,28 +209,28 @@ export class MaskLayer extends Vue {
       const y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
       if (this.canvasState.selection.kind === 'template') {
         if (this.draggingSelectionContent) {
-          this.draggingSelectionContent.x = x
-          this.draggingSelectionContent.y = y
+          this.draggingSelectionContent.x = formatPixel(x)
+          this.draggingSelectionContent.y = formatPixel(y)
         } else {
           const deltaX = x - this.canvasState.selection.template.x
           const deltaY = y - this.canvasState.selection.template.y
           if (this.draggingSelectionKind === 'move') {
-            this.canvasState.selection.template.x = x
-            this.canvasState.selection.template.y = y
+            this.canvasState.selection.template.x = formatPixel(x)
+            this.canvasState.selection.template.y = formatPixel(y)
           }
           if (this.draggingSelectionKind === 'w-resize' || this.draggingSelectionKind === 'nw-resize' || this.draggingSelectionKind === 'sw-resize') {
-            this.canvasState.selection.template.width -= deltaX
-            this.canvasState.selection.template.x = x
+            decreaseTemplateSize(this.canvasState.selection.template, 'width', deltaX)
+            this.canvasState.selection.template.x = formatPixel(x)
           }
           if (this.draggingSelectionKind === 'e-resize' || this.draggingSelectionKind === 'ne-resize' || this.draggingSelectionKind === 'se-resize') {
-            this.canvasState.selection.template.width = this.draggingSelectionWidth + deltaX
+            this.canvasState.selection.template.width = formatPixel(this.draggingSelectionWidth + deltaX)
           }
           if (this.draggingSelectionKind === 'n-resize' || this.draggingSelectionKind === 'nw-resize' || this.draggingSelectionKind === 'ne-resize') {
-            this.canvasState.selection.template.height -= deltaY
-            this.canvasState.selection.template.y = y
+            decreaseTemplateSize(this.canvasState.selection.template, 'height', deltaY)
+            this.canvasState.selection.template.y = formatPixel(y)
           }
           if (this.draggingSelectionKind === 's-resize' || this.draggingSelectionKind === 'sw-resize' || this.draggingSelectionKind === 'se-resize') {
-            this.canvasState.selection.template.height = this.draggingSelectionHeight + deltaY
+            this.canvasState.selection.template.height = formatPixel(this.draggingSelectionHeight + deltaY)
           }
         }
       } else if (this.canvasState.selection.kind === 'content') {
@@ -237,46 +240,22 @@ export class MaskLayer extends Vue {
         const deltaX = x - this.canvasState.selection.content.x
         const deltaY = y - this.canvasState.selection.content.y
         if (this.draggingSelectionKind === 'move') {
-          this.canvasState.selection.content.x = x
-          this.canvasState.selection.content.y = y
+          this.canvasState.selection.content.x = formatPixel(x)
+          this.canvasState.selection.content.y = formatPixel(y)
         }
         if (this.draggingSelectionKind === 'w-resize' || this.draggingSelectionKind === 'nw-resize' || this.draggingSelectionKind === 'sw-resize') {
-          if (this.canvasState.selection.content.kind !== 'reference') {
-            if (this.canvasState.selection.content.kind === 'snapshot') {
-              this.canvasState.selection.content.snapshot.width -= deltaX
-            } else {
-              this.canvasState.selection.content.width -= deltaX
-            }
-          }
-          this.canvasState.selection.content.x = x
+          decreaseContentSize(this.canvasState.selection.content, 'width', deltaX)
+          this.canvasState.selection.content.x = formatPixel(x)
         }
         if (this.draggingSelectionKind === 'e-resize' || this.draggingSelectionKind === 'ne-resize' || this.draggingSelectionKind === 'se-resize') {
-          if (this.canvasState.selection.content.kind !== 'reference') {
-            if (this.canvasState.selection.content.kind === 'snapshot') {
-              this.canvasState.selection.content.snapshot.width = this.draggingSelectionWidth + deltaX
-            } else {
-              this.canvasState.selection.content.width = this.draggingSelectionWidth + deltaX
-            }
-          }
+          setContentSize(this.canvasState.selection.content, 'width', this.draggingSelectionWidth + deltaX)
         }
         if (this.draggingSelectionKind === 'n-resize' || this.draggingSelectionKind === 'nw-resize' || this.draggingSelectionKind === 'ne-resize') {
-          if (this.canvasState.selection.content.kind !== 'reference') {
-            if (this.canvasState.selection.content.kind === 'snapshot') {
-              this.canvasState.selection.content.snapshot.height -= deltaY
-            } else {
-              this.canvasState.selection.content.height -= deltaY
-            }
-          }
-          this.canvasState.selection.content.y = y
+          decreaseContentSize(this.canvasState.selection.content, 'height', deltaY)
+          this.canvasState.selection.content.y = formatPixel(y)
         }
         if (this.draggingSelectionKind === 's-resize' || this.draggingSelectionKind === 'sw-resize' || this.draggingSelectionKind === 'se-resize') {
-          if (this.canvasState.selection.content.kind !== 'reference') {
-            if (this.canvasState.selection.content.kind === 'snapshot') {
-              this.canvasState.selection.content.snapshot.height = this.draggingSelectionHeight + deltaY
-            } else {
-              this.canvasState.selection.content.height = this.draggingSelectionHeight + deltaY
-            }
-          }
+          setContentSize(this.canvasState.selection.content, 'height', this.draggingSelectionHeight + deltaY)
         }
       }
     }
