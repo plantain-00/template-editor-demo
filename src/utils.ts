@@ -157,3 +157,7 @@ export function* iterateAllNameRegions(target: Template | undefined, styleGuide:
 }
 
 export const nameSize = 25
+
+export function formatPixel(n: number) {
+  return Math.round(n * 100) / 100
+}

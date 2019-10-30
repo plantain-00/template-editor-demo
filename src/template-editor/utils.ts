@@ -1,6 +1,6 @@
 import { CanvasState } from './canvas-state'
 import { Region, Position, TemplateContent, Template, TemplateReferenceContent } from '../model'
-import { isInRegion, nameSize } from '../utils'
+import { isInRegion, nameSize, formatPixel } from '../utils'
 
 export function selectContentOrTemplateByPosition(canvasState: CanvasState, position: Position) {
   let potentialNameRegion: Required<Region> & {
@@ -196,4 +196,24 @@ export function selectTemplateByArea(canvasState: CanvasState, position1: Positi
     return potentialTemplateRegion.template
   }
   return null
+}
+
+export function setContentSize(content: TemplateContent, kind: 'width' | 'height', value: number) {
+  if (content.kind === 'snapshot') {
+    content.snapshot[kind] = formatPixel(value)
+  } else if (content.kind !== 'reference') {
+    content[kind] = formatPixel(value)
+  }
+}
+
+export function decreaseContentSize(content: TemplateContent, kind: 'width' | 'height', value: number) {
+  if (content.kind === 'snapshot') {
+    content.snapshot[kind] = formatPixel(content.snapshot[kind] - value)
+  } else if (content.kind !== 'reference') {
+    content[kind] = formatPixel(content[kind] - value)
+  }
+}
+
+export function decreaseTemplateSize(template: Template, kind: 'width' | 'height', value: number) {
+  template[kind] = formatPixel(template[kind] - value)
 }

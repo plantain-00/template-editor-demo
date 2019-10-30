@@ -8,6 +8,7 @@ import { TemplateContent, Template } from '../model'
 import { renderTemplate, loadTemplateImages } from '../engine/renderer'
 import { ExpressionInputChangeData } from './expression-input'
 import { analyseRepeat, Repeat, composeRepeat } from '../engine/template-engine'
+import { formatPixel } from '../utils'
 
 @Component({
   render: templateEditorOperationPanelTemplateHtml,
@@ -35,6 +36,8 @@ export class OperationPanel extends Vue {
       let value = +e.target.value
       if (kind === 'z') {
         value = Math.round(value)
+      } else {
+        value = formatPixel(value)
       }
       Vue.set(this.canvasState.selection.template, kind, value)
     }
@@ -46,6 +49,8 @@ export class OperationPanel extends Vue {
         let value = +e.literal
         if (kind === 'z') {
           value = Math.round(value)
+        } else {
+          value = formatPixel(value)
         }
         Vue.set(this.canvasState.selection.content, kind, value)
       }
@@ -58,13 +63,13 @@ export class OperationPanel extends Vue {
     if (this.canvasState.selection.kind === 'content'
       && (this.canvasState.selection.content.kind === 'image' || this.canvasState.selection.content.kind === 'text' || this.canvasState.selection.content.kind === 'color')) {
       if (e.literal !== undefined) {
-        this.canvasState.selection.content[kind] = +e.literal
+        this.canvasState.selection.content[kind] = formatPixel(+e.literal)
       }
       Vue.set(this.canvasState.selection.content, kind + 'Expression', e.expression || undefined)
       Vue.set(this.canvasState.selection.content, kind + 'ExpressionId', e.expressionId)
     } else if (this.canvasState.selection.kind === 'template') {
       if (e.literal !== undefined) {
-        this.canvasState.selection.template[kind] = +e.literal
+        this.canvasState.selection.template[kind] = formatPixel(+e.literal)
       }
       Vue.set(this.canvasState.selection.template, kind + 'Expression', e.expression || undefined)
       Vue.set(this.canvasState.selection.template, kind + 'ExpressionId', e.expressionId)
@@ -138,7 +143,7 @@ export class OperationPanel extends Vue {
   changeFontSizeExpression(e: ExpressionInputChangeData) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'text') {
       if (e.literal !== undefined) {
-        this.canvasState.selection.content.fontSize = +e.literal
+        this.canvasState.selection.content.fontSize = formatPixel(+e.literal)
       }
       Vue.set(this.canvasState.selection.content, 'fontSizeExpression', e.expression)
       Vue.set(this.canvasState.selection.content, 'fontSizeExpressionId', e.expressionId)

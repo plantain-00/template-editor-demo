@@ -1,6 +1,7 @@
 import { parseExpression, tokenizeExpression, evaluateExpression } from 'expression-engine'
 import { Size, SizeExpression, TemplateImageContent, TemplateTextContent, Position, PositionExpression, TemplateColorContent } from '../model'
 import { PrecompiledStyleGuide } from './template-engine'
+import { formatPixel } from '../utils'
 
 export function evaluate(expression: string, model: { [key: string]: unknown }, options?: ExpressionOptions) {
   try {
@@ -47,7 +48,7 @@ export function evaluateSizeExpression(kind: 'width' | 'height', content: Size &
   if (expression) {
     const result = evaluate(expression, model, getExpressionOptions(options, expressionField))
     if (typeof result === 'number' && !isNaN(result)) {
-      return result
+      return formatPixel(result)
     }
   }
   return content[kind]
@@ -59,7 +60,7 @@ export function evaluatePositionExpression(kind: 'x' | 'y' | 'z', content: Posit
   if (expression) {
     const result = evaluate(expression, model, getExpressionOptions(options, expressionField))
     if (typeof result === 'number' && !isNaN(result)) {
-      return kind === 'z' ? Math.round(result) : result
+      return kind === 'z' ? Math.round(result) : formatPixel(result)
     }
   }
   return content[kind] || 0
@@ -89,7 +90,7 @@ export function evaluateFontSizeExpression(content: TemplateTextContent, model: 
   if (content.fontSizeExpression) {
     const result = evaluate(content.fontSizeExpression, model, getExpressionOptions(options, 'fontSizeExpression'))
     if (typeof result === 'number' && !isNaN(result)) {
-      return result
+      return formatPixel(result)
     }
   }
   return content.fontSize
