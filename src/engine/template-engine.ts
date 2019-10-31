@@ -7,12 +7,22 @@ import { applyImageOpacity, loadImage } from './image'
 import { getCharacters } from './mock'
 
 export async function generate(template: Template, styleGuide: StyleGuide, model: { [key: string]: unknown }, options?: ExpressionOptions): Promise<Template> {
-  const contents = await Promise.all(template.contents.map((c, i) => generateContent(c, styleGuide, model, getExpressionOptions(options, i))))
+  const contents: TemplateContent[] = []
+  let ifValues: Array<boolean | undefined> = []
+  for (let i = 0; i < template.contents.length; i++) {
+    const content = await generateContent(template.contents[i], styleGuide, model, ifValues, getExpressionOptions(options, i))
+    if (content.ifValue === undefined) {
+      ifValues = []
+    } else {
+      ifValues.push(content.ifValue)
+    }
+    contents.push(...content.contents)
+  }
   const result: Template = {
     ...template,
     x: 0,
     y: 0,
-    contents: contents.reduce((p, c) => p.concat(c), [])
+    contents
   }
   result.width = evaluateSizeExpression('width', result, model, options)
   delete result.widthExpression
@@ -74,15 +84,22 @@ export class PrecompiledStyleGuide {
   }
 }
 
-async function generateContent(content: TemplateContent, styleGuide: StyleGuide, model: { [key: string]: unknown }, options?: ExpressionOptions): Promise<TemplateContent[]> {
+async function generateContent(
+  content: TemplateContent,
+  styleGuide: StyleGuide,
+  model: { [key: string]: unknown },
+  ifValues: Array<boolean | undefined>,
+  options?: ExpressionOptions
+): Promise<{ contents: TemplateContent[], ifValue?: boolean }> {
   if (content.kind === 'snapshot') {
-    return [content]
+    return { contents: [content] }
   }
   if (content.repeat) {
     const { expression, itemName, indexName } = analyseRepeat(content.repeat, options)
     const result = evaluate(expression, model, getExpressionOptions(options, 'repeat'))
     if (Array.isArray(result)) {
       const contents: TemplateContent[] = []
+      let currentIfValues: Array<boolean | undefined> = []
       for (let i = 0; i < result.length; i++) {
         const newModel: { [key: string]: unknown } = { ...model }
         if (itemName) {
@@ -91,15 +108,28 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
             newModel[indexName] = i
           }
         }
-        contents.push(...(await generateContent({ ...content, repeat: undefined }, styleGuide, newModel, options)))
+        const contentResult = await generateContent({ ...content, repeat: undefined }, styleGuide, newModel, currentIfValues, options)
+        if (contentResult.ifValue === undefined) {
+          currentIfValues = []
+        } else {
+          currentIfValues.push(contentResult.ifValue)
+        }
+        contents.push(...contentResult.contents)
       }
-      return contents
+      return { contents }
     }
   }
+  if (content.else && ifValues.some((v) => v === true)) {
+    return { contents: [], ifValue: false }
+  }
+  let ifValue: boolean | undefined
   if (content.if) {
     const result = evaluate(content.if, model, getExpressionOptions(options, 'if'))
-    if (result === false) {
-      return []
+    if (typeof result === 'boolean') {
+      ifValue = result
+      if (result === false) {
+        return { contents: [], ifValue }
+      }
     }
   }
   content = { ...content }
@@ -120,16 +150,22 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
         delete content.propsIds
         model = { ...model, props: result }
       }
-      return [
-        {
-          kind: 'snapshot',
-          x: content.x,
-          y: content.y,
-          snapshot: await generate(reference, styleGuide, model, getExpressionOptions(options, reference.name || reference.id))
-        },
-      ]
+      return {
+        contents: [
+          {
+            kind: 'snapshot',
+            x: content.x,
+            y: content.y,
+            snapshot: await generate(reference, styleGuide, model, getExpressionOptions(options, reference.name || reference.id))
+          },
+        ],
+        ifValue
+      }
     }
-    return []
+    return {
+      contents: [],
+      ifValue
+    }
   }
 
   content.width = evaluateSizeExpression('width', content, model, options)
@@ -170,7 +206,7 @@ async function generateContent(content: TemplateContent, styleGuide: StyleGuide,
     delete content.colorExpression
     delete content.colorExpressionId
   }
-  return [content]
+  return { contents: [content], ifValue }
 }
 
 export interface Repeat {

@@ -66,6 +66,7 @@ interface Region extends Position, Size { }
 ```ts
 interface GenerationField {
   if?: string
+  else?: boolean
   repeat?: string
 }
 ```
@@ -76,6 +77,23 @@ interface GenerationField {
 {
   "if": "commodity.prices.length == 1"
 }
+```
+
+`else` 为 `true` 时，之前接近的内容的 `if` 表达式计算结果都为 `false` 时才执行。例如
+
+```json
+[
+  {
+    "if": "commodity.prices.length == 1"
+  },
+  {
+    "else": true,
+    "if": "commodity.prices.length == 2"
+  },
+  {
+    "else": true
+  }
+]
 ```
 
 而循环的语法设计为
