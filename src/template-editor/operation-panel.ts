@@ -95,6 +95,12 @@ export class OperationPanel extends Vue {
     }
   }
 
+  changeElse(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
+      Vue.set(this.canvasState.selection.content, 'else', e.target.value === 'true' ? true : undefined)
+    }
+  }
+
   changeRepeatExpression(e: { expression: string, expressionId?: string }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
       const repeat = composeRepeat({ ...this.repeat, expression: e.expression })

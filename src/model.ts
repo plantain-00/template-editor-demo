@@ -108,6 +108,7 @@ interface RegionExpression extends PositionExpression, SizeExpression { }
 interface GenerationField {
   if?: string
   ifId?: string
+  else?: boolean
   repeat?: string
   repeatId?: string
 }

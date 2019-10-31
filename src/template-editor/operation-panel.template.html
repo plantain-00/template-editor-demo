@@ -80,7 +80,10 @@
       <input type="checkbox" :checked="canvasState.selection.content.hidden" @change="changeHidden" />
     </div>
     <div>
-      if
+      <select :value="canvasState.selection.content.else ? 'true' : 'false'" @change="changeElse">
+        <option value="false">if</option>
+        <option value="true">else if</option>
+      </select>
       <expression-input :canvasState="canvasState" :expression="canvasState.selection.content.if"
         :expressionId="canvasState.selection.content.ifId" @change="changeIf" />
     </div>
