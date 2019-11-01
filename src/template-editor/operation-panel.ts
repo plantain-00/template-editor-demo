@@ -4,7 +4,7 @@ import { tokenizeExpression, parseExpression, printExpression, Expression, Prope
 
 import { templateEditorOperationPanelTemplateHtml, templateEditorOperationPanelTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
-import { TemplateContent, Template } from '../model'
+import { Template } from '../model'
 import { renderTemplate, loadTemplateImages } from '../engine/renderer'
 import { ExpressionInputChangeData } from './expression-input'
 import { analyseRepeat, Repeat, composeRepeat } from '../engine/template-engine'
@@ -198,16 +198,6 @@ export class OperationPanel extends Vue {
 
   addColor() {
     this.canvasState.addKind = 'color'
-  }
-
-  selectContent(content: TemplateContent) {
-    if (this.canvasState.selection.kind !== 'none') {
-      this.canvasState.selection = {
-        kind: 'content',
-        content,
-        template: this.canvasState.selection.template
-      }
-    }
   }
 
   changeFlex(field: string, value: unknown) {
