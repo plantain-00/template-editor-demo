@@ -4,8 +4,9 @@ import Component from 'vue-class-component'
 import { Template } from './model'
 import { styleGuide } from './data'
 import { CanvasState } from './template-editor/canvas-state'
+import { layerPanelWidth, operationPanelWidth } from './template-editor/template-editor'
 
-const offsetWidth = 300
+const offsetWidth = layerPanelWidth + operationPanelWidth
 const offsetHeight = 50
 
 @Component

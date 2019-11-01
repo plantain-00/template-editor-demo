@@ -1,4 +1,7 @@
 <div style="display: flex">
+  <div :style="layerPanelStyle">
+    <layer-panel :canvasState="canvasState"></layer-panel>
+  </div>
   <div :style="canvasStyle">
     <render-layer :canvasState="canvasState"></render-layer>
     <selection-layer :canvasState="canvasState"></selection-layer>
@@ -7,7 +10,7 @@
     <mask-layer :canvasState="canvasState"></mask-layer>
     <context-menu :canvasState="canvasState"></context-menu>
   </div>
-  <div style="width: 300px; right: 0; position: absolute;">
+  <div :style="operationPanelStyle">
     <operation-panel :canvasState="canvasState"></operation-panel>
   </div>
 </div>

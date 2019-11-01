@@ -143,9 +143,6 @@
         :expressionId="canvasState.selection.template.heightExpressionId"
         @change="changeSizeExpression($event, 'height')" />
     </div>
-    <div v-for="(content, i) of canvasState.selection.template.contents">
-      <div style="cursor: pointer" @click="selectContent(content)">content {{i}}: {{content.kind}}</div>
-    </div>
     <div>
       display
       <select :value="canvasState.selection.template.display" @change="changeFlex('display', $event.target.value)">
