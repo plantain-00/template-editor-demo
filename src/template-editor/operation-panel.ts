@@ -65,14 +65,24 @@ export class OperationPanel extends Vue {
       if (e.literal !== undefined) {
         this.canvasState.selection.content[kind] = formatPixel(+e.literal)
       }
-      Vue.set(this.canvasState.selection.content, kind + 'Expression', e.expression || undefined)
+      Vue.set(this.canvasState.selection.content, kind + 'Expression', e.expression)
       Vue.set(this.canvasState.selection.content, kind + 'ExpressionId', e.expressionId)
     } else if (this.canvasState.selection.kind === 'template') {
       if (e.literal !== undefined) {
         this.canvasState.selection.template[kind] = formatPixel(+e.literal)
       }
-      Vue.set(this.canvasState.selection.template, kind + 'Expression', e.expression || undefined)
+      Vue.set(this.canvasState.selection.template, kind + 'Expression', e.expression)
       Vue.set(this.canvasState.selection.template, kind + 'ExpressionId', e.expressionId)
+    }
+  }
+
+  changeRotateExpression(e: ExpressionInputChangeData) {
+    if (this.canvasState.selection.kind === 'content') {
+      if (e.literal !== undefined) {
+        Vue.set(this.canvasState.selection.content, 'rotate', formatPixel(+e.literal))
+      }
+      Vue.set(this.canvasState.selection.content, 'rotateExpression', e.expression)
+      Vue.set(this.canvasState.selection.content, 'rotateExpressionId', e.expressionId)
     }
   }
 
@@ -177,9 +187,8 @@ export class OperationPanel extends Vue {
   }
 
   debug() {
-    if (this.canvasState.selection.kind === 'none') {
-      console.info(this.canvasState)
-    } else {
+    console.info(this.canvasState)
+    if (this.canvasState.selection.kind !== 'none') {
       console.info(this.canvasState.selection)
     }
   }

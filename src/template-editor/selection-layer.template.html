@@ -4,5 +4,12 @@
       <div :style="getSelectionAreaStyle(r)">
       </div>
     </template>
+    <template v-for="r in canResizeRegions">
+      <div :style="getResizeStyle(r)">
+        <template v-for="r in resizeRegions">
+          <div :style="r"></div>
+        </template>
+      </div>
+    </template>
   </div>
 </div>

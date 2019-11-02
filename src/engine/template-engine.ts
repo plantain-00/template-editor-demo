@@ -53,12 +53,14 @@ export class PrecompiledStyleGuide {
         this.collectExpression(content.if)
         this.collectExpression(content.xExpression)
         this.collectExpression(content.yExpression)
+        this.collectExpression(content.zExpression)
         if (content.kind === 'reference') {
           this.collectExpression(content.props)
           continue
         }
         this.collectExpression(content.widthExpression)
         this.collectExpression(content.heightExpression)
+        this.collectExpression(content.rotateExpression)
         if (content.kind === 'text') {
           this.collectExpression(content.textExpression)
           this.collectExpression(content.fontSizeExpression)

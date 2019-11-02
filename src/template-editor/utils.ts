@@ -1,9 +1,9 @@
 import { CanvasState } from './canvas-state'
-import { Region, Position, TemplateContent, Template, TemplateReferenceContent } from '../model'
+import { Region, Position, TemplateContent, Template, TemplateReferenceContent, Rotate } from '../model'
 import { isInRegion, nameSize, formatPixel } from '../utils'
 
 export function selectContentOrTemplateByPosition(canvasState: CanvasState, position: Position) {
-  let potentialNameRegion: Required<Region> & {
+  let potentialNameRegion: Required<Region> & Rotate & {
     template: Template;
   } | undefined
   for (const nameRegion of canvasState.targetNameRegions) {
@@ -15,30 +15,30 @@ export function selectContentOrTemplateByPosition(canvasState: CanvasState, posi
     return { kind: 'template' as const, region: potentialNameRegion }
   }
 
-  let potentialTemplateRegion: Required<Region> & {
+  let potentialContentRegion: Required<Region> & Rotate & {
     index: number;
     contents: TemplateContent[];
     content: TemplateContent;
     template: Template;
   } | undefined
   for (const contentRegion of canvasState.targetContentRegions) {
-    if ((!potentialTemplateRegion || contentRegion.z >= potentialTemplateRegion.z) && isInRegion(position, contentRegion)) {
-      potentialTemplateRegion = contentRegion
+    if ((!potentialContentRegion || contentRegion.z >= potentialContentRegion.z) && isInRegion(position, contentRegion)) {
+      potentialContentRegion = contentRegion
     }
   }
-  if (potentialTemplateRegion) {
-    return { kind: 'content' as const, region: potentialTemplateRegion }
+  if (potentialContentRegion) {
+    return { kind: 'content' as const, region: potentialContentRegion }
   }
 
-  const t = selectTemplateByPosition(canvasState, position)
-  if (t) {
-    return { kind: 'template' as const, region: t }
+  const potentialTemplateRegion = selectTemplateRegionByPosition(canvasState, position)
+  if (potentialTemplateRegion) {
+    return { kind: 'template' as const, region: potentialTemplateRegion }
   }
   return undefined
 }
 
-export function selectTemplateByPosition(canvasState: CanvasState, position: Position) {
-  let potentialTemplateRegion: Required<Region> & {
+export function selectTemplateRegionByPosition(canvasState: CanvasState, position: Position) {
+  let potentialTemplateRegion: Required<Region> & Rotate & {
     template: Template;
   } | undefined
   for (const templateRegion of canvasState.targetTemplateRegions) {
@@ -120,22 +120,25 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
   return undefined
 }
 
-export type RegionSide = "nw-resize" | "w-resize" | "sw-resize" | "ne-resize" | "e-resize" | "se-resize" | "n-resize" | "s-resize"
+export type RegionSide = "left-top" | "left" | "left-bottom" | "right-top" | "right" | "right-bottom" | "top" | "bottom"
 
-function getRegionSide(position: Position, region: Region): RegionSide | undefined {
+function getRegionSide(position: Position, region: Region & Rotate): RegionSide | undefined {
+  if (region.rotate) {
+    return undefined
+  }
   const delta = 5
   if (Math.abs(position.x - region.x) <= delta) {
     if (position.y < region.y - delta) {
       return undefined
     }
     if (position.y < region.y + delta) {
-      return 'nw-resize'
+      return 'left-top'
     }
     if (position.y < region.y + region.height - delta) {
-      return 'w-resize'
+      return 'left'
     }
     if (position.y < region.y + region.height + delta) {
-      return 'sw-resize'
+      return 'left-bottom'
     }
     return undefined
   }
@@ -144,25 +147,25 @@ function getRegionSide(position: Position, region: Region): RegionSide | undefin
       return undefined
     }
     if (position.y < region.y + delta) {
-      return 'ne-resize'
+      return 'right-top'
     }
     if (position.y < region.y + region.height - delta) {
-      return 'e-resize'
+      return 'right'
     }
     if (position.y < region.y + region.height + delta) {
-      return 'se-resize'
+      return 'right-bottom'
     }
     return undefined
   }
   if (Math.abs(position.y - region.y) <= delta) {
     if (position.x > region.x + delta && position.x < region.x + region.width - delta) {
-      return 'n-resize'
+      return 'top'
     }
     return undefined
   }
   if (Math.abs(position.y - region.y - region.height) <= delta) {
     if (position.x > region.x + delta && position.x < region.x + region.width - delta) {
-      return 's-resize'
+      return 'bottom'
     }
     return undefined
   }

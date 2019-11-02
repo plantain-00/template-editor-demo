@@ -249,4 +249,5 @@ z 未设置时是 0。
 ## todo
 
 + intellisense?
-+ content rotate
++ rotate operation on canvas
++ component rotate

@@ -15,7 +15,7 @@ export interface Template extends Region, SizeExpression, FlexField {
 
 export type TemplateContent = TemplateTextContent | TemplateImageContent | TemplateColorContent | TemplateReferenceContent | TemplateSnapshotContent
 
-export interface TemplateTextContent extends Region, RegionExpression, GenerationField, Hidden {
+export interface TemplateTextContent extends Region, RegionExpression, GenerationField, Hidden, Rotate, RotateExpression {
   kind: 'text'
 
   text: string
@@ -43,7 +43,7 @@ interface Hidden {
   hidden?: boolean
 }
 
-export interface TemplateImageContent extends Region, RegionExpression, GenerationField, Hidden {
+export interface TemplateImageContent extends Region, RegionExpression, GenerationField, Hidden, Rotate, RotateExpression {
   kind: 'image'
 
   url: string
@@ -54,7 +54,7 @@ export interface TemplateImageContent extends Region, RegionExpression, Generati
   base64?: string
 }
 
-export interface TemplateColorContent extends Region, RegionExpression, GenerationField, Hidden {
+export interface TemplateColorContent extends Region, RegionExpression, GenerationField, Hidden, Rotate, RotateExpression {
   kind: 'color'
 
   color: string
@@ -99,6 +99,15 @@ export interface SizeExpression {
   heightExpression?: string
   widthExpressionId?: string
   heightExpressionId?: string
+}
+
+export interface Rotate {
+  rotate?: number
+}
+
+export interface RotateExpression {
+  rotateExpression?: string
+  rotateExpressionId?: string
 }
 
 export interface Region extends Position, Size { }

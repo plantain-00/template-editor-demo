@@ -1,9 +1,12 @@
 import { parseExpression, tokenizeExpression, evaluateExpression } from 'expression-engine'
-import { Size, SizeExpression, TemplateImageContent, TemplateTextContent, Position, PositionExpression, TemplateColorContent } from '../model'
+import { Size, SizeExpression, TemplateImageContent, TemplateTextContent, Position, PositionExpression, TemplateColorContent, Rotate, RotateExpression } from '../model'
 import { PrecompiledStyleGuide } from './template-engine'
 import { formatPixel } from '../utils'
 
-export function evaluate(expression: string, model: { [key: string]: unknown }, options?: ExpressionOptions) {
+export function evaluate(expression: string | undefined, model: { [key: string]: unknown }, options?: ExpressionOptions) {
+  if (!expression) {
+    return undefined
+  }
   try {
     if (options && options.precompiledStyleGuide) {
       const ast = options.precompiledStyleGuide.ast[expression]
@@ -64,6 +67,17 @@ export function evaluatePositionExpression(kind: 'x' | 'y' | 'z', content: Posit
     }
   }
   return content[kind] || 0
+}
+
+export function evaluateRotateExpression(content: Rotate & RotateExpression, model: { [key: string]: unknown }, options?: ExpressionOptions) {
+  const expression = content.rotateExpression
+  if (expression) {
+    const result = evaluate(expression, model, getExpressionOptions(options, 'rotateExpression'))
+    if (typeof result === 'number' && !isNaN(result)) {
+      return formatPixel(result)
+    }
+  }
+  return content.rotate || 0
 }
 
 export function evaluateUrlExpression(content: TemplateImageContent, model: { [key: string]: unknown }, options?: ExpressionOptions) {
