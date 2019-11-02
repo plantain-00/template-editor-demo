@@ -69,6 +69,12 @@
           :expressionId="canvasState.selection.content.heihtExpressionId"
           @change="changeSizeExpression($event, 'height')" />
       </div>
+      <div>
+        rotate
+        <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.rotate"
+          literalType="number" :expression="canvasState.selection.content.rotateExpression"
+          :expressionId="canvasState.selection.content.rotateExpressionId" @change="changeRotateExpression($event)" />
+      </div>
     </div>
     <template v-if="canvasState.selection.content.kind === 'snapshot'">
       <div v-for="(content, i) of canvasState.selection.content.snapshot.contents">

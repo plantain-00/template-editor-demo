@@ -3,6 +3,7 @@ import Component from 'vue-class-component'
 import { templateEditorHoverLayerTemplateHtml, templateEditorHoverLayerTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
 import { selectContentOrTemplateByPosition } from './utils'
+import { Template, Rotate } from '../model'
 
 @Component({
   render: templateEditorHoverLayerTemplateHtml,
@@ -32,12 +33,13 @@ export class HoverLayer extends Vue {
   get hoverStyle() {
     const content = selectContentOrTemplateByPosition(this.canvasState, { x: this.canvasState.mappedX, y: this.canvasState.mappedY })
     if (content) {
-      const region = content.kind === 'content' ? content.region : content.region.template
+      const region = content.kind === 'content' ? content.region : content.region.template as Template & Rotate
       return {
         left: region.x + 'px',
         top: region.y + 'px',
         width: region.width + 'px',
         height: region.height + 'px',
+        transform: region.rotate ? `rotate(${region.rotate}deg)` : undefined,
         position: 'absolute',
         backgroundColor: 'green',
         opacity: 0.1,

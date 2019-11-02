@@ -3,7 +3,7 @@ import Component from 'vue-class-component'
 
 import { CanvasState } from './canvas-state'
 import { TemplateContent, Template, TemplateReferenceContent, CanvasSelection } from '../model'
-import { selectTemplateByPosition, selectContentOrTemplateByPosition, getPositionAndSelectionAreaRelation, selectTemplateByArea, RegionSide, decreaseContentSize, setContentSize, decreaseTemplateSize } from './utils'
+import { selectTemplateRegionByPosition, selectContentOrTemplateByPosition, getPositionAndSelectionAreaRelation, selectTemplateByArea, RegionSide, decreaseContentSize, setContentSize, decreaseTemplateSize } from './utils'
 import { templateEditorMaskLayerTemplateHtml, templateEditorMaskLayerTemplateHtmlStatic } from '../variables'
 import { formatPixel } from '../utils'
 
@@ -36,12 +36,12 @@ export class MaskLayer extends Vue {
 
     if (this.canvasState.isDraggingForMoving) {
       if (this.draggingSelectionKind) {
-        cursor = this.draggingSelectionKind
+        cursor = cursorMap[this.draggingSelectionKind]
       } else {
         cursor = 'move'
       }
     } else if (relation) {
-      cursor = relation.kind
+      cursor = cursorMap[relation.kind]
     } else if (this.canvasState.isDraggingForSelection) {
       cursor = 'crosshair'
     } else {
@@ -101,7 +101,7 @@ export class MaskLayer extends Vue {
           template: newTemplate,
         }
       } else {
-        const templateRegion = selectTemplateByPosition(this.canvasState, { x, y })
+        const templateRegion = selectTemplateRegionByPosition(this.canvasState, { x, y })
         if (templateRegion) {
           const newContentX = formatPixel(x - templateRegion.template.x - 50)
           const newContentY = formatPixel(y - templateRegion.template.y - 50)
@@ -211,50 +211,52 @@ export class MaskLayer extends Vue {
         if (this.draggingSelectionContent) {
           this.draggingSelectionContent.x = formatPixel(x)
           this.draggingSelectionContent.y = formatPixel(y)
-        } else {
-          const deltaX = x - this.canvasState.selection.template.x
-          const deltaY = y - this.canvasState.selection.template.y
+        } else if (this.draggingSelectionKind) {
           if (this.draggingSelectionKind === 'move') {
             this.canvasState.selection.template.x = formatPixel(x)
             this.canvasState.selection.template.y = formatPixel(y)
+            return
           }
-          if (this.draggingSelectionKind === 'w-resize' || this.draggingSelectionKind === 'nw-resize' || this.draggingSelectionKind === 'sw-resize') {
+          const deltaX = x - this.canvasState.selection.template.x
+          const deltaY = y - this.canvasState.selection.template.y
+          if (this.draggingSelectionKind.includes('left')) {
             decreaseTemplateSize(this.canvasState.selection.template, 'width', deltaX)
             this.canvasState.selection.template.x = formatPixel(x)
           }
-          if (this.draggingSelectionKind === 'e-resize' || this.draggingSelectionKind === 'ne-resize' || this.draggingSelectionKind === 'se-resize') {
+          if (this.draggingSelectionKind.includes('right')) {
             this.canvasState.selection.template.width = formatPixel(this.draggingSelectionWidth + deltaX)
           }
-          if (this.draggingSelectionKind === 'n-resize' || this.draggingSelectionKind === 'nw-resize' || this.draggingSelectionKind === 'ne-resize') {
+          if (this.draggingSelectionKind.includes('top')) {
             decreaseTemplateSize(this.canvasState.selection.template, 'height', deltaY)
             this.canvasState.selection.template.y = formatPixel(y)
           }
-          if (this.draggingSelectionKind === 's-resize' || this.draggingSelectionKind === 'sw-resize' || this.draggingSelectionKind === 'se-resize') {
+          if (this.draggingSelectionKind.includes('bottom')) {
             this.canvasState.selection.template.height = formatPixel(this.draggingSelectionHeight + deltaY)
           }
         }
       } else if (this.canvasState.selection.kind === 'content') {
-        if (this.canvasState.selection.template.display === 'flex') {
+        if (this.canvasState.selection.template.display === 'flex' || !this.draggingSelectionKind) {
+          return
+        }
+        if (this.draggingSelectionKind === 'move') {
+          this.canvasState.selection.content.x = formatPixel(x)
+          this.canvasState.selection.content.y = formatPixel(y)
           return
         }
         const deltaX = x - this.canvasState.selection.content.x
         const deltaY = y - this.canvasState.selection.content.y
-        if (this.draggingSelectionKind === 'move') {
-          this.canvasState.selection.content.x = formatPixel(x)
-          this.canvasState.selection.content.y = formatPixel(y)
-        }
-        if (this.draggingSelectionKind === 'w-resize' || this.draggingSelectionKind === 'nw-resize' || this.draggingSelectionKind === 'sw-resize') {
+        if (this.draggingSelectionKind.includes('left')) {
           decreaseContentSize(this.canvasState.selection.content, 'width', deltaX)
           this.canvasState.selection.content.x = formatPixel(x)
         }
-        if (this.draggingSelectionKind === 'e-resize' || this.draggingSelectionKind === 'ne-resize' || this.draggingSelectionKind === 'se-resize') {
+        if (this.draggingSelectionKind.includes('right')) {
           setContentSize(this.canvasState.selection.content, 'width', this.draggingSelectionWidth + deltaX)
         }
-        if (this.draggingSelectionKind === 'n-resize' || this.draggingSelectionKind === 'nw-resize' || this.draggingSelectionKind === 'ne-resize') {
+        if (this.draggingSelectionKind.includes('top')) {
           decreaseContentSize(this.canvasState.selection.content, 'height', deltaY)
           this.canvasState.selection.content.y = formatPixel(y)
         }
-        if (this.draggingSelectionKind === 's-resize' || this.draggingSelectionKind === 'sw-resize' || this.draggingSelectionKind === 'se-resize') {
+        if (this.draggingSelectionKind.includes('bottom')) {
           setContentSize(this.canvasState.selection.content, 'height', this.draggingSelectionHeight + deltaY)
         }
       }
@@ -363,4 +365,16 @@ export class MaskLayer extends Vue {
       }
     }
   }
+}
+
+const cursorMap = {
+  'top': 'ns-resize',
+  'bottom': 'ns-resize',
+  'right': 'ew-resize',
+  'left': 'ew-resize',
+  'right-top': 'nesw-resize',
+  'left-bottom': 'nesw-resize',
+  'left-top': 'nwse-resize',
+  'right-bottom': 'nwse-resize',
+  'move': 'move',
 }

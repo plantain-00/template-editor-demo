@@ -2,11 +2,11 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { Template, TemplateTextContent, TemplateImageContent, TemplateReferenceContent, TemplateSnapshotContent, Position, TemplateColorContent } from '../model'
-import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression, evaluateColorExpression } from './expression'
+import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression, evaluateColorExpression, evaluateRotateExpression } from './expression'
 import { layoutFlex } from './layout-engine'
 import { applyImageOpacity, loadImage } from './image'
 import { getCharacters } from './mock'
-import { getPosition, formatPixel } from '../utils'
+import { getPosition, formatPixel, formatRadian } from '../utils'
 
 export function renderTemplate(template: Template, templates: Template[], images: { [url: string]: HTMLImageElement }) {
   const canvas = document.createElement('canvas')
@@ -108,80 +108,113 @@ function renderSymbol(
     const x = formatPixel(position.x + evaluatePositionExpression('x', renderItem.content, { props }))
     const y = formatPixel(position.y + evaluatePositionExpression('y', renderItem.content, { props }))
     const z = Math.round(position.z + evaluatePositionExpression('z', renderItem.content, { props }))
-    if (renderItem.kind === 'text') {
-      const content = renderItem.content
-      actions.push({
-        z,
-        index: actions.length,
-        action: (ctx) => {
-          const fontSize = props ? evaluateFontSizeExpression(content, { props }) : content.fontSize
-          const color = props ? evaluateColorExpression(content, { props }) : content.color
-          const characters = content.characters || getCharacters(props ? evaluateTextExpression(content, { props }) : content.text)
-          if (ctx) {
-            ctx.fillStyle = color
-            ctx.textBaseline = 'top'
-            ctx.font = `${fontSize}px ${content.fontFamily}`
-            ctx.fillText(characters.map((c) => c.text).join(''), x, y)
-            return []
-          }
-          return [
-            `ctx.fillStyle = ${color}`,
-            `ctx.textBaseline = 'top'`,
-            `ctx.font = ${fontSize}px ${content.fontFamily}`,
-            `ctx.fillText(${characters.map((c) => c.text).join('')}, ${x}, ${y})`,
-          ]
-        },
-      })
-    } else if (renderItem.kind === 'image') {
-      const content = renderItem.content
-
-      const url = props ? evaluateUrlExpression(content, { props }) : content.url
-
-      const width = props ? evaluateSizeExpression('width', content, { props }) : content.width
-      const height = props ? evaluateSizeExpression('height', content, { props }) : content.height
-
-      let image: HTMLImageElement | HTMLCanvasElement = images[url]
-      if (content.opacity !== undefined) {
-        const imageCanvas = applyImageOpacity(image, content.opacity)
-        if (imageCanvas) {
-          image = imageCanvas
+    if (renderItem.kind !== 'symbol') {
+      const width = evaluateSizeExpression('width', renderItem.content, { props })
+      const height = evaluateSizeExpression('height', renderItem.content, { props })
+      const rotate = formatRadian(evaluateRotateExpression(renderItem.content, { props }) * Math.PI / 180)
+      const centerX = formatPixel(x + width / 2)
+      const centerY = formatPixel(y + height / 2)
+      const rotateInCanvas = (ctx: CanvasRenderingContext2D) => {
+        if (rotate) {
+          ctx.translate(centerX, centerY)
+          ctx.rotate(rotate)
+          ctx.translate(-centerX, -centerY)
         }
       }
-      actions.push({
-        z,
-        index: actions.length,
-        action: (ctx) => {
-          if (ctx) {
-            ctx.drawImage(image, x, y, width, height)
-            return []
-          }
-          return [`ctx.drawImage(${url}, ${x}, ${y}, ${width}, ${height})`]
-        },
-      })
-    } else if (renderItem.kind === 'color') {
-      const content = renderItem.content
+      const rotateActions = rotate ? [
+        `ctx.translate(${centerX}, ${centerY})`,
+        `ctx.rotate(${rotate})`,
+        `ctx.translate(${-centerX}, ${-centerY})`,
+      ] : []
+      const resetTransformInCanvas = (ctx: CanvasRenderingContext2D) => {
+        if (rotate) {
+          ctx.setTransform(1, 0, 0, 1, 0, 0)
+        }
+      }
+      const resetTransformActions = rotate ? [
+        `ctx.setTransform(1, 0, 0, 1, 0, 0)`,
+      ] : []
 
-      const width = props ? evaluateSizeExpression('width', content, { props }) : content.width
-      const height = props ? evaluateSizeExpression('height', content, { props }) : content.height
-      const color = props ? evaluateColorExpression(content, { props }) : content.color
-
-      actions.push({
-        z,
-        index: actions.length,
-        action: (ctx) => {
-          if (ctx) {
-            ctx.fillStyle = color
-            ctx.fillRect(x, y, width, height)
-            return []
+      if (renderItem.kind === 'text') {
+        const content = renderItem.content
+        actions.push({
+          z,
+          index: actions.length,
+          action: (ctx) => {
+            const fontSize = evaluateFontSizeExpression(content, { props })
+            const color = evaluateColorExpression(content, { props })
+            const characters = content.characters || getCharacters(evaluateTextExpression(content, { props }))
+            if (ctx) {
+              ctx.fillStyle = color
+              ctx.textBaseline = 'top'
+              ctx.font = `${fontSize}px ${content.fontFamily}`
+              rotateInCanvas(ctx)
+              ctx.fillText(characters.map((c) => c.text).join(''), x, y)
+              resetTransformInCanvas(ctx)
+              return []
+            }
+            return [
+              `ctx.fillStyle = ${color}`,
+              `ctx.textBaseline = 'top'`,
+              `ctx.font = ${fontSize}px ${content.fontFamily}`,
+              ...rotateActions,
+              `ctx.fillText(${characters.map((c) => c.text).join('')}, ${x}, ${y})`,
+              ...resetTransformActions,
+            ]
+          },
+        })
+      } else if (renderItem.kind === 'image') {
+        const content = renderItem.content
+        const url = evaluateUrlExpression(content, { props })
+        let image: HTMLImageElement | HTMLCanvasElement = images[url]
+        if (content.opacity !== undefined) {
+          const imageCanvas = applyImageOpacity(image, content.opacity)
+          if (imageCanvas) {
+            image = imageCanvas
           }
-          return [
-            `ctx.fillStyle = ${content.color}`,
-            `ctx.fillRect(${x}, ${y}, ${width}, ${height})`,
-          ]
-        },
-      })
+        }
+        actions.push({
+          z,
+          index: actions.length,
+          action: (ctx) => {
+            if (ctx) {
+              rotateInCanvas(ctx)
+              ctx.drawImage(image, x, y, width, height)
+              resetTransformInCanvas(ctx)
+              return []
+            }
+            return [
+              ...rotateActions,
+              `ctx.drawImage(${url}, ${x}, ${y}, ${width}, ${height})`,
+              ...resetTransformActions,
+            ]
+          },
+        })
+      } else if (renderItem.kind === 'color') {
+        const content = renderItem.content
+        const color = evaluateColorExpression(content, { props })
+        actions.push({
+          z,
+          index: actions.length,
+          action: (ctx) => {
+            if (ctx) {
+              ctx.fillStyle = color
+              rotateInCanvas(ctx)
+              ctx.fillRect(x, y, width, height)
+              resetTransformInCanvas(ctx)
+              return []
+            }
+            return [
+              ...rotateActions,
+              `ctx.fillStyle = ${content.color}`,
+              `ctx.fillRect(${x}, ${y}, ${width}, ${height})`,
+              ...resetTransformActions,
+            ]
+          },
+        })
+      }
     } else if (renderItem.kind === 'symbol') {
-      const newProps = renderItem.props ? evaluate(renderItem.props, { props }) : undefined
+      const newProps = evaluate(renderItem.props, { props })
       renderSymbol(renderItem.symbol, templates, images, actions, { x, y, z }, newProps)
     }
   }
@@ -303,7 +336,7 @@ class SymbolRenderer extends Vue {
         ))
       } else if (renderItem.kind === 'symbol') {
         const content = renderItem.content
-        const props = renderItem.props ? evaluate(renderItem.props, { props: this.referenceProps }) : undefined
+        const props = evaluate(renderItem.props, { props: this.referenceProps })
         children.push(createElement(
           'symbol-renderer',
           {
@@ -350,7 +383,7 @@ class TextRenderer extends Vue {
   z!: number
 
   private get text() {
-    return this.props ? evaluateTextExpression(this.content, { props: this.props }) : this.content.text
+    return evaluateTextExpression(this.content, { props: this.props })
   }
 
   private get characters() {
@@ -358,11 +391,11 @@ class TextRenderer extends Vue {
   }
 
   private get fontSize() {
-    return this.props ? evaluateFontSizeExpression(this.content, { props: this.props }) : this.content.fontSize
+    return evaluateFontSizeExpression(this.content, { props: this.props })
   }
 
   private get color() {
-    return this.props ? evaluateColorExpression(this.content, { props: this.props }) : this.content.color
+    return evaluateColorExpression(this.content, { props: this.props })
   }
 
   private get x() {
@@ -377,6 +410,18 @@ class TextRenderer extends Vue {
     return this.z + getPosition(this.props, 'z', this.content, this.template, this.templates)
   }
 
+  private get rotate() {
+    return evaluateRotateExpression(this.content, { props: this.props })
+  }
+
+  private get width() {
+    return evaluateSizeExpression('width', this.content, { props: this.props })
+  }
+
+  private get height() {
+    return evaluateSizeExpression('height', this.content, { props: this.props })
+  }
+
   render(createElement: Vue.CreateElement): Vue.VNode {
     return createElement(
       'div',
@@ -388,7 +433,10 @@ class TextRenderer extends Vue {
           position: 'absolute',
           left: `${this.x}px`,
           top: `${this.y}px`,
+          width: `${this.width}px`,
+          height: `${this.height}px`,
           zIndex: this.zValue,
+          transform: this.rotate ? `rotate(${this.rotate}deg)` : undefined,
         }
       },
       this.characters.map((c) => c.text).join('')
@@ -409,15 +457,15 @@ class ImageRenderer extends Vue {
   z!: number
 
   private get url() {
-    return this.props ? evaluateUrlExpression(this.content, { props: this.props }) : this.content.url
+    return evaluateUrlExpression(this.content, { props: this.props })
   }
 
   private get width() {
-    return this.props ? evaluateSizeExpression('width', this.content, { props: this.props }) : this.content.width
+    return evaluateSizeExpression('width', this.content, { props: this.props })
   }
 
   private get height() {
-    return this.props ? evaluateSizeExpression('height', this.content, { props: this.props }) : this.content.height
+    return evaluateSizeExpression('height', this.content, { props: this.props })
   }
 
   private get x() {
@@ -430,6 +478,10 @@ class ImageRenderer extends Vue {
 
   private get zValue() {
     return this.z + getPosition(this.props, 'z', this.content, this.template, this.templates)
+  }
+
+  private get rotate() {
+    return evaluateRotateExpression(this.content, { props: this.props })
   }
 
   private get imageLoader() {
@@ -464,6 +516,7 @@ class ImageRenderer extends Vue {
           left: `${this.x}px`,
           top: `${this.y}px`,
           zIndex: this.zValue,
+          transform: this.rotate ? `rotate(${this.rotate}deg)` : undefined,
         },
         attrs: {
           src: this.base64,
@@ -486,11 +539,11 @@ class ColorRenderer extends Vue {
   z!: number
 
   private get width() {
-    return this.props ? evaluateSizeExpression('width', this.content, { props: this.props }) : this.content.width
+    return evaluateSizeExpression('width', this.content, { props: this.props })
   }
 
   private get height() {
-    return this.props ? evaluateSizeExpression('height', this.content, { props: this.props }) : this.content.height
+    return evaluateSizeExpression('height', this.content, { props: this.props })
   }
 
   private get x() {
@@ -505,8 +558,12 @@ class ColorRenderer extends Vue {
     return this.z + getPosition(this.props, 'z', this.content, this.template, this.templates)
   }
 
+  private get rotate() {
+    return evaluateRotateExpression(this.content, { props: this.props })
+  }
+
   private get color() {
-    return this.props ? evaluateColorExpression(this.content, { props: this.props }) : this.content.color
+    return evaluateColorExpression(this.content, { props: this.props })
   }
 
   render(createElement: Vue.CreateElement): Vue.VNode {
@@ -521,6 +578,7 @@ class ColorRenderer extends Vue {
           top: `${this.y}px`,
           backgroundColor: this.color,
           zIndex: this.zValue,
+          transform: this.rotate ? `rotate(${this.rotate}deg)` : undefined,
         },
       },
     )
