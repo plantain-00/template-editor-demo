@@ -3,8 +3,8 @@
   "templates": [
     {
       "id": "0.041843723393758525",
-      "x": 425.9,
-      "y": 4.54,
+      "x": 4.07,
+      "y": 358.58,
       "width": 140,
       "height": 60,
       "contents": [
@@ -39,10 +39,10 @@
           "x": 765.48,
           "y": -2.68,
           "props": "{ price: commodity?.prices?.[0] }",
-          "xExpression": "props.width - 140",
           "propsIds": {
             "price": "3"
-          }
+          },
+          "xExpression": "props.width - 140"
         },
         {
           "kind": "reference",
@@ -197,8 +197,8 @@
           "fontSizeExpressionId": "4"
         }
       ],
-      "x": 92.87,
-      "y": -78.7,
+      "x": 2.48,
+      "y": -169.09,
       "width": 500,
       "height": 54,
       "parameters": [
@@ -226,8 +226,8 @@
           "textExpressionId": "4"
         }
       ],
-      "x": 117.24,
-      "y": 103.03,
+      "x": 4.25,
+      "y": 155.76,
       "width": 400,
       "height": 80,
       "parameters": [
@@ -285,7 +285,7 @@
     {
       "id": "0.14261638357931328",
       "x": 1723.02,
-      "y": 179.05,
+      "y": 254.38,
       "width": 553,
       "height": 216,
       "contents": [
@@ -295,7 +295,8 @@
           "x": 0,
           "y": 0,
           "if": "commodity.prices.length == 3",
-          "ifId": "1"
+          "ifId": "1",
+          "else": true
         },
         {
           "kind": "reference",
@@ -304,10 +305,18 @@
           "y": 0,
           "props": "{ width: 553 }",
           "if": "commodity.prices.length == 1",
-          "ifId": "1"
+          "ifId": "1",
+          "else": true
+        },
+        {
+          "kind": "reference",
+          "id": "0.9641177365517657",
+          "x": 0,
+          "y": 0,
+          "else": true
         }
       ],
-      "heightExpression": "commodity.prices.length === 1 ? 54 : 216",
+      "heightExpression": "commodity.prices.length === 3 ? 216 : 54 ",
       "name": "553px宽商品"
     },
     {
@@ -371,8 +380,8 @@
     },
     {
       "id": "0.4520673784851612",
-      "x": 2807.32,
-      "y": -0.27,
+      "x": 2829.92,
+      "y": 67.52,
       "width": 960,
       "height": 260,
       "contents": [
@@ -417,8 +426,8 @@
     },
     {
       "id": "0.34988078104422415",
-      "x": 1591.65,
-      "y": -218.77,
+      "x": 1621.78,
+      "y": -331.76,
       "width": 302,
       "height": 54,
       "contents": [
@@ -471,6 +480,27 @@
         }
       ],
       "name": "模板1"
+    },
+    {
+      "id": "0.9641177365517657",
+      "x": 2212.73,
+      "y": -336.95,
+      "width": 553,
+      "height": 54,
+      "contents": [
+        {
+          "kind": "text",
+          "text": "价格数量错误？",
+          "color": "#ff0614",
+          "fontFamily": "Aria",
+          "fontSize": 30,
+          "x": 2.06,
+          "y": -0.88,
+          "width": 553,
+          "height": 54
+        }
+      ],
+      "name": "价格不匹配错误"
     }
   ]
 }

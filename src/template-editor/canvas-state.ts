@@ -147,7 +147,7 @@ export class CanvasState extends Vue {
 
   get allNameRegions() {
     if (this.selection.kind === 'template') {
-      return Array.from(iterateAllNameRegions(this.selection.template, this.styleGuide))
+      return Array.from(iterateAllNameRegions(this.selection.template, this.styleGuide, this.styleGuideScale))
     }
     return []
   }
@@ -161,7 +161,7 @@ export class CanvasState extends Vue {
   }
 
   get targetNameRegions() {
-    return Array.from(iterateAllNameRegions(undefined, this.styleGuide))
+    return Array.from(iterateAllNameRegions(undefined, this.styleGuide, this.styleGuideScale))
   }
 
   presetExpressions: PresetExpression[] = [

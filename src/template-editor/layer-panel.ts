@@ -14,6 +14,7 @@ export class LayerPanel extends Vue {
     return {
       height: this.canvasState.canvasHeight + 'px',
       overflow: 'auto',
+      whiteSpace: 'nowrap',
     }
   }
 

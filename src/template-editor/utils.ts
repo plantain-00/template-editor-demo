@@ -62,7 +62,7 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
         return {
           kind: 'move',
           offsetX: position.x - nameRegion.x,
-          offsetY: position.y - nameRegion.y - nameSize,
+          offsetY: position.y - nameRegion.y - nameSize / canvasState.styleGuideScale,
         }
       }
     }

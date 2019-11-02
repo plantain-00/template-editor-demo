@@ -167,7 +167,9 @@ interface TemplateSnapshotContent extends Position, PositionExpression {
 }
 ```
 
-模板中通过引用来使用组件后，一个六层嵌套的模板和使用的组件数据量之和只有 6.4KB。
+模板中通过引用来使用组件后，一个六层嵌套的模板和使用的组件数据量之和只有 7.0KB。
+
+![styleguide](./screenshots/styleguide.png)
 
 ### 布局引擎
 
@@ -246,8 +248,21 @@ z 未设置时是 0。
 
 组件中，和 x y 的逻辑一样，内容的 z 值是一个相对值。
 
+### 多人协同编辑模板
+
+可以通过创建、websocket 转发、应用 json patch 的方式，实现简单的多人协同编辑模板功能。
+
+### 错误提示
+
+可以把自定义错误写在一个组件里，然后通过模板引擎的条件语法控制显示在生成的海报里。
+
+例如，当热甜点里的第 2 个商品的价格数量不是 1 或 3 时，生成的海报是：
+
+![generation-error](./screenshots/generation-error.jpg)
+
 ## todo
 
 + intellisense?
 + rotate operation on canvas
 + component rotate
++ grabbing cursor for adding content or template
