@@ -156,15 +156,16 @@ export function getPosition(props: unknown, type: 'x' | 'y' | 'z', content: Temp
   return evaluatePositionExpression(type, content, { props })
 }
 
-export function* iterateAllNameRegions(target: Template | undefined, styleGuide: StyleGuide) {
+export function* iterateAllNameRegions(target: Template | undefined, styleGuide: StyleGuide, scale: number) {
+  const realNameSize = nameSize / scale
   for (const template of styleGuide.templates) {
     if ((target === undefined || target === template) && template.name) {
       yield {
         x: template.x,
-        y: template.y - nameSize,
+        y: template.y - realNameSize,
         z: template.z || 0,
-        width: nameSize * template.name.length,
-        height: nameSize,
+        width: realNameSize * template.name.length,
+        height: realNameSize,
         template,
         parent: undefined as {
           content: TemplateReferenceContent;
@@ -176,7 +177,7 @@ export function* iterateAllNameRegions(target: Template | undefined, styleGuide:
   }
 }
 
-export const nameSize = 25
+export const nameSize = 14
 
 export function formatPixel(n: number) {
   return Math.round(n * 100) / 100

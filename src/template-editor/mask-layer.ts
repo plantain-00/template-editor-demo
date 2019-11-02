@@ -116,7 +116,6 @@ export class MaskLayer extends Vue {
               y: newContentY,
               width: 100,
               height: 100,
-              characters: [],
             }
             templateRegion.template.contents.push(newContent)
             this.canvasState.selection = {

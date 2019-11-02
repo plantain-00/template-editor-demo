@@ -42,11 +42,12 @@ export class RenderLayer extends Vue {
   }
 
   getNameStyle(template: Template) {
+    const realNameSize = nameSize / this.canvasState.styleGuideScale
     return {
       position: 'absolute',
-      top: `-${nameSize}px`,
-      fontSize: '20px',
-      width: `${template.name ? template.name.length * nameSize : 0}px`,
+      top: `-${realNameSize}px`,
+      fontSize: `${realNameSize * 0.8}px`,
+      width: `${template.name ? template.name.length * realNameSize : 0}px`,
       zIndex: Math.round(template.z || 0),
     }
   }
