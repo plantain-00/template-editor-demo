@@ -72,6 +72,7 @@
     "ajv": "^6.10.2",
     "expression-engine": "1.7.2",
     "fast-json-patch": "^3.0.0-1",
+    "tree-vue-component": "^5.8.1",
     "vue": "2.6.10",
     "vue-class-component": "7.1.0",
     "vue-schema-based-json-editor": "^7.25.1",

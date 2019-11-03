@@ -251,18 +251,16 @@ export class MaskLayer extends Vue {
           return
         }
         if (this.draggingSelectionKind === 'grabbing' && content.kind !== 'reference' && content.kind !== 'snapshot') {
-          const offsetX = this.canvasState.mouseupMappedX - (content.x + content.width / 2)
-          const offsetY = this.canvasState.mouseupMappedY - (content.y + content.height / 2)
-          if (offsetX > 0) {
-            Vue.set(content, 'rotate', formatPixel(Math.atan(offsetY / offsetX) / Math.PI * 180 + 90))
-          } else if (equal(offsetX, 0)) {
-            if (offsetY > 0) {
+          if (x > 0) {
+            Vue.set(content, 'rotate', formatPixel(Math.atan(y / x) / Math.PI * 180 + 90))
+          } else if (equal(x, 0)) {
+            if (y > 0) {
               Vue.set(content, 'rotate', 180)
-            } else if (offsetY < 0) {
+            } else if (y < 0) {
               Vue.set(content, 'rotate', 0)
             }
           } else {
-            Vue.set(content, 'rotate', formatPixel(Math.atan(offsetY / offsetX) / Math.PI * 180 - 90))
+            Vue.set(content, 'rotate', formatPixel(Math.atan(y / x) / Math.PI * 180 - 90))
           }
           return
         }

@@ -102,8 +102,8 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
         if (canGrabToRotate) {
           return {
             kind: 'grab',
-            offsetX: position.x - content.x,
-            offsetY: position.y - content.y,
+            offsetX: contentRegion.x + contentRegion.width / 2,
+            offsetY: contentRegion.y + contentRegion.height / 2,
           }
         }
         const side = getRegionSide(position, contentRegion)
