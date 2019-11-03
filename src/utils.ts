@@ -33,7 +33,7 @@ export function isInRegion(position: Position | Position[], region: Region & Rot
   return position.x >= region.x && position.y >= region.y && position.x <= region.x + region.width && position.y <= region.y + region.height
 }
 
-function rotatePosition(position: Position, region: Region & Rotate) {
+export function rotatePosition(position: Position, region: Region & Rotate) {
   if (!region.rotate) {
     return position
   }

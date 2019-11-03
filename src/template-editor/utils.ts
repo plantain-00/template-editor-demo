@@ -1,6 +1,6 @@
 import { CanvasState } from './canvas-state'
 import { Region, Position, TemplateContent, Template, TemplateReferenceContent, Rotate } from '../model'
-import { isInRegion, nameSize, formatPixel } from '../utils'
+import { isInRegion, nameSize, formatPixel, rotatePosition } from '../utils'
 
 export function selectContentOrTemplateByPosition(canvasState: CanvasState, position: Position) {
   let potentialNameRegion: Required<Region> & Rotate & {
@@ -50,7 +50,7 @@ export function selectTemplateRegionByPosition(canvasState: CanvasState, positio
 }
 
 export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, position: Position): {
-  kind: 'move' | RegionSide
+  kind: 'move' | 'grab' | RegionSide
   offsetX: number
   offsetY: number
   content?: TemplateReferenceContent
@@ -98,6 +98,14 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
     const content = canvasState.selection.content
     for (const contentRegion of canvasState.allContentRegions) {
       if (contentRegion.content.kind !== 'reference') {
+        const canGrabToRotate = getCanGrabToRotate(position, contentRegion, canvasState.styleGuideScale)
+        if (canGrabToRotate) {
+          return {
+            kind: 'grab',
+            offsetX: contentRegion.x + contentRegion.width / 2,
+            offsetY: contentRegion.y + contentRegion.height / 2,
+          }
+        }
         const side = getRegionSide(position, contentRegion)
         if (side) {
           return {
@@ -122,49 +130,60 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
 
 export type RegionSide = "left-top" | "left" | "left-bottom" | "right-top" | "right" | "right-bottom" | "top" | "bottom"
 
+function getCanGrabToRotate(position: Position, region: Region & Rotate, scale: number) {
+  position = rotatePosition(position, region)
+  const circleSize = rotateCircleSize / scale
+  const stickLength = rotateStickLength / scale
+  return isInRegion(position, {
+    x: region.x + region.width / 2 - circleSize / 2,
+    y: region.y - stickLength - circleSize,
+    width: circleSize,
+    height: circleSize,
+  })
+}
+
 function getRegionSide(position: Position, region: Region & Rotate): RegionSide | undefined {
   if (region.rotate) {
     return undefined
   }
-  const delta = 5
-  if (Math.abs(position.x - region.x) <= delta) {
-    if (position.y < region.y - delta) {
+  if (Math.abs(position.x - region.x) <= resizeSize) {
+    if (position.y < region.y - resizeSize) {
       return undefined
     }
-    if (position.y < region.y + delta) {
+    if (position.y < region.y + resizeSize) {
       return 'left-top'
     }
-    if (position.y < region.y + region.height - delta) {
+    if (position.y < region.y + region.height - resizeSize) {
       return 'left'
     }
-    if (position.y < region.y + region.height + delta) {
+    if (position.y < region.y + region.height + resizeSize) {
       return 'left-bottom'
     }
     return undefined
   }
-  if (Math.abs(position.x - region.x - region.width) <= delta) {
-    if (position.y < region.y - delta) {
+  if (Math.abs(position.x - region.x - region.width) <= resizeSize) {
+    if (position.y < region.y - resizeSize) {
       return undefined
     }
-    if (position.y < region.y + delta) {
+    if (position.y < region.y + resizeSize) {
       return 'right-top'
     }
-    if (position.y < region.y + region.height - delta) {
+    if (position.y < region.y + region.height - resizeSize) {
       return 'right'
     }
-    if (position.y < region.y + region.height + delta) {
+    if (position.y < region.y + region.height + resizeSize) {
       return 'right-bottom'
     }
     return undefined
   }
-  if (Math.abs(position.y - region.y) <= delta) {
-    if (position.x > region.x + delta && position.x < region.x + region.width - delta) {
+  if (Math.abs(position.y - region.y) <= resizeSize) {
+    if (position.x > region.x + resizeSize && position.x < region.x + region.width - resizeSize) {
       return 'top'
     }
     return undefined
   }
-  if (Math.abs(position.y - region.y - region.height) <= delta) {
-    if (position.x > region.x + delta && position.x < region.x + region.width - delta) {
+  if (Math.abs(position.y - region.y - region.height) <= resizeSize) {
+    if (position.x > region.x + resizeSize && position.x < region.x + region.width - resizeSize) {
       return 'bottom'
     }
     return undefined
@@ -220,3 +239,7 @@ export function decreaseContentSize(content: TemplateContent, kind: 'width' | 'h
 export function decreaseTemplateSize(template: Template, kind: 'width' | 'height', value: number) {
   template[kind] = formatPixel(template[kind] - value)
 }
+
+export const resizeSize = 5
+export const rotateStickLength = 40
+export const rotateCircleSize = 10

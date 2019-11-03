@@ -11,5 +11,9 @@
         </template>
       </div>
     </template>
+    <div v-if="canRotateRegion" :style="rotateAreaStyle">
+      <div :style="rotateRegion"></div>
+      <div :style="rotateCircleRegion"></div>
+    </div>
   </div>
 </div>

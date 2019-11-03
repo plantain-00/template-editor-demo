@@ -45,7 +45,7 @@ export class CanvasState extends Vue {
   mouseupX = 0
   mouseupY = 0
   mousePressing = false
-  isDraggingForMoving = false
+  hasRelationWithSelection = false
   addKind: 'template' | 'image' | 'text' | 'color' | undefined
   x = 0
   y = 0
@@ -59,7 +59,7 @@ export class CanvasState extends Vue {
   }
   private _styleGuideWidth = 0
   get styleGuideWidth() {
-    if (this.isDraggingForMoving) {
+    if (this.hasRelationWithSelection) {
       return this._styleGuideWidth
     }
     const maxX = Math.max(...this.styleGuide.templates.map((t) => t.x + t.width))
@@ -73,7 +73,7 @@ export class CanvasState extends Vue {
   }
   private _styleGuideHeight = 0
   get styleGuideHeight() {
-    if (this.isDraggingForMoving) {
+    if (this.hasRelationWithSelection) {
       return this._styleGuideHeight
     }
     const maxY = Math.max(...this.styleGuide.templates.map((t) => t.y + t.height))
@@ -83,7 +83,7 @@ export class CanvasState extends Vue {
   }
 
   get isDraggingForSelection() {
-    return this.moved && this.mousePressing && !this.isDraggingForMoving
+    return this.moved && this.mousePressing && !this.hasRelationWithSelection
   }
 
   get moved() {
@@ -235,7 +235,7 @@ export class CanvasState extends Vue {
   ]
 }
 
-function equal(n1: number, n2: number) {
+export function equal(n1: number, n2: number) {
   const diff = n1 - n2
   return diff < Number.EPSILON && diff > -Number.EPSILON
 }

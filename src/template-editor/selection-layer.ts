@@ -3,6 +3,7 @@ import Component from 'vue-class-component'
 import { templateEditorSelectionLayerTemplateHtml, templateEditorSelectionLayerTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
 import { Region, Rotate } from '../model'
+import { rotateStickLength, rotateCircleSize, resizeSize } from './utils'
 
 @Component({
   render: templateEditorSelectionLayerTemplateHtml,
@@ -32,6 +33,13 @@ export class SelectionLayer extends Vue {
     return []
   }
 
+  get canRotateRegion(): Region | undefined {
+    if (this.canvasState.selection.kind === 'content') {
+      return this.canvasState.allContentRegions.find((c) => c.content.kind !== 'reference' && c.content.kind !== 'snapshot')
+    }
+    return undefined
+  }
+
   get canvasStyle() {
     return {
       position: 'absolute',
@@ -51,12 +59,7 @@ export class SelectionLayer extends Vue {
 
   getSelectionAreaStyle(region: Region & Rotate) {
     return {
-      left: region.x + 'px',
-      top: region.y + 'px',
-      width: region.width + 'px',
-      height: region.height + 'px',
-      transform: region.rotate ? `rotate(${region.rotate}deg)` : undefined,
-      position: 'absolute',
+      ...this.getResizeStyle(region),
       border: `${1 / this.canvasState.styleGuideScale}px solid green`
     }
   }
@@ -72,11 +75,53 @@ export class SelectionLayer extends Vue {
     }
   }
 
-  get resizeRegions() {
-    const width = 5 / this.canvasState.styleGuideScale
+  get rotateAreaStyle() {
+    if (!this.canRotateRegion) {
+      return undefined
+    }
+    return this.getResizeStyle(this.canRotateRegion)
+  }
+
+  get rotateRegion() {
+    if (!this.rotateAreaStyle) {
+      return undefined
+    }
+    const length = rotateStickLength / this.canvasState.styleGuideScale
     const border = 1 / this.canvasState.styleGuideScale
-    const leftTop = 2.5 / this.canvasState.styleGuideScale
-    const rightBottom = 1.5 / this.canvasState.styleGuideScale
+    return {
+      left: `calc(50% - ${border / 2}px)`,
+      top: -length + `px`,
+      width: Math.max(border, 1) + 'px',
+      height: length + 'px',
+      position: 'absolute',
+      backgroundColor: 'green',
+    }
+  }
+
+  get rotateCircleRegion() {
+    if (!this.rotateAreaStyle) {
+      return undefined
+    }
+    const length = rotateStickLength / this.canvasState.styleGuideScale
+    const border = 1 / this.canvasState.styleGuideScale
+    const width = rotateCircleSize / this.canvasState.styleGuideScale
+    return {
+      left: `calc(50% - ${border / 2 + width / 2}px)`,
+      top: -length - width + `px`,
+      width: width + 'px',
+      height: width + 'px',
+      position: 'absolute',
+      border: `${Math.max(border, 1)}px solid green`,
+      backgroundColor: 'white',
+      borderRadius: width / 2 + 'px',
+    }
+  }
+
+  get resizeRegions() {
+    const width = resizeSize / this.canvasState.styleGuideScale
+    const border = 1 / this.canvasState.styleGuideScale
+    const leftTop = width / 2
+    const rightBottom = width / 2 - border
     const style = {
       width: width + 'px',
       height: width + 'px',

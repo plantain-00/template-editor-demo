@@ -663,7 +663,7 @@ export function templateEditorRenderLayerTemplateHtml(this: RenderLayer) {var _v
 // @ts-ignore
 export var templateEditorRenderLayerTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function templateEditorSelectionLayerTemplateHtml(this: SelectionLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.canvasStyle)},[_c('div',{style:(_vm.styleGuideStyle)},[_vm._l((_vm.selectionRegions),function(r){return [_c('div',{style:(_vm.getSelectionAreaStyle(r))})]}),_vm._v(" "),_vm._l((_vm.canResizeRegions),function(r){return [_c('div',{style:(_vm.getResizeStyle(r))},[_vm._l((_vm.resizeRegions),function(r){return [_c('div',{style:(r)})]})],2)]})],2)])}
+export function templateEditorSelectionLayerTemplateHtml(this: SelectionLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.canvasStyle)},[_c('div',{style:(_vm.styleGuideStyle)},[_vm._l((_vm.selectionRegions),function(r){return [_c('div',{style:(_vm.getSelectionAreaStyle(r))})]}),_vm._v(" "),_vm._l((_vm.canResizeRegions),function(r){return [_c('div',{style:(_vm.getResizeStyle(r))},[_vm._l((_vm.resizeRegions),function(r){return [_c('div',{style:(r)})]})],2)]}),_vm._v(" "),(_vm.canRotateRegion)?_c('div',{style:(_vm.rotateAreaStyle)},[_c('div',{style:(_vm.rotateRegion)}),_vm._v(" "),_c('div',{style:(_vm.rotateCircleRegion)})]):_vm._e()],2)])}
 // @ts-ignore
 export var templateEditorSelectionLayerTemplateHtmlStatic = [  ]
 // @ts-ignore
