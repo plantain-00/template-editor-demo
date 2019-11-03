@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import { CanvasState } from './canvas-state'
+import { CanvasState, equal } from './canvas-state'
 import { TemplateContent, Template, TemplateReferenceContent, CanvasSelection } from '../model'
 import { selectTemplateRegionByPosition, selectContentOrTemplateByPosition, getPositionAndSelectionAreaRelation, selectTemplateByArea, RegionSide, decreaseContentSize, setContentSize, decreaseTemplateSize } from './utils'
 import { templateEditorMaskLayerTemplateHtml, templateEditorMaskLayerTemplateHtmlStatic } from '../variables'
@@ -22,30 +22,32 @@ export class MaskLayer extends Vue {
     kind: 'none'
   }
   private mouseIsDown = false
-  private draggingSelectionKind: 'move' | RegionSide | undefined
+  private draggingSelectionKind: 'move' | 'grab' | 'grabbing' | RegionSide | undefined
   private draggingSelectionWidth = 0
   private draggingSelectionHeight = 0
 
   get maskStyle() {
     let cursor: string
-
-    const relation = getPositionAndSelectionAreaRelation(this.canvasState, {
-      x: this.canvasState.mappedX,
-      y: this.canvasState.mappedY
-    })
-
-    if (this.canvasState.isDraggingForMoving) {
+    if (this.canvasState.addKind) {
+      cursor = 'grabbing'
+    } else if (this.canvasState.hasRelationWithSelection) {
       if (this.draggingSelectionKind) {
         cursor = cursorMap[this.draggingSelectionKind]
       } else {
         cursor = 'move'
       }
-    } else if (relation) {
-      cursor = cursorMap[relation.kind]
-    } else if (this.canvasState.isDraggingForSelection) {
-      cursor = 'crosshair'
     } else {
-      cursor = 'auto'
+      const relation = getPositionAndSelectionAreaRelation(this.canvasState, {
+        x: this.canvasState.mappedX,
+        y: this.canvasState.mappedY
+      })
+      if (relation) {
+        cursor = cursorMap[relation.kind]
+      } else if (this.canvasState.isDraggingForSelection) {
+        cursor = 'crosshair'
+      } else {
+        cursor = 'auto'
+      }
     }
     return {
       position: 'absolute',
@@ -170,23 +172,28 @@ export class MaskLayer extends Vue {
       x: this.canvasState.mousedownMappedX,
       y: this.canvasState.mousedownMappedY
     })
-    this.canvasState.isDraggingForMoving = !!relation
+    this.canvasState.hasRelationWithSelection = !!relation
     if (relation) {
       this.draggingSelectionOffsetX = relation.offsetX
       this.draggingSelectionOffsetY = relation.offsetY
       this.draggingSelectionContent = relation.content
-      this.draggingSelectionKind = relation.kind
+      if (relation.kind === 'grab') {
+        this.draggingSelectionKind = 'grabbing'
+      } else {
+        this.draggingSelectionKind = relation.kind
+      }
       if (this.canvasState.selection.kind === 'template') {
         this.draggingSelectionWidth = this.canvasState.selection.template.width
         this.draggingSelectionHeight = this.canvasState.selection.template.height
       } else if (this.canvasState.selection.kind === 'content') {
-        if (this.canvasState.selection.content.kind !== 'reference') {
-          if (this.canvasState.selection.content.kind === 'snapshot') {
-            this.draggingSelectionWidth = this.canvasState.selection.content.snapshot.width
-            this.draggingSelectionHeight = this.canvasState.selection.content.snapshot.height
+        const content = this.canvasState.selection.content
+        if (content.kind !== 'reference') {
+          if (content.kind === 'snapshot') {
+            this.draggingSelectionWidth = content.snapshot.width
+            this.draggingSelectionHeight = content.snapshot.height
           } else {
-            this.draggingSelectionWidth = this.canvasState.selection.content.width
-            this.draggingSelectionHeight = this.canvasState.selection.content.height
+            this.draggingSelectionWidth = content.width
+            this.draggingSelectionHeight = content.height
           }
         }
       }
@@ -202,8 +209,8 @@ export class MaskLayer extends Vue {
       this.canvasState.mouseupY = e.offsetY
     }
 
-    // move content or template
-    if (this.canvasState.isDraggingForMoving) {
+    // move, resize, rotate content or template
+    if (this.canvasState.hasRelationWithSelection) {
       const x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
       const y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
       if (this.canvasState.selection.kind === 'template') {
@@ -237,26 +244,43 @@ export class MaskLayer extends Vue {
         if (this.canvasState.selection.template.display === 'flex' || !this.draggingSelectionKind) {
           return
         }
+        const content = this.canvasState.selection.content
         if (this.draggingSelectionKind === 'move') {
-          this.canvasState.selection.content.x = formatPixel(x)
-          this.canvasState.selection.content.y = formatPixel(y)
+          content.x = formatPixel(x)
+          content.y = formatPixel(y)
           return
         }
-        const deltaX = x - this.canvasState.selection.content.x
-        const deltaY = y - this.canvasState.selection.content.y
+        if (this.draggingSelectionKind === 'grabbing' && content.kind !== 'reference' && content.kind !== 'snapshot') {
+          const offsetX = this.canvasState.mouseupMappedX - (content.x + content.width / 2)
+          const offsetY = this.canvasState.mouseupMappedY - (content.y + content.height / 2)
+          if (offsetX > 0) {
+            Vue.set(content, 'rotate', formatPixel(Math.atan(offsetY / offsetX) / Math.PI * 180 + 90))
+          } else if (equal(offsetX, 0)) {
+            if (offsetY > 0) {
+              Vue.set(content, 'rotate', 180)
+            } else if (offsetY < 0) {
+              Vue.set(content, 'rotate', 0)
+            }
+          } else {
+            Vue.set(content, 'rotate', formatPixel(Math.atan(offsetY / offsetX) / Math.PI * 180 - 90))
+          }
+          return
+        }
+        const deltaX = x - content.x
+        const deltaY = y - content.y
         if (this.draggingSelectionKind.includes('left')) {
-          decreaseContentSize(this.canvasState.selection.content, 'width', deltaX)
-          this.canvasState.selection.content.x = formatPixel(x)
+          decreaseContentSize(content, 'width', deltaX)
+          content.x = formatPixel(x)
         }
         if (this.draggingSelectionKind.includes('right')) {
-          setContentSize(this.canvasState.selection.content, 'width', this.draggingSelectionWidth + deltaX)
+          setContentSize(content, 'width', this.draggingSelectionWidth + deltaX)
         }
         if (this.draggingSelectionKind.includes('top')) {
-          decreaseContentSize(this.canvasState.selection.content, 'height', deltaY)
-          this.canvasState.selection.content.y = formatPixel(y)
+          decreaseContentSize(content, 'height', deltaY)
+          content.y = formatPixel(y)
         }
         if (this.draggingSelectionKind.includes('bottom')) {
-          setContentSize(this.canvasState.selection.content, 'height', this.draggingSelectionHeight + deltaY)
+          setContentSize(content, 'height', this.draggingSelectionHeight + deltaY)
         }
       }
     }
@@ -270,12 +294,12 @@ export class MaskLayer extends Vue {
     this.canvasState.mouseupX = e.offsetX
     this.canvasState.mouseupY = e.offsetY
 
-    if (this.canvasState.isDraggingForMoving) {
+    if (this.canvasState.hasRelationWithSelection) {
       // contants before and after moving
       const constantsX = (this.canvasState.styleGuideTranslateX - this.canvasState.styleGuideWidth / 2) * this.canvasState.styleGuideScale + this.canvasState.styleGuideWidth / 2
       const constantsY = (this.canvasState.styleGuideTranslateY - this.canvasState.styleGuideHeight / 2) * this.canvasState.styleGuideScale + this.canvasState.styleGuideHeight / 2
 
-      this.canvasState.isDraggingForMoving = false
+      this.canvasState.hasRelationWithSelection = false
       // keep canvas stable
       this.canvasState.styleGuideTranslateX = (constantsX - this.canvasState.styleGuideWidth / 2) / this.canvasState.styleGuideScale + this.canvasState.styleGuideWidth / 2
       this.canvasState.styleGuideTranslateY = (constantsY - this.canvasState.styleGuideHeight / 2) / this.canvasState.styleGuideScale + this.canvasState.styleGuideHeight / 2
@@ -376,4 +400,6 @@ const cursorMap = {
   'left-top': 'nwse-resize',
   'right-bottom': 'nwse-resize',
   'move': 'move',
+  'grab': 'grab',
+  'grabbing': 'grabbing',
 }

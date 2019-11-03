@@ -263,6 +263,4 @@ z 未设置时是 0。
 ## todo
 
 + intellisense?
-+ rotate operation on canvas
 + component rotate
-+ grabbing cursor for adding content or template
