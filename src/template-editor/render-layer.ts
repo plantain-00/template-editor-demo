@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { templateEditorRenderLayerTemplateHtml, templateEditorRenderLayerTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
-import { TemplateRenderer } from '../engine/renderer'
+import { TemplateRenderer } from '../engine/vue-renderer'
 import { Template } from '../model'
 import { nameSize } from '../utils'
 

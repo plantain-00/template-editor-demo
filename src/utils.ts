@@ -37,16 +37,23 @@ export function rotatePosition(position: Position, region: Region & Rotate) {
   if (!region.rotate) {
     return position
   }
-  const rotate = -region.rotate * Math.PI / 180
   const centerX = region.x + region.width / 2
   const centerY = region.y + region.height / 2
-  const offsetX = position.x - centerX
-  const offsetY = position.y - centerY
+  return rotatePositionByCenter(position, { x: centerX, y: centerY }, region.rotate)
+}
+
+export function rotatePositionByCenter(position: Position, center: Position, rotate: number) {
+  if (!rotate) {
+    return position
+  }
+  rotate = -rotate * Math.PI / 180
+  const offsetX = position.x - center.x
+  const offsetY = position.y - center.y
   const sin = Math.sin(rotate)
   const cos = Math.cos(rotate)
   return {
-    x: cos * offsetX - sin * offsetY + centerX,
-    y: sin * offsetX + cos * offsetY + centerY,
+    x: cos * offsetX - sin * offsetY + center.x,
+    y: sin * offsetX + cos * offsetY + center.y,
   }
 }
 

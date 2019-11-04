@@ -5,7 +5,7 @@ import { tokenizeExpression, parseExpression, printExpression, Expression, Prope
 import { templateEditorOperationPanelTemplateHtml, templateEditorOperationPanelTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
 import { Template } from '../model'
-import { renderTemplate, loadTemplateImages } from '../engine/renderer'
+import { renderTemplate, loadTemplateImages } from '../engine/canvas-renderer'
 import { ExpressionInputChangeData } from './expression-input'
 import { analyseRepeat, Repeat, composeRepeat } from '../engine/template-engine'
 import { formatPixel } from '../utils'

@@ -144,7 +144,7 @@ function getCanGrabToRotate(position: Position, region: Region & Rotate, scale: 
 
 function getRegionSide(position: Position, region: Region & Rotate): RegionSide | undefined {
   if (region.rotate) {
-    return undefined
+    position = rotatePosition(position, region)
   }
   if (Math.abs(position.x - region.x) <= resizeSize) {
     if (position.y < region.y - resizeSize) {
@@ -225,14 +225,6 @@ export function setContentSize(content: TemplateContent, kind: 'width' | 'height
     content.snapshot[kind] = formatPixel(value)
   } else if (content.kind !== 'reference') {
     content[kind] = formatPixel(value)
-  }
-}
-
-export function decreaseContentSize(content: TemplateContent, kind: 'width' | 'height', value: number) {
-  if (content.kind === 'snapshot') {
-    content.snapshot[kind] = formatPixel(content.snapshot[kind] - value)
-  } else if (content.kind !== 'reference') {
-    content[kind] = formatPixel(content[kind] - value)
   }
 }
 

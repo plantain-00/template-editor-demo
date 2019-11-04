@@ -1,6 +1,6 @@
 import test from 'ava'
 
-import { renderTemplateOnCanvas } from '../test-dist/engine/renderer'
+import { renderTemplateOnCanvas } from '../test-dist/engine/canvas-renderer'
 
 const title = 'render every template'
 
