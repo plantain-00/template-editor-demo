@@ -1,7 +1,7 @@
 import test from 'ava'
 
 import { generate } from '../test-dist/engine/template-engine'
-import { renderTemplateOnCanvas } from '../test-dist/engine/renderer'
+import { renderTemplateOnCanvas } from '../test-dist/engine/canvas-renderer'
 
 const title = 'generate and render'
 

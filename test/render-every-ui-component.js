@@ -2,7 +2,7 @@ import test from 'ava'
 import Vue from 'vue'
 import * as vueServerRenderer from 'vue-server-renderer'
 
-import { TemplateRenderer } from '../test-dist/engine/renderer'
+import { TemplateRenderer } from '../test-dist/engine/vue-renderer'
 
 const title = 'render every ui component'
 
