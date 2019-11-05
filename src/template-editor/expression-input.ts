@@ -171,7 +171,7 @@ export class ExpressionInput extends Vue {
               },
               on: {
                 change: (e: { target: { value: string } }) => {
-                  const newExpression = replaceNonStringToken(presetExpression.expression, e.target.value, currentToken.range)
+                  const newExpression = replaceNonStringToken(presetExpression.expression, e.target.value, currentToken.range, '0')
                   this.emitChange({
                     expression: newExpression,
                     expressionId: this.expressionId,
@@ -221,7 +221,7 @@ export class ExpressionInput extends Vue {
                 },
                 on: {
                   change: (e: { target: { value: string } }) => {
-                    const newExpression = replaceNonStringToken(presetExpression.expression, e.target.value, currentToken.range)
+                    const newExpression = replaceNonStringToken(presetExpression.expression, e.target.value, currentToken.range, 'a')
                     this.emitChange({
                       expression: newExpression,
                       expressionId: this.expressionId,
@@ -252,7 +252,7 @@ export class ExpressionInput extends Vue {
               },
               on: {
                 change: (e: { target: { value: string } }) => {
-                  const newExpression = replaceNonStringToken(presetExpression.expression, e.target.value, currentToken.range)
+                  const newExpression = replaceNonStringToken(presetExpression.expression, e.target.value, currentToken.range, 'a')
                   this.emitChange({
                     expression: newExpression,
                     expressionId: this.expressionId,
@@ -385,9 +385,9 @@ function matchPattern(presetExpression: PresetExpression, currentTokens: Token[]
   return true
 }
 
-function replaceNonStringToken(expression: string, value: string, range: [number, number]) {
+function replaceNonStringToken(expression: string, value: string, range: [number, number], defaultValue: string) {
   return expression.substring(0, range[0])
-    + value
+    + (value || defaultValue)
     + expression.substring(range[1])
 }
 
