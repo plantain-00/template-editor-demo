@@ -8465,19 +8465,19 @@ tough-cookie@~2.4.3:
     psl "^1.1.24"
     punycode "^1.4.1"
 
-tree-component@^5.8.1:
-  version "5.8.1"
-  resolved "https://registry.yarnpkg.com/tree-component/-/tree-component-5.8.1.tgz#6704f64d4565fa21c50c9cc3e105026ea40e41db"
-  integrity sha512-ICQnptGnyRY6pZ7qIraPffRIYo+FqkQXDTQO34O7WZPwmLW/GGspbc3rws/amy4SxPGLYV9Ann45YBOtHiUNGQ==
+tree-component@^5.8.2:
+  version "5.8.2"
+  resolved "https://registry.npm.taobao.org/tree-component/download/tree-component-5.8.2.tgz#940adf4ca1bad2abbbbfc96ff921cc7988150dc8"
+  integrity sha1-lArfTKG60qu7v8lv+SHMeYgVDcg=
   dependencies:
     tslib "1"
 
-tree-vue-component@^5.8.1:
-  version "5.8.1"
-  resolved "https://registry.yarnpkg.com/tree-vue-component/-/tree-vue-component-5.8.1.tgz#0a2158be22334ed7c4de51a1211e0b056e6d42b9"
-  integrity sha512-ixw4By7OwllLczTxAOtTDL6zb5BexOSBCSIZXvPuRMEFnsEeDniZQTUbahJZed3A6+9E9wHYtk5lcAXQQ+sm5g==
+tree-vue-component@^5.8.2:
+  version "5.8.2"
+  resolved "https://registry.npm.taobao.org/tree-vue-component/download/tree-vue-component-5.8.2.tgz#67941776cf4f281cde09ddae580599cf1fbca052"
+  integrity sha1-Z5QXds9PKBzeCd2uWAWZzx+8oFI=
   dependencies:
-    tree-component "^5.8.1"
+    tree-component "^5.8.2"
     vue "2"
     vue-class-component "7"
 
