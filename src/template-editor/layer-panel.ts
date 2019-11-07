@@ -12,6 +12,8 @@ import { TemplateContent, Template } from '../model'
 export class LayerPanel extends Vue {
   private canvasState!: CanvasState
 
+  private dragIndex: number | undefined
+
   private get panelStyle() {
     return {
       height: this.canvasState.canvasHeight + 'px',
@@ -26,16 +28,31 @@ export class LayerPanel extends Vue {
       'tree',
       {
         style: this.panelStyle,
-        props: { data: [] }
+        props: {
+          data: [],
+          draggable: true,
+        },
       },
       this.canvasState.styleGuide.templates.map((template, i) => createElement(
         'layer-node',
         {
+          key: template.id,
           props: {
             canvasState: this.canvasState,
             template,
             last: i === this.canvasState.styleGuide.templates.length - 1,
             path: [i],
+          },
+          on: {
+            drag: (index: number) => {
+              this.dragIndex = index
+            },
+            drop: (index: number) => {
+              if (this.dragIndex !== undefined && this.dragIndex !== index) {
+                const template = this.canvasState.styleGuide.templates.splice(this.dragIndex, 1)[0]
+                this.canvasState.styleGuide.templates.splice(index, 0, template)
+              }
+            },
           }
         },
       ))
@@ -54,6 +71,7 @@ class LayerNode extends Vue {
   private path!: number[]
 
   private opened = true
+  private dragIndex: number | undefined
 
   private get selected() {
     return this.canvasState.selection.kind === 'content' && this.canvasState.selection.content === this.content
@@ -82,24 +100,37 @@ class LayerNode extends Vue {
     return content.kind
   }
 
-  render(createElement: Vue.CreateElement): Vue.VNode {
-    let contents: TemplateContent[] = []
+  private get contents() {
     if (this.content) {
       if (this.content.kind === 'snapshot') {
-        contents = this.content.snapshot.contents
+        return this.content.snapshot.contents
       }
-    } else {
-      contents = this.template.contents
+      return []
     }
-    const children = contents.map((c, i) => createElement(
+    return this.template.contents
+  }
+
+  render(createElement: Vue.CreateElement): Vue.VNode {
+    const children = this.contents.map((c, i) => createElement(
       'layer-node',
       {
         props: {
           canvasState: this.canvasState,
           content: c,
           template: this.template,
-          last: i === contents.length - 1,
+          last: i === this.contents.length - 1,
           path: [...this.path, i],
+        },
+        on: {
+          drag: (index: number) => {
+            this.dragIndex = index
+          },
+          drop: (index: number) => {
+            if (this.dragIndex !== undefined && this.dragIndex !== index) {
+              const content = this.contents.splice(this.dragIndex, 1)[0]
+              this.contents.splice(index, 0, content)
+            }
+          },
         }
       },
     ))
@@ -124,6 +155,7 @@ class LayerNode extends Vue {
           },
           last: this.last,
           path: this.path,
+          draggable: true,
         },
         on: {
           toggle: () => {
@@ -142,7 +174,19 @@ class LayerNode extends Vue {
                 template: this.template,
               }
             }
-          }
+          },
+          dragstart: (e: DragEvent) => {
+            this.$emit('drag', this.path[this.path.length - 1])
+            e.stopPropagation()
+          },
+          dragend: (e: DragEvent) => {
+            this.$emit('drag', undefined)
+            e.stopPropagation()
+          },
+          drop: (e: DragEvent) => {
+            this.$emit('drop', this.path[this.path.length - 1])
+            e.stopPropagation()
+          },
         }
       },
       children
