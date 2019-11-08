@@ -76,11 +76,6 @@
           :expressionId="canvasState.selection.content.rotateExpressionId" @change="changeRotateExpression($event)" />
       </div>
     </div>
-    <template v-if="canvasState.selection.content.kind === 'snapshot'">
-      <div v-for="(content, i) of canvasState.selection.content.snapshot.contents">
-        <div style="cursor: pointer" @click="selectContent(content)">content {{i}}: {{content.kind}}</div>
-      </div>
-    </template>
     <div>
       hidden
       <input type="checkbox" :checked="canvasState.selection.content.hidden" @change="changeHidden" />

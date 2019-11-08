@@ -7,7 +7,10 @@ import { PresetExpression } from '../model'
 import { ExpressionEditor } from './expression-editor'
 
 @Component({
-  props: ['literal', 'literalType', 'expression', 'expressionId', 'canvasState']
+  props: ['literal', 'literalType', 'expression', 'expressionId', 'canvasState'],
+  components: {
+    'expression-editor': ExpressionEditor,
+  }
 })
 export class ExpressionInput extends Vue {
   literal?: unknown
@@ -341,8 +344,6 @@ export class ExpressionInput extends Vue {
     return input
   }
 }
-
-Vue.component('expression-editor', ExpressionEditor)
 
 function matchPattern(presetExpression: PresetExpression, currentTokens: Token[]) {
   const tokens = tokenizeExpression(presetExpression.expression)

@@ -12,7 +12,7 @@ import { TemplateContent, Template } from '../model'
 export class LayerPanel extends Vue {
   private canvasState!: CanvasState
 
-  private dragIndex: number | undefined
+  private childrenDragIndex: number | null = null
 
   private get panelStyle() {
     return {
@@ -42,14 +42,25 @@ export class LayerPanel extends Vue {
             template,
             last: i === this.canvasState.styleGuide.templates.length - 1,
             path: [i],
+            dragIndex: this.childrenDragIndex,
           },
           on: {
             drag: (index: number) => {
-              this.dragIndex = index
+              this.childrenDragIndex = index
             },
-            drop: (index: number) => {
-              if (this.dragIndex !== undefined && this.dragIndex !== index) {
-                const template = this.canvasState.styleGuide.templates.splice(this.dragIndex, 1)[0]
+            drop: (e: { index: number, dropPosition: DropPosition }) => {
+              if (this.childrenDragIndex !== null
+                && this.childrenDragIndex !== e.index
+                && (this.childrenDragIndex !== e.index + 1 || e.dropPosition !== DropPosition.down)
+                && (this.childrenDragIndex !== e.index - 1 || e.dropPosition !== DropPosition.up)) {
+                const template = this.canvasState.styleGuide.templates.splice(this.childrenDragIndex, 1)[0]
+                let index = e.index
+                if (e.dropPosition === DropPosition.down) {
+                  index++
+                }
+                if (this.childrenDragIndex < e.index) {
+                  index--
+                }
                 this.canvasState.styleGuide.templates.splice(index, 0, template)
               }
             },
@@ -61,7 +72,7 @@ export class LayerPanel extends Vue {
 }
 
 @Component({
-  props: ['canvasState', 'content', 'template', 'last', 'path']
+  props: ['canvasState', 'content', 'template', 'last', 'path', 'dragIndex']
 })
 class LayerNode extends Vue {
   private canvasState!: CanvasState
@@ -69,12 +80,24 @@ class LayerNode extends Vue {
   private template!: Template
   private last!: boolean
   private path!: number[]
+  private dragIndex!: number | null
 
   private opened = true
-  private dragIndex: number | undefined
+  private dropPosition = DropPosition.empty
+  private childrenDragIndex: number | null = null
 
   private get selected() {
     return this.canvasState.selection.kind === 'content' && this.canvasState.selection.content === this.content
+  }
+  private get dropAllowed() {
+    return this.dragIndex !== null
+      && this.dragIndex !== this.index
+      && (this.dragIndex !== this.index + 1 || this.dropPosition !== DropPosition.down)
+      && (this.dragIndex !== this.index - 1 || this.dropPosition !== DropPosition.up)
+  }
+
+  private get index() {
+    return this.path[this.path.length - 1]
   }
 
   private get contentName() {
@@ -120,14 +143,25 @@ class LayerNode extends Vue {
           template: this.template,
           last: i === this.contents.length - 1,
           path: [...this.path, i],
+          dragIndex: this.childrenDragIndex,
         },
         on: {
           drag: (index: number) => {
-            this.dragIndex = index
+            this.childrenDragIndex = index
           },
-          drop: (index: number) => {
-            if (this.dragIndex !== undefined && this.dragIndex !== index) {
-              const content = this.contents.splice(this.dragIndex, 1)[0]
+          drop: (e: { index: number, dropPosition: DropPosition }) => {
+            if (this.childrenDragIndex !== null
+              && this.childrenDragIndex !== e.index
+              && (this.childrenDragIndex !== e.index + 1 || e.dropPosition !== DropPosition.down)
+              && (this.childrenDragIndex !== e.index - 1 || e.dropPosition !== DropPosition.up)) {
+              const content = this.contents.splice(this.childrenDragIndex, 1)[0]
+              let index = e.index
+              if (e.dropPosition === DropPosition.down) {
+                index++
+              }
+              if (this.childrenDragIndex < e.index) {
+                index--
+              }
               this.contents.splice(index, 0, content)
             }
           },
@@ -149,8 +183,8 @@ class LayerNode extends Vue {
               loading: false,
               highlighted: false,
               openable: false,
-              dropPosition: DropPosition.empty,
-              dropAllowed: false,
+              dropPosition: this.dropPosition,
+              dropAllowed: this.dropAllowed,
             }
           },
           last: this.last,
@@ -176,15 +210,33 @@ class LayerNode extends Vue {
             }
           },
           dragstart: (e: DragEvent) => {
-            this.$emit('drag', this.path[this.path.length - 1])
+            this.$emit('drag', this.index)
             e.stopPropagation()
           },
           dragend: (e: DragEvent) => {
             this.$emit('drag', undefined)
             e.stopPropagation()
           },
+          dragover: (e: DragEvent) => {
+            const target = e.target as HTMLElement
+            const offsetTop = getGlobalOffset(target)
+            this.dropPosition = getDropPosition(e.pageY, offsetTop, target.offsetHeight)
+            e.stopPropagation()
+            e.preventDefault()
+          },
+          dragenter: (e: DragEvent) => {
+            const target = e.target as HTMLElement
+            const offsetTop = getGlobalOffset(target)
+            this.dropPosition = getDropPosition(e.pageY, offsetTop, target.offsetHeight)
+            e.stopPropagation()
+          },
+          dragleave: (e: DragEvent) => {
+            this.dropPosition = DropPosition.empty
+            e.stopPropagation()
+          },
           drop: (e: DragEvent) => {
-            this.$emit('drop', this.path[this.path.length - 1])
+            this.$emit('drop', { index: this.index, dropPosition: this.dropPosition })
+            this.dropPosition = DropPosition.empty
             e.stopPropagation()
           },
         }
@@ -195,3 +247,21 @@ class LayerNode extends Vue {
 }
 
 Vue.component('layer-node', LayerNode)
+
+function getGlobalOffset(dropTarget: HTMLElement) {
+  let offset = 0
+  let currentElem = dropTarget
+  while (currentElem) {
+    offset += currentElem.offsetTop
+    currentElem = currentElem.offsetParent as HTMLElement
+  }
+  return offset
+}
+
+function getDropPosition(pageY: number, offsetTop: number, offsetHeight: number) {
+  const top = pageY - offsetTop
+  if (top < offsetHeight / 2) {
+    return DropPosition.up
+  }
+  return DropPosition.down
+}

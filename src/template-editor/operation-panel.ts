@@ -6,14 +6,17 @@ import { templateEditorOperationPanelTemplateHtml, templateEditorOperationPanelT
 import { CanvasState } from './canvas-state'
 import { Template } from '../model'
 import { renderTemplate, loadTemplateImages } from '../engine/canvas-renderer'
-import { ExpressionInputChangeData } from './expression-input'
+import { ExpressionInputChangeData, ExpressionInput } from './expression-input'
 import { analyseRepeat, Repeat, composeRepeat } from '../engine/template-engine'
 import { formatPixel } from '../utils'
 
 @Component({
   render: templateEditorOperationPanelTemplateHtml,
   staticRenderFns: templateEditorOperationPanelTemplateHtmlStatic,
-  props: ['canvasState']
+  props: ['canvasState'],
+  components: {
+    'expression-input': ExpressionInput,
+  }
 })
 export class OperationPanel extends Vue {
   canvasState!: CanvasState
