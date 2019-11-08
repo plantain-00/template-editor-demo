@@ -9,7 +9,10 @@ import { nameSize } from '../utils'
 @Component({
   render: templateEditorRenderLayerTemplateHtml,
   staticRenderFns: templateEditorRenderLayerTemplateHtmlStatic,
-  props: ['canvasState']
+  props: ['canvasState'],
+  components: {
+    'template-renderer': TemplateRenderer,
+  }
 })
 export class RenderLayer extends Vue {
   canvasState!: CanvasState
@@ -54,5 +57,3 @@ export class RenderLayer extends Vue {
     }
   }
 }
-
-Vue.component('template-renderer', TemplateRenderer)

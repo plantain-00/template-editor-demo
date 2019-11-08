@@ -8,13 +8,14 @@ import { TemplateModelEditor } from './template-model-editor'
 import { AppState } from './app-state'
 import { TemplateEditor } from './template-editor/template-editor'
 
-Vue.component('app-panel', AppPanel)
-Vue.component('template-model-editor', TemplateModelEditor)
-Vue.component('template-editor', TemplateEditor)
-
 @Component({
   render: indexTemplateHtml,
-  staticRenderFns: indexTemplateHtmlStatic
+  staticRenderFns: indexTemplateHtmlStatic,
+  components: {
+    'app-panel': AppPanel,
+    'template-model-editor': TemplateModelEditor,
+    'template-editor': TemplateEditor,
+  }
 })
 export class App extends Vue {
   appState = new AppState()

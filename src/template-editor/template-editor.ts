@@ -11,13 +11,22 @@ import { HoverLayer } from './hover-layer'
 import { MaskLayer } from './mask-layer'
 import { ContextMenu } from './context-menu'
 import { OperationPanel } from './operation-panel'
-import { ExpressionInput } from './expression-input'
 import { LayerPanel } from './layer-panel'
 
 @Component({
   render: templateEditorTemplateEditorTemplateHtml,
   staticRenderFns: templateEditorTemplateEditorTemplateHtmlStatic,
-  props: ['canvasState']
+  props: ['canvasState'],
+  components: {
+    'render-layer': RenderLayer,
+    'dragging-for-selection-layer': DraggingForSelectionLayer,
+    'selection-layer': SelectionLayer,
+    'hover-layer': HoverLayer,
+    'mask-layer': MaskLayer,
+    'context-menu': ContextMenu,
+    'operation-panel': OperationPanel,
+    'layer-panel': LayerPanel,
+  }
 })
 export class TemplateEditor extends Vue {
   private canvasState!: CanvasState
@@ -50,13 +59,3 @@ export class TemplateEditor extends Vue {
 
 export const layerPanelWidth = 200
 export const operationPanelWidth = 300
-
-Vue.component('render-layer', RenderLayer)
-Vue.component('dragging-for-selection-layer', DraggingForSelectionLayer)
-Vue.component('selection-layer', SelectionLayer)
-Vue.component('hover-layer', HoverLayer)
-Vue.component('mask-layer', MaskLayer)
-Vue.component('context-menu', ContextMenu)
-Vue.component('operation-panel', OperationPanel)
-Vue.component('expression-input', ExpressionInput)
-Vue.component('layer-panel', LayerPanel)
