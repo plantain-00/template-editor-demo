@@ -2,7 +2,7 @@ import { Expression } from 'expression-engine'
 
 import { Template, TemplateContent, StyleGuide } from '../model'
 import { layoutFlex } from './layout-engine'
-import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression, parseExpressionToAst, ExpressionOptions, getExpressionOptions, evaluateColorExpression } from './expression'
+import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression, parseExpressionToAst, ExpressionOptions, getExpressionOptions, evaluateColorExpression, evaluateRotateExpression } from './expression'
 import { applyImageOpacity, loadImage } from './image'
 import { getCharacters } from './mock'
 
@@ -158,6 +158,7 @@ async function generateContent(
             kind: 'snapshot',
             x: content.x,
             y: content.y,
+            rotate: content.rotate,
             snapshot: await generate(reference, styleGuide, model, getExpressionOptions(options, reference.name || reference.id))
           },
         ],
@@ -176,6 +177,9 @@ async function generateContent(
   content.height = evaluateSizeExpression('height', content, model, options)
   delete content.heightExpression
   delete content.heightExpressionId
+  content.rotate = evaluateRotateExpression(content, model, options)
+  delete content.rotateExpression
+  delete content.rotateExpressionId
 
   if (content.kind === 'text') {
     content.text = evaluateTextExpression(content, model, options)

@@ -62,14 +62,14 @@ export interface TemplateColorContent extends Region, RegionExpression, Generati
   colorExpressionId?: string
 }
 
-export interface TemplateReferenceContent extends Position, PositionExpression, GenerationField, Hidden {
+export interface TemplateReferenceContent extends Position, PositionExpression, GenerationField, Hidden, Rotate {
   kind: 'reference'
   id: string
   props?: string
   propsIds?: { [key: string]: string }
 }
 
-export interface TemplateSnapshotContent extends Position, PositionExpression, Hidden {
+export interface TemplateSnapshotContent extends Position, PositionExpression, Hidden, Rotate {
   kind: 'snapshot'
   snapshot: Template
 }
