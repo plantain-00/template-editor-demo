@@ -7,7 +7,7 @@ export function* iterateAllTemplateRegions(
   styleGuide: StyleGuide,
 ) {
   for (const template of styleGuide.templates) {
-    yield* iterateAllTemplate(target, template, { x: template.x, y: template.y, z: template.z || 0 }, styleGuide, undefined)
+    yield* iterateAllTemplate(target, template, { x: template.x, y: template.y, z: template.z || 0 }, styleGuide, 0, undefined)
   }
 }
 
@@ -17,11 +17,11 @@ export function* iterateAllContentRegions(
   targetTemplate?: Template,
 ) {
   if (targetTemplate) {
-    yield* iterateAllContent(target, targetTemplate, targetTemplate, { x: targetTemplate.x, y: targetTemplate.y, z: targetTemplate.z || 0 }, styleGuide, undefined)
+    yield* iterateAllContent(target, targetTemplate, targetTemplate, { x: targetTemplate.x, y: targetTemplate.y, z: targetTemplate.z || 0 }, styleGuide, [], undefined)
     return
   }
   for (const template of styleGuide.templates) {
-    yield* iterateAllContent(target, template, template, { x: template.x, y: template.y, z: template.z || 0 }, styleGuide, undefined)
+    yield* iterateAllContent(target, template, template, { x: template.x, y: template.y, z: template.z || 0 }, styleGuide, [], undefined)
   }
 }
 
@@ -62,9 +62,10 @@ function* iterateAllTemplate(
   template: Template,
   position: Required<Position>,
   styleGuide: StyleGuide,
+  rotate: number,
   props: unknown,
   parent?: { content: TemplateReferenceContent, template: Template, index: number },
-): Generator<Required<Region> & { parent?: { content: TemplateReferenceContent, template: Template, index: number }, template: Template }, void, unknown> {
+): Generator<Required<Region> & Rotate & { parent?: { content: TemplateReferenceContent, template: Template, index: number }, template: Template }, void, unknown> {
   if (template === target || target === undefined) {
     const width = evaluateSizeExpression('width', template, { props })
     const height = evaluateSizeExpression('height', template, { props })
@@ -76,6 +77,7 @@ function* iterateAllTemplate(
       height,
       parent,
       template,
+      rotate,
     }
   }
   if (target && template !== target) {
@@ -97,6 +99,7 @@ function* iterateAllTemplate(
               z: z + position.z,
             },
             styleGuide,
+            content.rotate || 0,
             targetProps,
             { content, template, index: i },
           )
@@ -112,6 +115,7 @@ function* iterateAllContent(
   template: Template,
   position: Required<Position>,
   styleGuide: StyleGuide,
+  rotates: Array<Required<Rotate> & Position>,
   props: unknown,
 ): Generator<Required<Region> & Rotate & { index: number, contents: TemplateContent[], content: TemplateContent, parent: Template, template: Template }, void, unknown> {
   for (let i = 0; i < parent.contents.length; i++) {
@@ -124,10 +128,25 @@ function* iterateAllContent(
       const size = getContentSize(content, styleGuide.templates)
       const width = targetProps ? evaluateSizeExpression('width', size, { props: targetProps }) : size.width
       const height = targetProps ? evaluateSizeExpression('height', size, { props: targetProps }) : size.height
-      const rotate = content.kind !== 'reference' && content.kind !== 'snapshot' ? evaluateRotateExpression(content, { props }) : undefined
+      let rotate = evaluateRotateExpression(content, { props })
+      let newX = position.x + x
+      let newY = position.y + y
+      if (rotates.length > 0) {
+        rotate += rotates.reduce((p, c) => p + c.rotate, 0)
+        let center: Position = {
+          x: newX + width / 2, 
+          y: newY + height / 2
+        }
+        for (let i = rotates.length - 1; i >= 0; i--) {
+          const r = rotates[i]
+          center = rotatePositionByCenter(center, r, -r.rotate)
+        }
+        newX = center.x - width / 2
+        newY = center.y - height / 2
+      }
       yield {
-        x: position.x + x,
-        y: position.y + y,
+        x: formatPixel(newX),
+        y: formatPixel(newY),
         z: position.z + z,
         rotate: rotate || undefined,
         width,
@@ -140,6 +159,14 @@ function* iterateAllContent(
       }
     }
     if (content.kind === 'snapshot') {
+      const newRotates: Array<Required<Rotate> & Position> = [
+        ...rotates,
+        {
+          rotate: content.rotate || 0,
+          x: position.x + content.x + content.snapshot.width / 2,
+          y: position.y + content.y + content.snapshot.height / 2,
+        }
+      ]
       yield* iterateAllContent(
         target,
         content.snapshot,
@@ -150,6 +177,7 @@ function* iterateAllContent(
           z: position.z + (content.z || 0),
         },
         styleGuide,
+        newRotates,
         undefined
       )
     }

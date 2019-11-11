@@ -69,12 +69,12 @@
           :expressionId="canvasState.selection.content.heihtExpressionId"
           @change="changeSizeExpression($event, 'height')" />
       </div>
-      <div>
-        rotate
-        <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.rotate"
-          literalType="number" :expression="canvasState.selection.content.rotateExpression"
-          :expressionId="canvasState.selection.content.rotateExpressionId" @change="changeRotateExpression($event)" />
-      </div>
+    </div>
+    <div>
+      rotate
+      <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.rotate"
+        literalType="number" :expression="canvasState.selection.content.rotateExpression"
+        :expressionId="canvasState.selection.content.rotateExpressionId" @change="changeRotateExpression($event)" />
     </div>
     <div>
       hidden

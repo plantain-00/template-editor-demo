@@ -28,7 +28,7 @@ export class SelectionLayer extends Vue {
       return this.canvasState.allTemplateRegions.filter((t) => !t.parent)
     }
     if (this.canvasState.selection.kind === 'content') {
-      return this.canvasState.allContentRegions
+      return this.canvasState.allContentRegions.filter((t) => t.content.kind !== 'reference')
     }
     return []
   }

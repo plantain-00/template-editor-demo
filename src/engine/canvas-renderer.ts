@@ -1,5 +1,5 @@
 
-import { Template, Position } from '../model'
+import { Template, Position, Rotate } from '../model'
 import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression, evaluateColorExpression, evaluateRotateExpression } from './expression'
 import { layoutFlex } from './layout-engine'
 import { applyImageOpacity, loadImage } from './image'
@@ -34,7 +34,7 @@ export function renderTemplateOnCanvas(ctx: CanvasRenderingContext2D | undefined
     )
   }
   const actions: Array<{ z: number, index: number, action: (ctx: CanvasRenderingContext2D | undefined) => string[] }> = []
-  renderSymbol(template, templates, images, actions, { x: 0, y: 0, z: 0 })
+  renderSymbol(template, templates, images, actions, { x: 0, y: 0, z: 0 }, [])
   actions.sort((a, b) => {
     if (a.z !== b.z) {
       return a.z - b.z
@@ -101,36 +101,52 @@ function renderSymbol(
   images: { [url: string]: HTMLImageElement },
   actions: Array<{ z: number, index: number, action: (ctx: CanvasRenderingContext2D | undefined) => string[] }>,
   position: Required<Position>,
+  rotates: Array<Required<Rotate> & Position>,
   props?: unknown,
 ) {
   for (const renderItem of iterateSymbolRenderItem(template, templates)) {
     const x = formatPixel(position.x + evaluatePositionExpression('x', renderItem.content, { props }))
     const y = formatPixel(position.y + evaluatePositionExpression('y', renderItem.content, { props }))
     const z = Math.round(position.z + evaluatePositionExpression('z', renderItem.content, { props }))
+    const rotate = formatRadian(evaluateRotateExpression(renderItem.content, { props }) * Math.PI / 180)
     if (renderItem.kind !== 'symbol') {
       const width = evaluateSizeExpression('width', renderItem.content, { props })
       const height = evaluateSizeExpression('height', renderItem.content, { props })
-      const rotate = formatRadian(evaluateRotateExpression(renderItem.content, { props }) * Math.PI / 180)
       const centerX = formatPixel(x + width / 2)
       const centerY = formatPixel(y + height / 2)
       const rotateInCanvas = (ctx: CanvasRenderingContext2D) => {
+        for (const r of rotates) {
+          ctx.translate(r.x, r.y)
+          ctx.rotate(r.rotate)
+          ctx.translate(-r.x, -r.y)
+        }
         if (rotate) {
           ctx.translate(centerX, centerY)
           ctx.rotate(rotate)
           ctx.translate(-centerX, -centerY)
         }
       }
-      const rotateActions = rotate ? [
-        `ctx.translate(${centerX}, ${centerY})`,
-        `ctx.rotate(${rotate})`,
-        `ctx.translate(${-centerX}, ${-centerY})`,
-      ] : []
+      const rotateActions: string[] = []
+      for (const r of rotates) {
+        rotateActions.push(
+          `ctx.translate(${r.x}, ${r.y})`,
+          `ctx.rotate(${r.rotate})`,
+          `ctx.translate(${-r.x}, ${-r.y})`,
+        )
+      }
+      if (rotate) {
+        rotateActions.push(
+          `ctx.translate(${centerX}, ${centerY})`,
+          `ctx.rotate(${rotate})`,
+          `ctx.translate(${-centerX}, ${-centerY})`,
+        )
+      }
       const resetTransformInCanvas = (ctx: CanvasRenderingContext2D) => {
-        if (rotate) {
+        if (rotate || rotates.length > 0) {
           ctx.setTransform(1, 0, 0, 1, 0, 0)
         }
       }
-      const resetTransformActions = rotate ? [
+      const resetTransformActions = rotate || rotates.length > 0 ? [
         `ctx.setTransform(1, 0, 0, 1, 0, 0)`,
       ] : []
 
@@ -214,7 +230,20 @@ function renderSymbol(
       }
     } else if (renderItem.kind === 'symbol') {
       const newProps = evaluate(renderItem.props, { props })
-      renderSymbol(renderItem.symbol, templates, images, actions, { x, y, z }, newProps)
+      let newRotates: Array<Required<Rotate> & Position> = rotates
+      if (rotate) {
+        const width = evaluateSizeExpression('width', renderItem.symbol, { props: newProps })
+        const height = evaluateSizeExpression('height', renderItem.symbol, { props: newProps })
+        newRotates = [
+          ...rotates,
+          {
+            rotate,
+            x: formatPixel(x + width / 2),
+            y: formatPixel(y + height / 2)
+          }
+        ]
+      }
+      renderSymbol(renderItem.symbol, templates, images, actions, { x, y, z }, newRotates, newProps)
     }
   }
 }

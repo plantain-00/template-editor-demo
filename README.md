@@ -263,4 +263,4 @@ z 未设置时是 0。
 ## todo
 
 + intellisense?
-+ component rotate
++ fix resize in snapshot

@@ -80,6 +80,10 @@ class SymbolRenderer extends Vue {
     return this.z + getPosition(this.props, 'z', this.content, this.template, this.templates)
   }
 
+  private get rotate() {
+    return evaluateRotateExpression(this.content, { props: this.props })
+  }
+
   render(createElement: Vue.CreateElement): Vue.VNode {
     const children: Vue.VNode[] = []
     for (const renderItem of iterateSymbolRenderItem(this.reference, this.templates)) {
@@ -151,6 +155,7 @@ class SymbolRenderer extends Vue {
           top: `${this.y}px`,
           position: 'absolute',
           userSelect: 'none',
+          transform: this.rotate ? `rotate(${this.rotate}deg)` : undefined,
         },
       },
       children
