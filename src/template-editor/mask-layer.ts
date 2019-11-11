@@ -242,7 +242,7 @@ export class MaskLayer extends Vue {
           content.y = formatPixel(y)
           return
         }
-        if (this.draggingSelectionKind === 'grabbing' && content.kind !== 'reference' && content.kind !== 'snapshot') {
+        if (this.draggingSelectionKind === 'grabbing' && content.kind !== 'reference') {
           if (x > 0) {
             Vue.set(content, 'rotate', formatPixel(Math.atan(y / x) / Math.PI * 180 + 90))
           } else if (equal(x, 0)) {
