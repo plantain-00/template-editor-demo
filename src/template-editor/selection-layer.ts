@@ -35,7 +35,7 @@ export class SelectionLayer extends Vue {
 
   get canRotateRegion(): Region | undefined {
     if (this.canvasState.selection.kind === 'content') {
-      return this.canvasState.allContentRegions.find((c) => c.content.kind !== 'reference' && c.content.kind !== 'snapshot')
+      return this.canvasState.allContentRegions.find((c) => c.content.kind !== 'reference')
     }
     return undefined
   }

@@ -38,7 +38,7 @@ export function resizeContent(
   draggingSelectionHeight: number,
   draggingSelectionKind: 'grab' | 'grabbing' | RegionSide,
 ) {
-  const rotatedPosition = content.kind !== 'reference' && content.kind !== 'snapshot' && content.rotate
+  const rotatedPosition = content.kind !== 'reference' && content.rotate
     ? rotatePositionByCenter({ x, y }, { x: draggingSelectionX, y: draggingSelectionY }, content.rotate)
     : { x, y }
   const deltaX = rotatedPosition.x - draggingSelectionX
@@ -49,7 +49,7 @@ export function resizeContent(
   let resultHeight = draggingSelectionHeight
   if (draggingSelectionKind.includes('left')) {
     resultWidth -= deltaX
-    if (content.kind !== 'reference' && content.kind !== 'snapshot' && content.rotate) {
+    if (content.kind !== 'reference' && content.rotate) {
       const rotate = content.rotate * Math.PI / 180
       const deltaCenterX = (resultWidth - draggingSelectionWidth) / 2
       resultX -= (Math.cos(rotate) + 1) * deltaCenterX
@@ -60,7 +60,7 @@ export function resizeContent(
   }
   if (draggingSelectionKind.includes('right')) {
     resultWidth += deltaX
-    if (content.kind !== 'reference' && content.kind !== 'snapshot' && content.rotate) {
+    if (content.kind !== 'reference' && content.rotate) {
       const rotate = content.rotate * Math.PI / 180
       const deltaCenterX = (resultWidth - draggingSelectionWidth) / 2
       resultX += (Math.cos(rotate) - 1) * deltaCenterX
@@ -69,7 +69,7 @@ export function resizeContent(
   }
   if (draggingSelectionKind.includes('top')) {
     resultHeight -= deltaY
-    if (content.kind !== 'reference' && content.kind !== 'snapshot' && content.rotate) {
+    if (content.kind !== 'reference' && content.rotate) {
       const rotate = content.rotate * Math.PI / 180
       const deltaCenterY = (resultHeight - draggingSelectionHeight) / 2
       resultX += Math.sin(rotate) * deltaCenterY
@@ -80,7 +80,7 @@ export function resizeContent(
   }
   if (draggingSelectionKind.includes('bottom')) {
     resultHeight += deltaY
-    if (content.kind !== 'reference' && content.kind !== 'snapshot' && content.rotate) {
+    if (content.kind !== 'reference' && content.rotate) {
       const rotate = content.rotate * Math.PI / 180
       const deltaCenterY = (resultHeight - draggingSelectionHeight) / 2
       resultX -= Math.sin(rotate) * deltaCenterY
