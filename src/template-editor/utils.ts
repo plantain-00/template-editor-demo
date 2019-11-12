@@ -53,6 +53,7 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
   kind: 'move' | 'grab' | RegionSide
   offsetX: number
   offsetY: number
+  rotate: number,
   content?: TemplateReferenceContent
 } | undefined {
   if (canvasState.selection.kind === 'template') {
@@ -61,8 +62,9 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
       if (isInSelectionRegion) {
         return {
           kind: 'move',
-          offsetX: position.x - nameRegion.x,
-          offsetY: position.y - nameRegion.y - nameSize / canvasState.styleGuideScale,
+          offsetX: nameRegion.x,
+          offsetY: nameRegion.y + nameSize / canvasState.styleGuideScale,
+          rotate: 0,
         }
       }
     }
@@ -72,8 +74,9 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
         if (side) {
           return {
             kind: side,
-            offsetX: position.x - templateRegion.x,
-            offsetY: position.y - templateRegion.y,
+            offsetX: templateRegion.x,
+            offsetY: templateRegion.y,
+            rotate: 0,
           }
         }
       }
@@ -82,21 +85,24 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
         if (templateRegion.parent) {
           return {
             kind: 'move',
-            offsetX: position.x - templateRegion.parent.content.x,
-            offsetY: position.y - templateRegion.parent.content.y,
-            content: templateRegion.parent.content
+            offsetX: templateRegion.parent.content.x,
+            offsetY: templateRegion.parent.content.y,
+            rotate: 0,
+            content: templateRegion.parent.content,
           }
         }
         return {
           kind: 'move',
-          offsetX: position.x - templateRegion.x,
-          offsetY: position.y - templateRegion.y,
+          offsetX: templateRegion.x,
+          offsetY: templateRegion.y,
+          rotate: 0,
         }
       }
     }
   } else if (canvasState.selection.kind === 'content') {
     const content = canvasState.selection.content
     for (const contentRegion of canvasState.allContentRegions) {
+      const rotate = contentRegion.rotates.reduce((p, c) => p + c.rotate, 0)
       if (contentRegion.content.kind !== 'reference') {
         const canGrabToRotate = getCanGrabToRotate(position, contentRegion, canvasState.styleGuideScale)
         if (canGrabToRotate) {
@@ -104,14 +110,16 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
             kind: 'grab',
             offsetX: contentRegion.x + contentRegion.width / 2,
             offsetY: contentRegion.y + contentRegion.height / 2,
+            rotate,
           }
         }
         const side = getRegionSide(position, contentRegion)
         if (side) {
           return {
             kind: side,
-            offsetX: position.x - content.x,
-            offsetY: position.y - content.y,
+            offsetX: content.x,
+            offsetY: content.y,
+            rotate,
           }
         }
       }
@@ -119,8 +127,9 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
       if (isInSelectionRegion) {
         return {
           kind: 'move',
-          offsetX: position.x - content.x,
-          offsetY: position.y - content.y,
+          offsetX: content.x,
+          offsetY: content.y,
+          rotate,
         }
       }
     }

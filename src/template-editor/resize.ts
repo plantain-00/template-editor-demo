@@ -1,6 +1,7 @@
 import { TemplateContent, Template } from '../model'
 import { RegionSide, setContentSize, decreaseTemplateSize } from './utils'
 import { formatPixel, rotatePositionByCenter } from '../utils'
+import { equal } from './canvas-state'
 
 export function resizeTemplate(
   template: Template,
@@ -91,4 +92,20 @@ export function resizeContent(
   content.y = formatPixel(resultY)
   setContentSize(content, 'width', resultWidth)
   setContentSize(content, 'height', resultHeight)
+}
+
+export function rotateContent(x: number, y: number) {
+  if (x > 0) {
+    return formatPixel(Math.atan(y / x) / Math.PI * 180 + 90)
+  }
+  if (equal(x, 0)) {
+    if (y > 0) {
+      return 180
+    }
+    if (y < 0) {
+      return 0
+    }
+    return undefined
+  }
+  return formatPixel(Math.atan(y / x) / Math.PI * 180 - 90)
 }
