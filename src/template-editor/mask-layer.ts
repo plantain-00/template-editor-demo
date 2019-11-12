@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import { CanvasState, equal } from './canvas-state'
+import { CanvasState } from './canvas-state'
 import { TemplateContent, Template, TemplateReferenceContent, CanvasSelection } from '../model'
 import { selectTemplateRegionByPosition, selectContentOrTemplateByPosition, getPositionAndSelectionAreaRelation, selectTemplateByArea, RegionSide } from './utils'
 import { templateEditorMaskLayerTemplateHtml, templateEditorMaskLayerTemplateHtmlStatic } from '../variables'
-import { formatPixel } from '../utils'
-import { resizeTemplate, resizeContent } from './resize'
+import { formatPixel, rotatePositionByCenter } from '../utils'
+import { resizeTemplate, resizeContent, rotateContent } from './resize'
 import { getCursor } from './cursor'
 
 @Component({
@@ -19,6 +19,7 @@ export class MaskLayer extends Vue {
 
   private draggingSelectionOffsetX = 0
   private draggingSelectionOffsetY = 0
+  private draggingSelectionRotate = 0
   private draggingSelectionContent: TemplateReferenceContent | undefined
   private clipboard: CanvasSelection = {
     kind: 'none'
@@ -180,6 +181,7 @@ export class MaskLayer extends Vue {
     if (relation) {
       this.draggingSelectionOffsetX = relation.offsetX
       this.draggingSelectionOffsetY = relation.offsetY
+      this.draggingSelectionRotate = relation.rotate
       this.draggingSelectionContent = relation.content
       if (relation.kind === 'grab') {
         this.draggingSelectionKind = 'grabbing'
@@ -217,9 +219,9 @@ export class MaskLayer extends Vue {
 
     // move, resize, rotate content or template
     if (this.canvasState.hasRelationWithSelection) {
-      const x = this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX
-      const y = this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY
       if (this.canvasState.selection.kind === 'template') {
+        const x = this.canvasState.mouseupMappedX - this.canvasState.mousedownMappedX + this.draggingSelectionOffsetX
+        const y = this.canvasState.mouseupMappedY - this.canvasState.mousedownMappedY + this.draggingSelectionOffsetY
         if (this.draggingSelectionContent) {
           this.draggingSelectionContent.x = formatPixel(x)
           this.draggingSelectionContent.y = formatPixel(y)
@@ -237,22 +239,20 @@ export class MaskLayer extends Vue {
           return
         }
         const content = this.canvasState.selection.content
+        const offsetX = this.canvasState.mouseupMappedX - this.canvasState.mousedownMappedX
+        const offsetY = this.canvasState.mouseupMappedY - this.canvasState.mousedownMappedY
+        const newPosition = rotatePositionByCenter({ x: offsetX, y: offsetY }, { x: 0, y: 0 }, this.draggingSelectionRotate)
+        const x = newPosition.x + this.draggingSelectionOffsetX
+        const y = newPosition.y + this.draggingSelectionOffsetY
         if (this.draggingSelectionKind === 'move') {
           content.x = formatPixel(x)
           content.y = formatPixel(y)
           return
         }
         if (this.draggingSelectionKind === 'grabbing' && content.kind !== 'reference') {
-          if (x > 0) {
-            Vue.set(content, 'rotate', formatPixel(Math.atan(y / x) / Math.PI * 180 + 90))
-          } else if (equal(x, 0)) {
-            if (y > 0) {
-              Vue.set(content, 'rotate', 180)
-            } else if (y < 0) {
-              Vue.set(content, 'rotate', 0)
-            }
-          } else {
-            Vue.set(content, 'rotate', formatPixel(Math.atan(y / x) / Math.PI * 180 - 90))
+          const rotate = rotateContent(this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX, this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY)
+          if (rotate !== undefined) {
+            Vue.set(content, 'rotate', rotate - this.draggingSelectionRotate)
           }
           return
         }

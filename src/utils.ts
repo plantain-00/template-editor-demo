@@ -117,7 +117,7 @@ function* iterateAllContent(
   styleGuide: StyleGuide,
   rotates: Array<Required<Rotate> & Position>,
   props: unknown,
-): Generator<Required<Region> & Rotate & { index: number, contents: TemplateContent[], content: TemplateContent, parent: Template, template: Template }, void, unknown> {
+): Generator<Required<Region> & Rotate & { index: number, contents: TemplateContent[], content: TemplateContent, parent: Template, template: Template, rotates: Array<Required<Rotate> & Position> }, void, unknown> {
   for (let i = 0; i < parent.contents.length; i++) {
     const content = parent.contents[i]
     if (content === target || target === undefined) {
@@ -156,6 +156,7 @@ function* iterateAllContent(
         content,
         parent,
         template,
+        rotates,
       }
     }
     if (content.kind === 'snapshot') {
