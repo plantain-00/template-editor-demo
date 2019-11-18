@@ -677,7 +677,7 @@ export function templateEditorTemplateEditorTemplateHtml(this: TemplateEditor) {
 // @ts-ignore
 export var templateEditorTemplateEditorTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function templateModelEditorTemplateHtml(this: TemplateModelEditor) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.appState.templateModelEditorVisible)?_c('div',{style:(_vm.editorStyle)},[_c('json-editor',{attrs:{"schema":_vm.schema,"initial-value":_vm.appState.templateModel},on:{"update-value":function($event){return _vm.updateValue($event)}}})],1):_vm._e()}
+export function templateModelEditorTemplateHtml(this: TemplateModelEditor) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.appState.templateModelEditorVisible)?_c('div',{style:(_vm.editorStyle)},[_c('json-editor',{attrs:{"schema":_vm.schema,"initial-value":_vm.appState.templateModel},on:{"update-value":function($event){return _vm.updateValue($event)}}}),_vm._v(" "),_c('textarea',{staticStyle:{"width":"calc(100% - 40px)","height":"400px","margin-left":"20px","margin-right":"20px"},domProps:{"value":_vm.templateModel},on:{"blur":_vm.changeTemplateModel}})],1):_vm._e()}
 // @ts-ignore
 export var templateModelEditorTemplateHtmlStatic = [  ]
 /* eslint-enable */
