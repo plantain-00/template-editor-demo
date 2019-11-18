@@ -50,7 +50,7 @@ export class TemplateModelEditor extends Vue {
                     }
                   }
                 },
-                required: ['id', 'name', 'prices','description', 'image'],
+                required: ['id', 'name', 'prices', 'description', 'image'],
                 collapsed: true
               }
             }
@@ -77,6 +77,18 @@ export class TemplateModelEditor extends Vue {
   updateValue(value: { isValid: boolean, value: { [key: string]: unknown } }) {
     if (value.isValid) {
       this.appState.templateModel = value.value
+    }
+  }
+
+  get templateModel() {
+    return JSON.stringify(this.appState.templateModel, null, 2)
+  }
+
+  changeTemplateModel(e: { target: { value: string } }) {
+    try {
+      this.appState.templateModel = JSON.parse(e.target.value)
+    } catch (error) {
+      // do nothing
     }
   }
 }

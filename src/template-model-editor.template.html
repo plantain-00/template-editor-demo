@@ -1,4 +1,7 @@
 <div v-if="appState.templateModelEditorVisible" :style="editorStyle">
   <json-editor :schema="schema" :initial-value="appState.templateModel" @update-value="updateValue($event)">
   </json-editor>
+  <textarea :value="templateModel"
+    style="width: calc(100% - 40px); height: 400px; margin-left: 20px; margin-right: 20px;"
+    @blur="changeTemplateModel"></textarea>
 </div>
