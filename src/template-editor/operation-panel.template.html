@@ -72,8 +72,8 @@
     </div>
     <div>
       rotate
-      <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.rotate"
-        literalType="number" :expression="canvasState.selection.content.rotateExpression"
+      <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.rotate" literalType="number"
+        :expression="canvasState.selection.content.rotateExpression"
         :expressionId="canvasState.selection.content.rotateExpressionId" @change="changeRotateExpression($event)" />
     </div>
     <div>
@@ -185,7 +185,7 @@
     <div>
       <div v-for="(parameter, i) of canvasState.selection.template.parameters || []">
         parameter {{i}}
-        <input type="text" :value="parameter" @change="changeParameter($event, i)" />
+        <input type="text" :value="parameter" @blur="changeParameter($event, i)" />
       </div>
       <button @click="addParameter()">add parameter</button>
     </div>
