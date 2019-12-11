@@ -16,9 +16,9 @@ export const styleGuide: StyleGuide = {
           text: 'test',
           fontFamily: 'serif',
           fontSize: 50,
-          color: '#FF0000',
-          colorExpression: 'props.color',
-          colorExpressionId: '4',
+          color: '',
+          colorExpression: 'variable.textColor',
+          colorExpressionId: '6',
           width: 100,
           height: 100,
           x: 10,
@@ -47,6 +47,16 @@ export const styleGuide: StyleGuide = {
       height: 400,
       contents: [
         {
+          kind: 'color',
+          x: 0,
+          y: 0,
+          width: 1100,
+          height: 400,
+          color: '',
+          colorExpression: 'variable.backgroundColor',
+          colorExpressionId: '6',
+        },
+        {
           kind: 'reference',
           id: '1',
           x: 10,
@@ -57,10 +67,13 @@ export const styleGuide: StyleGuide = {
           kind: 'reference',
           id: '1',
           x: 550,
-          y: 10,
-          props: '{ color: "blue" }'
+          y: 10
         }
       ]
     }
   ],
+  variable: {
+    backgroundColor: '#cccccc',
+    textColor: 'red'
+  }
 }

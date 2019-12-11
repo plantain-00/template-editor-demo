@@ -87,7 +87,8 @@ class LayerNode extends Vue {
   private childrenDragIndex: number | null = null
 
   private get selected() {
-    return this.canvasState.selection.kind === 'content' && this.canvasState.selection.content === this.content
+    return (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content === this.content)
+      || (this.canvasState.selection.kind === 'template' && this.canvasState.selection.template === this.template && !this.content)
   }
   private get dropAllowed() {
     return this.dragIndex !== null

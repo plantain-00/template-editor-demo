@@ -211,6 +211,8 @@ export class ExpressionInput extends Vue {
             let enums: string[]
             if (v.internal === 'component parameters' && (this.canvasState.selection.kind === 'content' || this.canvasState.selection.kind === 'template')) {
               enums = this.canvasState.selection.template.parameters || []
+            } else if (v.internal === 'variable') {
+              enums = this.canvasState.styleGuide.variable ? Object.keys(this.canvasState.styleGuide.variable) : []
             } else if (v.enum) {
               enums = v.enum
             } else {

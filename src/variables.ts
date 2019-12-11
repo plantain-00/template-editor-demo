@@ -35,6 +35,9 @@ export const distStyleguideSchemaJson = {
                     "items": {
                         "$ref": "#/definitions/Template"
                     }
+                },
+                "variable": {
+                    "$ref": "#/definitions/StyleGuideVariable"
                 }
             },
             "required": [
@@ -633,6 +636,12 @@ export const distStyleguideSchemaJson = {
                 "y"
             ],
             "additionalProperties": false
+        },
+        "StyleGuideVariable": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": {}
         }
     }
 }
@@ -665,7 +674,7 @@ export function templateEditorOperationPanelTemplateHtml(this: OperationPanel) {
 // @ts-ignore
 export var templateEditorOperationPanelTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function templateEditorRenderLayerTemplateHtml(this: RenderLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.canvasStyle)},[_c('div',{style:(_vm.styleGuideStyle)},[_vm._l((_vm.canvasState.styleGuide.templates),function(r){return [_c('div',{style:(_vm.getTemplateStyle(r))},[(r.name)?_c('div',{style:(_vm.getNameStyle(r))},[_vm._v(_vm._s(r.name))]):_vm._e(),_vm._v(" "),_c('template-renderer',{attrs:{"template":r,"templates":_vm.canvasState.styleGuide.templates}})],1)]})],2)])}
+export function templateEditorRenderLayerTemplateHtml(this: RenderLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{style:(_vm.canvasStyle)},[_c('div',{style:(_vm.styleGuideStyle)},[_vm._l((_vm.canvasState.styleGuide.templates),function(r){return [_c('div',{style:(_vm.getTemplateStyle(r))},[(r.name)?_c('div',{style:(_vm.getNameStyle(r))},[_vm._v(_vm._s(r.name))]):_vm._e(),_vm._v(" "),_c('template-renderer',{attrs:{"template":r,"styleGuide":_vm.canvasState.styleGuide}})],1)]})],2)])}
 // @ts-ignore
 export var templateEditorRenderLayerTemplateHtmlStatic = [  ]
 // @ts-ignore

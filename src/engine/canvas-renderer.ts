@@ -1,5 +1,4 @@
-
-import { Template, Position, Rotate } from '../model'
+import { Template, Position, Rotate, StyleGuide } from '../model'
 import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression, evaluateColorExpression, evaluateRotateExpression } from './expression'
 import { layoutFlex } from './layout-engine'
 import { applyImageOpacity, loadImage } from './image'
@@ -7,14 +6,14 @@ import { getCharacters } from './mock'
 import { formatPixel, formatRadian } from '../utils'
 import { iterateSymbolRenderItem } from './renderer'
 
-export function renderTemplate(template: Template, templates: Template[], images: { [url: string]: HTMLImageElement }) {
+export function renderTemplate(template: Template, styleGuide: StyleGuide, images: { [url: string]: HTMLImageElement }) {
   const canvas = document.createElement('canvas')
   canvas.width = template.width
   canvas.height = template.height
   const ctx = canvas.getContext('2d')
   if (ctx) {
-    layoutFlex(template, templates)
-    renderTemplateOnCanvas(ctx, template, templates, images)
+    layoutFlex(template, styleGuide)
+    renderTemplateOnCanvas(ctx, template, styleGuide, images)
   }
   return canvas.toDataURL('image/jpeg')
 }
@@ -22,7 +21,7 @@ export function renderTemplate(template: Template, templates: Template[], images
 /**
  * @internal
  */
-export function renderTemplateOnCanvas(ctx: CanvasRenderingContext2D | undefined, template: Template, templates: Template[], images: { [url: string]: HTMLImageElement }) {
+export function renderTemplateOnCanvas(ctx: CanvasRenderingContext2D | undefined, template: Template, styleGuide: StyleGuide, images: { [url: string]: HTMLImageElement }) {
   const infos: string[] = []
   if (ctx) {
     ctx.fillStyle = 'white'
@@ -34,7 +33,7 @@ export function renderTemplateOnCanvas(ctx: CanvasRenderingContext2D | undefined
     )
   }
   const actions: Array<{ z: number, index: number, action: (ctx: CanvasRenderingContext2D | undefined) => string[] }> = []
-  renderSymbol(template, templates, images, actions, { x: 0, y: 0, z: 0 }, [])
+  renderSymbol(template, styleGuide, images, actions, { x: 0, y: 0, z: 0 }, [])
   actions.sort((a, b) => {
     if (a.z !== b.z) {
       return a.z - b.z
@@ -47,12 +46,9 @@ export function renderTemplateOnCanvas(ctx: CanvasRenderingContext2D | undefined
   return infos
 }
 
-export async function loadTemplateImages(
-  template: Template,
-  templates: Template[],
-) {
+export async function loadTemplateImages(template: Template, styleGuide: StyleGuide) {
   const images: { [url: string]: Promise<HTMLImageElement> } = {}
-  collectTemplateImages(template, templates, images)
+  collectTemplateImages(template, styleGuide, images)
   const array = Object.keys(images).map((url) => ({ url, resource: images[url] }))
   const values = await Promise.all(array.map((a) => a.resource))
 
@@ -65,7 +61,7 @@ export async function loadTemplateImages(
 
 function collectTemplateImages(
   template: Template,
-  templates: Template[],
+  styleGuide: StyleGuide,
   images: { [url: string]: Promise<HTMLImageElement> },
 ) {
   for (const content of template.contents) {
@@ -85,33 +81,33 @@ function collectTemplateImages(
         images[content.url] = loadImage(content.url)
       }
     } else if (content.kind === 'reference') {
-      const reference = templates.find((t) => t.id === content.id)
+      const reference = styleGuide.templates.find((t) => t.id === content.id)
       if (reference) {
-        collectTemplateImages(reference, templates, images)
+        collectTemplateImages(reference, styleGuide, images)
       }
     } else if (content.kind === 'snapshot') {
-      collectTemplateImages(content.snapshot, templates, images)
+      collectTemplateImages(content.snapshot, styleGuide, images)
     }
   }
 }
 
 function renderSymbol(
   template: Template,
-  templates: Template[],
+  styleGuide: StyleGuide,
   images: { [url: string]: HTMLImageElement },
   actions: Array<{ z: number, index: number, action: (ctx: CanvasRenderingContext2D | undefined) => string[] }>,
   position: Required<Position>,
   rotates: Array<Required<Rotate> & Position>,
   props?: unknown,
 ) {
-  for (const renderItem of iterateSymbolRenderItem(template, templates)) {
-    const x = formatPixel(position.x + evaluatePositionExpression('x', renderItem.content, { props }))
-    const y = formatPixel(position.y + evaluatePositionExpression('y', renderItem.content, { props }))
-    const z = Math.round(position.z + evaluatePositionExpression('z', renderItem.content, { props }))
-    const rotate = formatRadian(evaluateRotateExpression(renderItem.content, { props }) * Math.PI / 180)
+  for (const renderItem of iterateSymbolRenderItem(template, styleGuide)) {
+    const x = formatPixel(position.x + evaluatePositionExpression('x', renderItem.content, { variable: styleGuide.variable, props }))
+    const y = formatPixel(position.y + evaluatePositionExpression('y', renderItem.content, { variable: styleGuide.variable, props }))
+    const z = Math.round(position.z + evaluatePositionExpression('z', renderItem.content, { variable: styleGuide.variable, props }))
+    const rotate = formatRadian(evaluateRotateExpression(renderItem.content, { variable: styleGuide.variable, props }) * Math.PI / 180)
     if (renderItem.kind !== 'symbol') {
-      const width = evaluateSizeExpression('width', renderItem.content, { props })
-      const height = evaluateSizeExpression('height', renderItem.content, { props })
+      const width = evaluateSizeExpression('width', renderItem.content, { variable: styleGuide.variable, props })
+      const height = evaluateSizeExpression('height', renderItem.content, { variable: styleGuide.variable, props })
       const centerX = formatPixel(x + width / 2)
       const centerY = formatPixel(y + height / 2)
       const rotateInCanvas = (ctx: CanvasRenderingContext2D) => {
@@ -156,9 +152,9 @@ function renderSymbol(
           z,
           index: actions.length,
           action: (ctx) => {
-            const fontSize = evaluateFontSizeExpression(content, { props })
-            const color = evaluateColorExpression(content, { props })
-            const characters = content.characters || getCharacters(evaluateTextExpression(content, { props }))
+            const fontSize = evaluateFontSizeExpression(content, { variable: styleGuide.variable, props })
+            const color = evaluateColorExpression(content, { variable: styleGuide.variable, props })
+            const characters = content.characters || getCharacters(evaluateTextExpression(content, { variable: styleGuide.variable, props }))
             if (ctx) {
               ctx.fillStyle = color
               ctx.textBaseline = 'top'
@@ -180,7 +176,7 @@ function renderSymbol(
         })
       } else if (renderItem.kind === 'image') {
         const content = renderItem.content
-        const url = evaluateUrlExpression(content, { props })
+        const url = evaluateUrlExpression(content, { variable: styleGuide.variable, props })
         let image: HTMLImageElement | HTMLCanvasElement = images[url]
         if (content.opacity !== undefined) {
           const imageCanvas = applyImageOpacity(image, content.opacity)
@@ -207,7 +203,7 @@ function renderSymbol(
         })
       } else if (renderItem.kind === 'color') {
         const content = renderItem.content
-        const color = evaluateColorExpression(content, { props })
+        const color = evaluateColorExpression(content, { variable: styleGuide.variable, props })
         actions.push({
           z,
           index: actions.length,
@@ -229,11 +225,11 @@ function renderSymbol(
         })
       }
     } else if (renderItem.kind === 'symbol') {
-      const newProps = evaluate(renderItem.props, { props })
+      const newProps = evaluate(renderItem.props, { variable: styleGuide.variable, props })
       let newRotates: Array<Required<Rotate> & Position> = rotates
       if (rotate) {
-        const width = evaluateSizeExpression('width', renderItem.symbol, { props: newProps })
-        const height = evaluateSizeExpression('height', renderItem.symbol, { props: newProps })
+        const width = evaluateSizeExpression('width', renderItem.symbol, { variable: styleGuide.variable, props: newProps })
+        const height = evaluateSizeExpression('height', renderItem.symbol, { variable: styleGuide.variable, props: newProps })
         newRotates = [
           ...rotates,
           {
@@ -243,7 +239,7 @@ function renderSymbol(
           }
         ]
       }
-      renderSymbol(renderItem.symbol, templates, images, actions, { x, y, z }, newRotates, newProps)
+      renderSymbol(renderItem.symbol, styleGuide, images, actions, { x, y, z }, newRotates, newProps)
     }
   }
 }

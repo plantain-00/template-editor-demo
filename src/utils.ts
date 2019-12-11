@@ -86,9 +86,9 @@ function* iterateAllTemplate(
       if (content.kind === 'reference') {
         const reference = styleGuide.templates.find((t) => t.id === content.id)
         if (reference) {
-          const x = getPosition(props, 'x', content, template, styleGuide.templates)
-          const y = getPosition(props, 'y', content, template, styleGuide.templates)
-          const z = getPosition(props, 'z', content, template, styleGuide.templates)
+          const x = getPosition(props, 'x', content, template, styleGuide)
+          const y = getPosition(props, 'y', content, template, styleGuide)
+          const z = getPosition(props, 'z', content, template, styleGuide)
           const targetProps = evaluate(content.props, { props })
           yield* iterateAllTemplate(
             target,
@@ -121,11 +121,11 @@ function* iterateAllContent(
   for (let i = 0; i < parent.contents.length; i++) {
     const content = parent.contents[i]
     if (content === target || target === undefined) {
-      const x = getPosition(props, 'x', content, parent, styleGuide.templates)
-      const y = getPosition(props, 'y', content, parent, styleGuide.templates)
-      const z = getPosition(props, 'z', content, parent, styleGuide.templates)
+      const x = getPosition(props, 'x', content, parent, styleGuide)
+      const y = getPosition(props, 'y', content, parent, styleGuide)
+      const z = getPosition(props, 'z', content, parent, styleGuide)
       const targetProps = content.kind === 'reference' ? evaluate(content.props, { props }) : undefined
-      const size = getContentSize(content, styleGuide.templates)
+      const size = getContentSize(content, styleGuide)
       const width = targetProps ? evaluateSizeExpression('width', size, { props: targetProps }) : size.width
       const height = targetProps ? evaluateSizeExpression('height', size, { props: targetProps }) : size.height
       let rotate = evaluateRotateExpression(content, { props })
@@ -185,9 +185,9 @@ function* iterateAllContent(
   }
 }
 
-export function getPosition(props: unknown, type: 'x' | 'y' | 'z', content: TemplateContent, template: Template | undefined, templates: Template[]) {
+export function getPosition(props: unknown, type: 'x' | 'y' | 'z', content: TemplateContent, template: Template | undefined, styleGuide: StyleGuide) {
   if (type !== 'z' && template && template.display === 'flex') {
-    return getFlexPosition(content, type, template, templates)
+    return getFlexPosition(content, type, template, styleGuide)
   }
   return evaluatePositionExpression(type, content, { props })
 }

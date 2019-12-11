@@ -265,8 +265,8 @@ export class OperationPanel extends Vue {
 
   async renderToImage() {
     if (this.canvasState.selection.kind === 'template') {
-      const images = await loadTemplateImages(this.canvasState.selection.template, this.canvasState.styleGuide.templates)
-      const url = renderTemplate(this.canvasState.selection.template, this.canvasState.styleGuide.templates, images)
+      const images = await loadTemplateImages(this.canvasState.selection.template, this.canvasState.styleGuide)
+      const url = renderTemplate(this.canvasState.selection.template, this.canvasState.styleGuide, images)
       this.imageUrl = url
     }
   }

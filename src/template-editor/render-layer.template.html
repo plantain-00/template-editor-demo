@@ -3,7 +3,7 @@
     <template v-for="r in canvasState.styleGuide.templates">
       <div :style="getTemplateStyle(r)">
         <div v-if="r.name" :style="getNameStyle(r)">{{r.name}}</div>
-        <template-renderer :template="r" :templates="canvasState.styleGuide.templates"></template-renderer>
+        <template-renderer :template="r" :styleGuide="canvasState.styleGuide"></template-renderer>
       </div>
     </template>
   </div>

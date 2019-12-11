@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import { CanvasSelection, StyleGuide, PresetExpression } from '../model'
+import { CanvasSelection, StyleGuide } from '../model'
 import { iterateAllTemplateRegions, iterateAllContentRegions, iterateAllNameRegions } from '../utils'
+import { presetExpressions } from '../preset-expressions'
 
 @Component
 export class CanvasState extends Vue {
@@ -164,75 +165,7 @@ export class CanvasState extends Vue {
     return Array.from(iterateAllNameRegions(undefined, this.styleGuide, this.styleGuideScale))
   }
 
-  presetExpressions: PresetExpression[] = [
-    {
-      id: '1',
-      name: 'price count',
-      expression: 'commodity.prices.length == 3',
-      variables: [
-        {
-          tokenIndex: 6
-        },
-        'prices'
-      ]
-    },
-    {
-      id: '2',
-      name: 'commodity property',
-      expression: 'commodity.name',
-      variables: [
-        'commodity',
-        {
-          tokenIndex: 2,
-          enum: [
-            'name',
-            'id',
-            'description',
-            'image'
-          ]
-        }
-      ]
-    },
-    {
-      id: '3',
-      name: 'price index',
-      expression: 'commodity?.prices?.[0]',
-      variables: [
-        'the',
-        {
-          tokenIndex: 5
-        },
-        'th price'
-      ]
-    },
-    {
-      id: '4',
-      name: 'component parameter',
-      expression: 'props.name',
-      variables: [
-        'component parameter',
-        {
-          tokenIndex: 2,
-          internal: 'component parameters'
-        }
-      ]
-    },
-    {
-      id: '5',
-      name: 'categories range',
-      expression: 'categories.slice(0, 1)',
-      variables: [
-        'categories',
-        {
-          tokenIndex: 4
-        },
-        'until',
-        {
-          tokenIndex: 6
-        }
-      ]
-    }
-  ]
+  presetExpressions = presetExpressions
 }
 
 export function equal(n1: number, n2: number) {
