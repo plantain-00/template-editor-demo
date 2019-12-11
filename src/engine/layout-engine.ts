@@ -1,6 +1,6 @@
-import { Template, TemplateContent, Size, SizeExpression } from '../model'
+import { Template, TemplateContent, Size, SizeExpression, StyleGuide } from '../model'
 
-export function layoutFlex(template: Template, templates: Template[]) {
+export function layoutFlex(template: Template, styleGuide: StyleGuide) {
   if (template.display === 'flex') {
     const flexDirection = template.flexDirection || 'row'
     const justifyContent = template.justifyContent || 'start'
@@ -8,27 +8,27 @@ export function layoutFlex(template: Template, templates: Template[]) {
     const mainAxisPositionType = flexDirection === 'row' ? 'x' : 'y'
     const mainAxisSizeType = flexDirection === 'row' ? 'width' : 'height'
     const crossAxisPositionType = flexDirection === 'row' ? 'y' : 'x'
-    const totalContentSize = template.contents.reduce((p, c) => p + getContentSize(c, templates)[mainAxisSizeType], 0)
+    const totalContentSize = template.contents.reduce((p, c) => p + getContentSize(c, styleGuide)[mainAxisSizeType], 0)
 
     for (let i = 0; i < template.contents.length; i++) {
       const content = template.contents[i]
-      content[mainAxisPositionType] = getMainAxisValue(justifyContent, template, mainAxisSizeType, totalContentSize, i, templates)
-      content[crossAxisPositionType] = getCrossAxisValue(alignItems, template, flexDirection, getContentSize(content, templates))
+      content[mainAxisPositionType] = getMainAxisValue(justifyContent, template, mainAxisSizeType, totalContentSize, i, styleGuide)
+      content[crossAxisPositionType] = getCrossAxisValue(alignItems, template, flexDirection, getContentSize(content, styleGuide))
     }
   }
   for (const content of template.contents) {
     if (content.kind === 'reference') {
-      const reference = templates.find((t) => t.id === content.id)
+      const reference = styleGuide.templates.find((t) => t.id === content.id)
       if (reference) {
-        layoutFlex(reference, templates)
+        layoutFlex(reference, styleGuide)
       }
     } else if (content.kind === 'snapshot') {
-      layoutFlex(content.snapshot, templates)
+      layoutFlex(content.snapshot, styleGuide)
     }
   }
 }
 
-export function getFlexPosition(target: TemplateContent, kind: 'x' | 'y', template: Template, templates: Template[]) {
+export function getFlexPosition(target: TemplateContent, kind: 'x' | 'y', template: Template, styleGuide: StyleGuide) {
   const flexDirection = template.flexDirection || 'row'
   const mainAxisPositionType = flexDirection === 'row' ? 'x' : 'y'
   if (kind === mainAxisPositionType) {
@@ -37,16 +37,16 @@ export function getFlexPosition(target: TemplateContent, kind: 'x' | 'y', templa
       template.justifyContent || 'start',
       template,
       mainAxisSizeType,
-      template.contents.reduce((p, c) => p + getContentSize(c, templates)[mainAxisSizeType], 0),
+      template.contents.reduce((p, c) => p + getContentSize(c, styleGuide)[mainAxisSizeType], 0),
       template.contents.findIndex((c) => c === target),
-      templates
+      styleGuide
     )
   }
   return getCrossAxisValue(
     template.alignItems || 'start',
     template,
     flexDirection,
-    getContentSize(target, templates)
+    getContentSize(target, styleGuide)
   )
 }
 
@@ -56,7 +56,7 @@ function getMainAxisValue(
   mainAxisSizeType: 'width' | 'height',
   totalContentSize: number,
   i: number,
-  templates: Template[],
+  styleGuide: StyleGuide,
 ) {
   let mainAxisValue: number
   if (justifyContent === 'start') {
@@ -73,7 +73,7 @@ function getMainAxisValue(
     }
   }
   for (let j = 0; j < i; j++) {
-    mainAxisValue += getContentSize(template.contents[j], templates)[mainAxisSizeType]
+    mainAxisValue += getContentSize(template.contents[j], styleGuide)[mainAxisSizeType]
   }
   return mainAxisValue
 }
@@ -94,9 +94,9 @@ function getCrossAxisValue(
   return (template[crossAxisSizeType] - contentSize[crossAxisSizeType]) / 2
 }
 
-export function getContentSize(content: TemplateContent, templates: Template[]): Size & SizeExpression {
+export function getContentSize(content: TemplateContent, styleGuide: StyleGuide): Size & SizeExpression {
   if (content.kind === 'reference') {
-    const reference = templates.find((t) => t.id === content.id)
+    const reference = styleGuide.templates.find((t) => t.id === content.id)
     if (reference) {
       return reference
     }

@@ -260,6 +260,24 @@ z 未设置时是 0。
 
 ![generation-error](./screenshots/generation-error.jpg)
 
+### 设计规范限制
+
+模版中的样式一般有统一的设计规范，例如模版里的元素只能使用某几种颜色、某几种字号等等，这时可以在模版外预先定义，然后在模版内通过表达式（`variable.foo`）来使用。
+
+```ts
+interface StyleGuide {
+  name: string
+  templates: Template[]
+  variable?: StyleGuideVariable
+}
+
+interface StyleGuideVariable {
+  [name: string]: unknown
+}
+```
+
+对于数据量较大的字样，“预先定义 + 引用”可以明显减少模版体积。
+
 ## todo
 
 + intellisense?

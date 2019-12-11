@@ -1,6 +1,6 @@
-import { Template } from '../model'
+import { Template, StyleGuide } from '../model'
 
-export function* iterateSymbolRenderItem(template: Template, templates: Template[]) {
+export function* iterateSymbolRenderItem(template: Template, styleGuide: StyleGuide) {
   for (const content of template.contents) {
     if (content.hidden) {
       continue
@@ -21,7 +21,7 @@ export function* iterateSymbolRenderItem(template: Template, templates: Template
         content,
       }
     } else if (content.kind === 'reference') {
-      const reference = templates.find((t) => t.id === content.id)
+      const reference = styleGuide.templates.find((t) => t.id === content.id)
       if (reference) {
         yield {
           kind: 'symbol' as const,

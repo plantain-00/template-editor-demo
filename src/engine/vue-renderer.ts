@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import { Template, TemplateTextContent, TemplateImageContent, TemplateReferenceContent, TemplateSnapshotContent, TemplateColorContent } from '../model'
+import { Template, TemplateTextContent, TemplateImageContent, TemplateReferenceContent, TemplateSnapshotContent, TemplateColorContent, StyleGuide } from '../model'
 import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluateColorExpression, evaluateRotateExpression } from './expression'
 import { applyImageOpacity, loadImage } from './image'
 import { getCharacters } from './mock'
@@ -9,11 +9,11 @@ import { getPosition } from '../utils'
 import { iterateSymbolRenderItem } from './renderer'
 
 @Component({
-  props: ['template', 'templates']
+  props: ['template', 'styleGuide']
 })
 export class TemplateRenderer extends Vue {
   template!: Template
-  templates!: Template[]
+  styleGuide!: StyleGuide
 
   render(createElement: Vue.CreateElement): Vue.VNode {
     return createElement(
@@ -34,7 +34,7 @@ export class TemplateRenderer extends Vue {
           {
             props: {
               reference: this.template,
-              templates: this.templates,
+              styleGuide: this.styleGuide,
               content: {
                 x: 0,
                 y: 0,
@@ -49,11 +49,11 @@ export class TemplateRenderer extends Vue {
 }
 
 @Component({
-  props: ['reference', 'templates', 'referenceProps', 'content', 'template', 'props', 'z']
+  props: ['reference', 'styleGuide', 'referenceProps', 'content', 'template', 'props', 'z']
 })
 class SymbolRenderer extends Vue {
   reference!: Template
-  templates!: Template[]
+  styleGuide!: StyleGuide
   referenceProps!: unknown
   content!: TemplateReferenceContent | TemplateSnapshotContent
   template?: Template
@@ -61,32 +61,32 @@ class SymbolRenderer extends Vue {
   z!: number
 
   private get width() {
-    return this.referenceProps ? evaluateSizeExpression('width', this.reference, { props: this.referenceProps }) : this.reference.width
+    return this.referenceProps ? evaluateSizeExpression('width', this.reference, { variable: this.styleGuide.variable, props: this.referenceProps }) : this.reference.width
   }
 
   private get height() {
-    return this.referenceProps ? evaluateSizeExpression('height', this.reference, { props: this.referenceProps }) : this.reference.height
+    return this.referenceProps ? evaluateSizeExpression('height', this.reference, { variable: this.styleGuide.variable, props: this.referenceProps }) : this.reference.height
   }
 
   private get x() {
-    return getPosition(this.props, 'x', this.content, this.template, this.templates)
+    return getPosition(this.props, 'x', this.content, this.template, this.styleGuide)
   }
 
   private get y() {
-    return getPosition(this.props, 'y', this.content, this.template, this.templates)
+    return getPosition(this.props, 'y', this.content, this.template, this.styleGuide)
   }
 
   private get zValue() {
-    return this.z + getPosition(this.props, 'z', this.content, this.template, this.templates)
+    return this.z + getPosition(this.props, 'z', this.content, this.template, this.styleGuide)
   }
 
   private get rotate() {
-    return evaluateRotateExpression(this.content, { props: this.props })
+    return evaluateRotateExpression(this.content, { variable: this.styleGuide.variable, props: this.props })
   }
 
   render(createElement: Vue.CreateElement): Vue.VNode {
     const children: Vue.VNode[] = []
-    for (const renderItem of iterateSymbolRenderItem(this.reference, this.templates)) {
+    for (const renderItem of iterateSymbolRenderItem(this.reference, this.styleGuide)) {
       if (renderItem.kind === 'text') {
         children.push(createElement(
           'text-renderer',
@@ -95,7 +95,7 @@ class SymbolRenderer extends Vue {
               content: renderItem.content,
               props: this.referenceProps,
               template: this.reference,
-              templates: this.templates,
+              styleGuide: this.styleGuide,
               z: this.zValue,
             }
           },
@@ -108,7 +108,7 @@ class SymbolRenderer extends Vue {
               content: renderItem.content,
               props: this.referenceProps,
               template: this.reference,
-              templates: this.templates,
+              styleGuide: this.styleGuide,
               z: this.zValue,
             }
           },
@@ -121,20 +121,20 @@ class SymbolRenderer extends Vue {
               content: renderItem.content,
               props: this.referenceProps,
               template: this.reference,
-              templates: this.templates,
+              styleGuide: this.styleGuide,
               z: this.zValue,
             }
           },
         ))
       } else if (renderItem.kind === 'symbol') {
         const content = renderItem.content
-        const props = evaluate(renderItem.props, { props: this.referenceProps })
+        const props = evaluate(renderItem.props, { variable: this.styleGuide.variable, props: this.referenceProps })
         children.push(createElement(
           'symbol-renderer',
           {
             props: {
               reference: renderItem.symbol,
-              templates: this.templates,
+              styleGuide: this.styleGuide,
               referenceProps: props,
               content,
               template: this.reference,
@@ -166,17 +166,17 @@ class SymbolRenderer extends Vue {
 Vue.component('symbol-renderer', SymbolRenderer)
 
 @Component({
-  props: ['content', 'props', 'template', 'templates', 'z']
+  props: ['content', 'props', 'template', 'styleGuide', 'z']
 })
 class TextRenderer extends Vue {
   content!: TemplateTextContent
   props!: unknown
   template!: Template
-  templates!: Template[]
+  styleGuide!: StyleGuide
   z!: number
 
   private get text() {
-    return evaluateTextExpression(this.content, { props: this.props })
+    return evaluateTextExpression(this.content, { variable: this.styleGuide.variable, props: this.props })
   }
 
   private get characters() {
@@ -184,35 +184,35 @@ class TextRenderer extends Vue {
   }
 
   private get fontSize() {
-    return evaluateFontSizeExpression(this.content, { props: this.props })
+    return evaluateFontSizeExpression(this.content, { variable: this.styleGuide.variable, props: this.props })
   }
 
   private get color() {
-    return evaluateColorExpression(this.content, { props: this.props })
+    return evaluateColorExpression(this.content, { variable: this.styleGuide.variable, props: this.props })
   }
 
   private get x() {
-    return getPosition(this.props, 'x', this.content, this.template, this.templates)
+    return getPosition(this.props, 'x', this.content, this.template, this.styleGuide)
   }
 
   private get y() {
-    return getPosition(this.props, 'y', this.content, this.template, this.templates)
+    return getPosition(this.props, 'y', this.content, this.template, this.styleGuide)
   }
 
   private get zValue() {
-    return this.z + getPosition(this.props, 'z', this.content, this.template, this.templates)
+    return this.z + getPosition(this.props, 'z', this.content, this.template, this.styleGuide)
   }
 
   private get rotate() {
-    return evaluateRotateExpression(this.content, { props: this.props })
+    return evaluateRotateExpression(this.content, { variable: this.styleGuide.variable, props: this.props })
   }
 
   private get width() {
-    return evaluateSizeExpression('width', this.content, { props: this.props })
+    return evaluateSizeExpression('width', this.content, { variable: this.styleGuide.variable, props: this.props })
   }
 
   private get height() {
-    return evaluateSizeExpression('height', this.content, { props: this.props })
+    return evaluateSizeExpression('height', this.content, { variable: this.styleGuide.variable, props: this.props })
   }
 
   render(createElement: Vue.CreateElement): Vue.VNode {
@@ -240,41 +240,41 @@ class TextRenderer extends Vue {
 Vue.component('text-renderer', TextRenderer)
 
 @Component({
-  props: ['content', 'props', 'template', 'templates', 'z']
+  props: ['content', 'props', 'template', 'styleGuide', 'z']
 })
 class ImageRenderer extends Vue {
   content!: TemplateImageContent
   props!: unknown
   template!: Template
-  templates!: Template[]
+  styleGuide!: StyleGuide
   z!: number
 
   private get url() {
-    return evaluateUrlExpression(this.content, { props: this.props })
+    return evaluateUrlExpression(this.content, { variable: this.styleGuide.variable, props: this.props })
   }
 
   private get width() {
-    return evaluateSizeExpression('width', this.content, { props: this.props })
+    return evaluateSizeExpression('width', this.content, { variable: this.styleGuide.variable, props: this.props })
   }
 
   private get height() {
-    return evaluateSizeExpression('height', this.content, { props: this.props })
+    return evaluateSizeExpression('height', this.content, { variable: this.styleGuide.variable, props: this.props })
   }
 
   private get x() {
-    return getPosition(this.props, 'x', this.content, this.template, this.templates)
+    return getPosition(this.props, 'x', this.content, this.template, this.styleGuide)
   }
 
   private get y() {
-    return getPosition(this.props, 'y', this.content, this.template, this.templates)
+    return getPosition(this.props, 'y', this.content, this.template, this.styleGuide)
   }
 
   private get zValue() {
-    return this.z + getPosition(this.props, 'z', this.content, this.template, this.templates)
+    return this.z + getPosition(this.props, 'z', this.content, this.template, this.styleGuide)
   }
 
   private get rotate() {
-    return evaluateRotateExpression(this.content, { props: this.props })
+    return evaluateRotateExpression(this.content, { variable: this.styleGuide.variable, props: this.props })
   }
 
   private get imageLoader() {
@@ -322,41 +322,41 @@ class ImageRenderer extends Vue {
 Vue.component('image-renderer', ImageRenderer)
 
 @Component({
-  props: ['content', 'props', 'template', 'templates', 'z']
+  props: ['content', 'props', 'template', 'styleGuide', 'z']
 })
 class ColorRenderer extends Vue {
   content!: TemplateColorContent
   props!: unknown
   template!: Template
-  templates!: Template[]
+  styleGuide!: StyleGuide
   z!: number
 
   private get width() {
-    return evaluateSizeExpression('width', this.content, { props: this.props })
+    return evaluateSizeExpression('width', this.content, { variable: this.styleGuide.variable, props: this.props })
   }
 
   private get height() {
-    return evaluateSizeExpression('height', this.content, { props: this.props })
+    return evaluateSizeExpression('height', this.content, { variable: this.styleGuide.variable, props: this.props })
   }
 
   private get x() {
-    return getPosition(this.props, 'x', this.content, this.template, this.templates)
+    return getPosition(this.props, 'x', this.content, this.template, this.styleGuide)
   }
 
   private get y() {
-    return getPosition(this.props, 'y', this.content, this.template, this.templates)
+    return getPosition(this.props, 'y', this.content, this.template, this.styleGuide)
   }
 
   private get zValue() {
-    return this.z + getPosition(this.props, 'z', this.content, this.template, this.templates)
+    return this.z + getPosition(this.props, 'z', this.content, this.template, this.styleGuide)
   }
 
   private get rotate() {
-    return evaluateRotateExpression(this.content, { props: this.props })
+    return evaluateRotateExpression(this.content, { variable: this.styleGuide.variable, props: this.props })
   }
 
   private get color() {
-    return evaluateColorExpression(this.content, { props: this.props })
+    return evaluateColorExpression(this.content, { variable: this.styleGuide.variable, props: this.props })
   }
 
   render(createElement: Vue.CreateElement): Vue.VNode {

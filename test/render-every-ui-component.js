@@ -14,7 +14,7 @@ test(title, async (t) => {
   const infos = await Promise.all(styleGuide.templates.map((t) => renderer.renderToString(new Constructor({
     propsData: {
       template: t,
-      templates: styleGuide.templates
+      styleGuide
     },
   }))))
   t.snapshot({ infos }, { id: title })
