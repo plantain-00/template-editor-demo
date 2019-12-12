@@ -9,6 +9,7 @@ import { generate, PrecompiledStyleGuide } from './engine/template-engine'
 import { StyleGuide } from './model'
 import { AppState } from './app-state'
 import { ExpressionErrorReason } from './engine/expression'
+import { getVariableObject } from './utils'
 
 const ajv = new Ajv()
 const validateStyleGuide = ajv.compile(distStyleguideSchemaJson)
@@ -16,9 +17,7 @@ const validateStyleGuide = ajv.compile(distStyleguideSchemaJson)
 @Component({
   render: appPanelTemplateHtml,
   staticRenderFns: appPanelTemplateHtmlStatic,
-  props: {
-    appState: AppState,
-  }
+  props: ['appState'],
 })
 export class AppPanel extends Vue {
   private appState!: AppState
@@ -125,7 +124,10 @@ export class AppPanel extends Vue {
       const result = await generate(
         this.appState.canvasState.selection.template,
         this.appState.canvasState.styleGuide,
-        this.appState.templateModel,
+        {
+          ...this.appState.templateModel,
+          variable: getVariableObject(this.appState.canvasState.styleGuide.variables),
+        },
         {
           errorHandler: (reason) => reasons.push(reason),
           precompiledStyleGuide: this.precompiledStyleGuide,

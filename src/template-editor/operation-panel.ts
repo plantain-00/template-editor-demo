@@ -387,6 +387,10 @@ export class OperationPanel extends Vue {
       Vue.set(this.canvasState.selection.content, 'propsIds', Object.keys(newPropsIds).filter((p) => newPropsIds[p] !== undefined).length > 0 ? newPropsIds : undefined)
     }
   }
+
+  toggleVariableEditor() {
+    this.canvasState.variableEditorVisible = !this.canvasState.variableEditorVisible
+  }
 }
 
 function getNewProperty(parameter: string, propertyAst: Expression): Property {

@@ -4,11 +4,23 @@
 export interface StyleGuide {
   name: string
   templates: Template[]
-  variable?: StyleGuideVariable
+  variables?: StyleGuideVariable[]
+  collections?: StyleGuideCollection[]
+  constrains?: string[]
 }
 
-interface StyleGuideVariable {
-  [name: string]: unknown
+type StyleGuideCollection = StyleGuideColor
+
+interface StyleGuideColor {
+  kind: 'color'
+  color: string
+}
+
+export interface StyleGuideVariable {
+  kind?: string
+  name: string
+  displayName?: string
+  value: unknown
 }
 
 export interface Template extends Region, SizeExpression, FlexField {

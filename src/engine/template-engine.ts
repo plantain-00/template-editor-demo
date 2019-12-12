@@ -7,7 +7,6 @@ import { applyImageOpacity, loadImage } from './image'
 import { getCharacters } from './mock'
 
 export async function generate(template: Template, styleGuide: StyleGuide, model: { [key: string]: unknown }, options?: ExpressionOptions): Promise<Template> {
-  model = { ...model, variable: styleGuide.variable }
   const contents: TemplateContent[] = []
   let ifValues: Array<boolean | undefined> = []
   for (let i = 0; i < template.contents.length; i++) {

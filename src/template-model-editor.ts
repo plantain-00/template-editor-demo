@@ -6,9 +6,7 @@ import { AppState } from './app-state'
 @Component({
   render: templateModelEditorTemplateHtml,
   staticRenderFns: templateModelEditorTemplateHtmlStatic,
-  props: {
-    appState: AppState,
-  }
+  props: ['appState'],
 })
 export class TemplateModelEditor extends Vue {
   private appState!: AppState

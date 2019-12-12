@@ -260,23 +260,61 @@ z 未设置时是 0。
 
 ![generation-error](./screenshots/generation-error.jpg)
 
-### 设计规范限制
+### 变量
 
-模版中的样式一般有统一的设计规范，例如模版里的元素只能使用某几种颜色、某几种字号等等，这时可以在模版外预先定义，然后在模版内通过表达式（`variable.foo`）来使用。
+可以在模版外预先定义变量，然后在模版内通过表达式（`variable.foo`）来使用，这样可以方便进行批量修改。
 
 ```ts
 interface StyleGuide {
   name: string
   templates: Template[]
-  variable?: StyleGuideVariable
+  variables?: StyleGuideVariable[]
 }
 
 interface StyleGuideVariable {
-  [name: string]: unknown
+  name: string
+  displayName?: string
+  value: unknown
 }
 ```
 
 对于数据量较大的字样，“预先定义 + 引用”可以明显减少模版体积。
+
+### 推荐
+
+模版中的样式一般有统一的设计规范，例如模版里的元素只能使用某几种颜色、某几种字号等等，可以增加这些设计规范：
+
+```ts
+interface StyleGuide {
+  name: string
+  templates: Template[]
+  variables?: StyleGuideVariable[]
+  collections?: StyleGuideCollection[]
+}
+
+type StyleGuideCollection = StyleGuideColor
+
+interface StyleGuideColor {
+  kind: 'color'
+  color: string
+}
+```
+
+推荐时，会从 `StyleGuideCollection[]` 集合中，列出所有的组合可能性，并提供预览。
+
+在列出的所有结果中，可能会有一些不合理的结果，例如文字颜色和背景颜色相等，可以提供设置一些限制规则来排除这些不合理的结果，例如 `variable.textColor !== variable.backgroundColor`。
+
+```ts
+interface StyleGuide {
+  name: string
+  templates: Template[]
+  variables?: StyleGuideVariable[]
+  collections?: StyleGuideCollection[]
+  constrains?: string[]
+}
+```
+
+当用户选中其中一个结果后，会在 `variables` 中保存下来。
 
 ## todo
 
