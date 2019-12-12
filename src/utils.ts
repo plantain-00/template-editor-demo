@@ -1,4 +1,4 @@
-import { StyleGuide, Position, TemplateContent, Template, TemplateReferenceContent, Region, Rotate } from './model'
+import { StyleGuide, Position, TemplateContent, Template, TemplateReferenceContent, Region, Rotate, StyleGuideVariable } from './model'
 import { getContentSize, getFlexPosition } from './engine/layout-engine'
 import { evaluateSizeExpression, evaluate, evaluatePositionExpression, evaluateRotateExpression } from './engine/expression'
 
@@ -134,7 +134,7 @@ function* iterateAllContent(
       if (rotates.length > 0) {
         rotate += rotates.reduce((p, c) => p + c.rotate, 0)
         let center: Position = {
-          x: newX + width / 2, 
+          x: newX + width / 2,
           y: newY + height / 2
         }
         for (let i = rotates.length - 1; i >= 0; i--) {
@@ -221,4 +221,14 @@ export function formatPixel(n: number) {
 
 export function formatRadian(n: number) {
   return Math.round(n * 10000) / 10000
+}
+
+export function getVariableObject(variables: StyleGuideVariable[] | undefined) {
+  const result: { [name: string]: unknown } = {}
+  if (variables) {
+    for (const variable of variables) {
+      result[variable.name] = variable.value
+    }
+  }
+  return result
 }

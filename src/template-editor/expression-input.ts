@@ -208,11 +208,14 @@ export class ExpressionInput extends Vue {
         }
         if (currentToken.type === 'Identifier') {
           if (v.enum || v.internal) {
-            let enums: string[]
+            let enums: (string | { value: string, name: string })[]
             if (v.internal === 'component parameters' && (this.canvasState.selection.kind === 'content' || this.canvasState.selection.kind === 'template')) {
               enums = this.canvasState.selection.template.parameters || []
             } else if (v.internal === 'variable') {
-              enums = this.canvasState.styleGuide.variable ? Object.keys(this.canvasState.styleGuide.variable) : []
+              enums = this.canvasState.styleGuide.variables ? this.canvasState.styleGuide.variables.map((v) => ({
+                value: v.name,
+                name: v.displayName || v.name,
+              })) : []
             } else if (v.enum) {
               enums = v.enum
             } else {
@@ -234,16 +237,20 @@ export class ExpressionInput extends Vue {
                   }
                 }
               },
-              enums.map((p) => createElement(
-                'option',
-                {
-                  key: p,
-                  attrs: {
-                    value: p
-                  }
-                },
-                p
-              ))
+              enums.map((p) => {
+                const name = typeof p === 'string' ? p : p.name
+                const value = typeof p === 'string' ? p : p.value
+                return createElement(
+                  'option',
+                  {
+                    key: value,
+                    attrs: {
+                      value
+                    }
+                  },
+                  name
+                )
+              })
             )
           }
           return createElement(

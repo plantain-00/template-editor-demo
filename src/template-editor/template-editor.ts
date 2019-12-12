@@ -12,6 +12,7 @@ import { MaskLayer } from './mask-layer'
 import { ContextMenu } from './context-menu'
 import { OperationPanel } from './operation-panel'
 import { LayerPanel } from './layer-panel'
+import { VariableEditor } from './variable-editor'
 
 @Component({
   render: templateEditorTemplateEditorTemplateHtml,
@@ -26,6 +27,7 @@ import { LayerPanel } from './layer-panel'
     'context-menu': ContextMenu,
     'operation-panel': OperationPanel,
     'layer-panel': LayerPanel,
+    'variable-editor': VariableEditor,
   }
 })
 export class TemplateEditor extends Vue {

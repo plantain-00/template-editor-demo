@@ -72,8 +72,18 @@ export const styleGuide: StyleGuide = {
       ]
     }
   ],
-  variable: {
-    backgroundColor: '#cccccc',
-    textColor: 'red'
-  }
+  variables: [
+    {
+      kind: 'color',
+      name: 'backgroundColor',
+      displayName: 'background color',
+      value: '#cccccc'
+    },
+    {
+      kind: 'color',
+      name: 'textColor',
+      displayName: 'text color',
+      value: '#ff0000'
+    },
+  ]
 }
