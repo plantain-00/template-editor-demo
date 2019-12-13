@@ -200,6 +200,12 @@
     <button @click="addColor()">add color</button>
   </div>
   <div>
-    <button @click="toggleVariableEditor()">{{ canvasState.variableEditorVisible ? 'hide' : 'show' }} variable editor</button>
+    <button @click="toggleVariableEditor()">edit variables</button>
+    <button @click="toggleCollectionEditor()">edit collections</button>
+  </div>
+  <div>
+    <button @click="recommand()">recommand</button>
+    <img v-for="result in recommandResults" :src="result.preview" @click="applyRecommandResult(result.variables)"
+      style="object-fit: contain; width: 100%; cursor: pointer;" />
   </div>
 </div>

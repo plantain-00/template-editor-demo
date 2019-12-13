@@ -9,7 +9,7 @@ export interface StyleGuide {
   constrains?: string[]
 }
 
-type StyleGuideCollection = StyleGuideColor
+export type StyleGuideCollection = StyleGuideColor
 
 interface StyleGuideColor {
   kind: 'color'

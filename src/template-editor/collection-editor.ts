@@ -1,15 +1,15 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { templateEditorVariableEditorTemplateHtml, templateEditorVariableEditorTemplateHtmlStatic } from '../variables'
+import { templateEditorCollectionEditorTemplateHtml, templateEditorCollectionEditorTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
 import { operationPanelWidth } from './template-editor'
 
 @Component({
-  render: templateEditorVariableEditorTemplateHtml,
-  staticRenderFns: templateEditorVariableEditorTemplateHtmlStatic,
+  render: templateEditorCollectionEditorTemplateHtml,
+  staticRenderFns: templateEditorCollectionEditorTemplateHtmlStatic,
   props: ['canvasState'],
 })
-export class VariableEditor extends Vue {
+export class CollectionEditor extends Vue {
   private canvasState!: CanvasState
   
   editorStyle = {
@@ -23,13 +23,13 @@ export class VariableEditor extends Vue {
     overflow: 'auto',
   }
 
-  get variable() {
-    return JSON.stringify(this.canvasState.styleGuide.variables || [], null, 2)
+  get collection() {
+    return JSON.stringify(this.canvasState.styleGuide.collections || [], null, 2)
   }
 
-  changeVariable(e: { target: { value: string } }) {
+  changeCollection(e: { target: { value: string } }) {
     try {
-      this.canvasState.styleGuide.variables = JSON.parse(e.target.value)
+      this.canvasState.styleGuide.collections = JSON.parse(e.target.value)
     } catch (error) {
       // do nothing
     }

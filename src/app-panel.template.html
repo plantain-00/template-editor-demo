@@ -5,7 +5,7 @@
   <input type="text" v-model="templateModelKey" />
   <button @click="loadTemplateModel()">load template model</button>
   <button @click="saveTemplateModel()">save template model</button>
-  <button @click="editTemplateModel()">{{ appState.templateModelEditorVisible ? 'hide template model editor' : 'show template model editor' }}</button>
+  <button @click="editTemplateModel()">edit template model</button>
   <button @click="precompile()">precompile</button>
   <button @click="generate()">{{appState.graphicCanvasState ? 'back to template' : 'generate graphic'}}</button>
 </div>
