@@ -85,5 +85,18 @@ export const styleGuide: StyleGuide = {
       displayName: 'text color',
       value: '#ff0000'
     },
+  ],
+  collections: [
+    {
+      kind: 'color',
+      color: '#000000'
+    },
+    {
+      kind: 'color',
+      color: '#ffffff'
+    }
+  ],
+  constrains: [
+    'variable.backgroundColor !== variable.textColor'
   ]
 }

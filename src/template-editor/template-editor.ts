@@ -13,6 +13,7 @@ import { ContextMenu } from './context-menu'
 import { OperationPanel } from './operation-panel'
 import { LayerPanel } from './layer-panel'
 import { VariableEditor } from './variable-editor'
+import { CollectionEditor } from './collection-editor'
 
 @Component({
   render: templateEditorTemplateEditorTemplateHtml,
@@ -28,6 +29,7 @@ import { VariableEditor } from './variable-editor'
     'operation-panel': OperationPanel,
     'layer-panel': LayerPanel,
     'variable-editor': VariableEditor,
+    'collection-editor': CollectionEditor,
   }
 })
 export class TemplateEditor extends Vue {

@@ -168,6 +168,7 @@ export class CanvasState extends Vue {
   presetExpressions = presetExpressions
 
   variableEditorVisible = false
+  collectionEditorVisible = false
 }
 
 export function equal(n1: number, n2: number) {

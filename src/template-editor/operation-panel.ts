@@ -4,11 +4,12 @@ import { tokenizeExpression, parseExpression, printExpression, Expression, Prope
 
 import { templateEditorOperationPanelTemplateHtml, templateEditorOperationPanelTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
-import { Template } from '../model'
+import { Template, StyleGuideVariable } from '../model'
 import { renderTemplate, loadTemplateImages } from '../engine/canvas-renderer'
 import { ExpressionInputChangeData, ExpressionInput } from './expression-input'
 import { analyseRepeat, Repeat, composeRepeat } from '../engine/template-engine'
 import { formatPixel } from '../utils'
+import { recommand } from '../engine/recommand'
 
 @Component({
   render: templateEditorOperationPanelTemplateHtml,
@@ -390,6 +391,35 @@ export class OperationPanel extends Vue {
 
   toggleVariableEditor() {
     this.canvasState.variableEditorVisible = !this.canvasState.variableEditorVisible
+  }
+
+  toggleCollectionEditor() {
+    this.canvasState.collectionEditorVisible = !this.canvasState.collectionEditorVisible
+  }
+
+  recommandResults: Array<{ preview: string, variables: StyleGuideVariable[] }> = []
+
+  async recommand() {
+    if (this.canvasState.styleGuide.variables && this.canvasState.styleGuide.collections && this.canvasState.selection.kind === 'template') {
+      const result = recommand(this.canvasState.styleGuide.variables, this.canvasState.styleGuide.collections, this.canvasState.styleGuide.constrains)
+      this.recommandResults = []
+      for (const r of result) {
+        const styleGuide = {
+          ...this.canvasState.styleGuide,
+          variables: r,
+        }
+        const images = await loadTemplateImages(this.canvasState.selection.template, styleGuide)
+        const preview = renderTemplate(this.canvasState.selection.template, styleGuide, images)
+        this.recommandResults.push({
+          variables: r,
+          preview,
+        })
+      }
+    }
+  }
+
+  applyRecommandResult(variables: StyleGuideVariable[]) {
+    this.canvasState.styleGuide.variables = variables
   }
 }
 
