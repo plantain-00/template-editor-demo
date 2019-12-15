@@ -16,7 +16,7 @@ export class TemplateRenderer extends Vue {
   styleGuide!: StyleGuide
 
   private get variable() {
-    return getVariableObject(this.styleGuide.variables)
+    return getVariableObject(this.styleGuide.variables?.[0])
   }
 
   render(createElement: Vue.CreateElement): Vue.VNode {

@@ -4,7 +4,7 @@ import { tokenizeExpression, parseExpression, printExpression, Expression, Prope
 
 import { templateEditorOperationPanelTemplateHtml, templateEditorOperationPanelTemplateHtmlStatic } from '../variables'
 import { CanvasState } from './canvas-state'
-import { Template, StyleGuideVariable } from '../model'
+import { Template, StyleGuideVariable, StyleGuide } from '../model'
 import { renderTemplate, loadTemplateImages } from '../engine/canvas-renderer'
 import { ExpressionInputChangeData, ExpressionInput } from './expression-input'
 import { analyseRepeat, Repeat, composeRepeat } from '../engine/template-engine'
@@ -395,15 +395,17 @@ export class OperationPanel extends Vue {
   }
 
   recommandResults: Array<{ preview: string, variables: StyleGuideVariable[] }> = []
+  selectedVariables: StyleGuideVariable[][] = []
 
   async recommand() {
+    this.selectedVariables = []
     if (this.canvasState.styleGuide.variables && this.canvasState.styleGuide.collections && this.canvasState.selection.kind === 'template') {
-      const result = recommand(this.canvasState.styleGuide.variables, this.canvasState.styleGuide.collections, this.canvasState.styleGuide.constrains)
+      const result = recommand(this.canvasState.styleGuide.variables?.[0], this.canvasState.styleGuide.collections, this.canvasState.styleGuide.constrains)
       this.recommandResults = []
       for (const r of result) {
-        const styleGuide = {
+        const styleGuide: StyleGuide = {
           ...this.canvasState.styleGuide,
-          variables: r,
+          variables: [r],
         }
         const images = await loadTemplateImages(this.canvasState.selection.template, styleGuide)
         const preview = renderTemplate(this.canvasState.selection.template, styleGuide, images)
@@ -415,8 +417,28 @@ export class OperationPanel extends Vue {
     }
   }
 
-  applyRecommandResult(variables: StyleGuideVariable[]) {
-    this.canvasState.styleGuide.variables = variables
+  selectVariables(variables: StyleGuideVariable[]) {
+    const index = this.selectedVariables.findIndex(v => v === variables)
+    if (index >= 0) {
+      this.selectedVariables.splice(index, 1)
+    } else {
+      this.selectedVariables.push(variables)
+    }
+  }
+
+  applyRecommandResult() {
+    if (this.selectedVariables.length > 0) {
+      this.canvasState.styleGuide.variables = [...this.selectedVariables]
+    }
+  }
+
+  getPreviewStyle(variables: StyleGuideVariable[]) {
+    return {
+      objectFit: 'contain',
+      width: '100%',
+      cursor: 'pointer',
+      border: `1px solid ${this.selectedVariables.includes(variables) ? 'green' : '#cccccc'}`
+    }
   }
 }
 

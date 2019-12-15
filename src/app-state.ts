@@ -31,14 +31,14 @@ export class AppState extends Vue {
     }
   }
 
-  loadGraphicCanvas(template: Template) {
+  loadGraphicCanvas(templates: Template[]) {
     this.graphicCanvasState = CanvasState.create({
       name: '',
-      templates: [template],
+      templates,
     }, window.innerWidth - offsetWidth, window.innerHeight - offsetHeight)
     this.graphicCanvasState.selection = {
       kind: 'template',
-      template
+      template: templates[0]
     }
   }
 }
