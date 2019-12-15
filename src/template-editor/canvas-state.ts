@@ -167,8 +167,8 @@ export class CanvasState extends Vue {
 
   presetExpressions = presetExpressions
 
-  variableEditorVisible = false
-  collectionEditorVisible = false
+  commonEditorVisible = false
+  commonEditorEditingFieldName: 'variables' | 'collections' | 'constrains' = 'variables'
 }
 
 export function equal(n1: number, n2: number) {
