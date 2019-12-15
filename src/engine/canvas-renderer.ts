@@ -33,7 +33,7 @@ export function renderTemplateOnCanvas(ctx: CanvasRenderingContext2D | undefined
     )
   }
   const actions: Array<{ z: number, index: number, action: (ctx: CanvasRenderingContext2D | undefined) => string[] }> = []
-  const variable = getVariableObject(styleGuide.variables)
+  const variable = getVariableObject(styleGuide.variables?.[0])
   renderSymbol(template, styleGuide, images, actions, { x: 0, y: 0, z: 0 }, [], variable)
   actions.sort((a, b) => {
     if (a.z !== b.z) {

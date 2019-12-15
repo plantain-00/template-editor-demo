@@ -6,7 +6,7 @@ import { setWsHeartbeat } from 'ws-heartbeat/client'
 
 import { appPanelTemplateHtml, appPanelTemplateHtmlStatic, distStyleguideSchemaJson } from './variables'
 import { generate, PrecompiledStyleGuide } from './engine/template-engine'
-import { StyleGuide } from './model'
+import { StyleGuide, Template } from './model'
 import { AppState } from './app-state'
 import { ExpressionErrorReason } from './engine/expression'
 import { getVariableObject } from './utils'
@@ -119,21 +119,45 @@ export class AppPanel extends Vue {
       return
     }
     if (this.appState.canvasState.selection.kind === 'template') {
+      const selection = this.appState.canvasState.selection
+      const styleGuide = this.appState.canvasState.styleGuide
       const now = Date.now()
       const reasons: ExpressionErrorReason[] = []
-      const result = await generate(
-        this.appState.canvasState.selection.template,
-        this.appState.canvasState.styleGuide,
-        {
-          ...this.appState.templateModel,
-          variable: getVariableObject(this.appState.canvasState.styleGuide.variables),
-        },
-        {
-          errorHandler: (reason) => reasons.push(reason),
-          precompiledStyleGuide: this.precompiledStyleGuide,
-          stack: [this.appState.canvasState.selection.template.name || this.appState.canvasState.selection.template.id]
+      let result: Template[]
+      if (styleGuide.variables && styleGuide.variables.length > 0) {
+        result = await Promise.all(styleGuide.variables.map(v => generate(
+          selection.template,
+          styleGuide,
+          {
+            ...this.appState.templateModel,
+            variable: getVariableObject(v),
+          },
+          {
+            errorHandler: (reason) => reasons.push(reason),
+            precompiledStyleGuide: this.precompiledStyleGuide,
+            stack: [selection.template.name || selection.template.id]
+          }
+        )))
+
+        let x = 0
+        for (let i = 0; i < result.length; i++) {
+          result[i].x = x
+          x += result[i].width + 10
         }
-      )
+      } else {
+        result = [
+          await generate(
+            selection.template,
+            styleGuide,
+            this.appState.templateModel,
+            {
+              errorHandler: (reason) => reasons.push(reason),
+              precompiledStyleGuide: this.precompiledStyleGuide,
+              stack: [selection.template.name || selection.template.id]
+            }
+          )
+        ]
+      }
       console.info(Date.now() - now)
       for (const reason of reasons) {
         console.info(reason.stack ? reason.stack.join(' ') : '', reason.expression, reason.error.message, reason.model)

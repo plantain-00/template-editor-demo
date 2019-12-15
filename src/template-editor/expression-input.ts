@@ -212,7 +212,8 @@ export class ExpressionInput extends Vue {
             if (v.internal === 'component parameters' && (this.canvasState.selection.kind === 'content' || this.canvasState.selection.kind === 'template')) {
               enums = this.canvasState.selection.template.parameters || []
             } else if (v.internal === 'variable') {
-              enums = this.canvasState.styleGuide.variables ? this.canvasState.styleGuide.variables.map((v) => ({
+              const variables = this.canvasState.styleGuide.variables?.[0]
+              enums = variables ? variables.map((v) => ({
                 value: v.name,
                 name: v.displayName || v.name,
               })) : []

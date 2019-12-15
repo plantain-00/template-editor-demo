@@ -206,7 +206,8 @@
   </div>
   <div>
     <button @click="recommand()">recommand</button>
-    <img v-for="result in recommandResults" :src="result.preview" @click="applyRecommandResult(result.variables)"
-      style="object-fit: contain; width: 100%; cursor: pointer;" />
+    <button v-if="selectedVariables.length > 0" @click="applyRecommandResult()">apply</button>
+    <img v-for="result in recommandResults" :src="result.preview" @click="selectVariables(result.variables)"
+      :style="getPreviewStyle(result.variables)" />
   </div>
 </div>

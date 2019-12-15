@@ -314,7 +314,13 @@ interface StyleGuide {
 }
 ```
 
-当用户选中其中一个结果后，会在 `variables` 中保存下来。
+用户可以选择其中一个结果，替换变量中的值，以实现批量修改样式的效果。
+
+当用户保存其中多个结果后，在海报生成中使用，可以实现根据一张模板，根据相同的输入，同时生成多张不同样式的海报的效果。
+
+![multiple-result-1](./screenshots/multiple-result-1.jpg)
+
+![multiple-result-2](./screenshots/multiple-result-2.jpg)
 
 ## todo
 

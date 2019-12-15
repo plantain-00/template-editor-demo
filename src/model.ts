@@ -4,7 +4,7 @@
 export interface StyleGuide {
   name: string
   templates: Template[]
-  variables?: StyleGuideVariable[]
+  variables?: StyleGuideVariable[][]
   collections?: StyleGuideCollection[]
   constrains?: string[]
 }
