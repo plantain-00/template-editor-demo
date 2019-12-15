@@ -200,8 +200,9 @@
     <button @click="addColor()">add color</button>
   </div>
   <div>
-    <button @click="toggleVariableEditor()">edit variables</button>
-    <button @click="toggleCollectionEditor()">edit collections</button>
+    <button @click="toggleCommonEditor('variables')">edit variables</button>
+    <button @click="toggleCommonEditor('collections')">edit collections</button>
+    <button @click="toggleCommonEditor('constrains')">edit constrains</button>
   </div>
   <div>
     <button @click="recommand()">recommand</button>

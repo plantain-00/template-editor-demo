@@ -389,12 +389,9 @@ export class OperationPanel extends Vue {
     }
   }
 
-  toggleVariableEditor() {
-    this.canvasState.variableEditorVisible = !this.canvasState.variableEditorVisible
-  }
-
-  toggleCollectionEditor() {
-    this.canvasState.collectionEditorVisible = !this.canvasState.collectionEditorVisible
+  toggleCommonEditor(fieldName: 'variables' | 'collections' | 'constrains') {
+    this.canvasState.commonEditorEditingFieldName = fieldName
+    this.canvasState.commonEditorVisible = !this.canvasState.commonEditorVisible
   }
 
   recommandResults: Array<{ preview: string, variables: StyleGuideVariable[] }> = []
