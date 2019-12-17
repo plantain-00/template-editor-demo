@@ -19,7 +19,7 @@ import { TemplateEditor } from "./template-editor/template-editor"
 import { TemplateModelEditor } from "./template-model-editor"
 
 // @ts-ignore
-export function appPanelTemplateHtml(this: AppPanel) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticStyle:{"display":"flex","align-items":"center","height":"50px"}},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.styleGuideKey),expression:"styleGuideKey"}],attrs:{"type":"text"},domProps:{"value":(_vm.styleGuideKey)},on:{"input":function($event){if($event.target.composing){ return; }_vm.styleGuideKey=$event.target.value}}}),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.loadStyleGuide()}}},[_vm._v("load style guide")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.saveStyleGuide()}}},[_vm._v("save style guide")]),_vm._v(" "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.templateModelKey),expression:"templateModelKey"}],attrs:{"type":"text"},domProps:{"value":(_vm.templateModelKey)},on:{"input":function($event){if($event.target.composing){ return; }_vm.templateModelKey=$event.target.value}}}),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.loadTemplateModel()}}},[_vm._v("load template model")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.saveTemplateModel()}}},[_vm._v("save template model")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.editTemplateModel()}}},[_vm._v("edit template model")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.precompile()}}},[_vm._v("precompile")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.generate()}}},[_vm._v(_vm._s(_vm.appState.graphicCanvasState ? 'back to template' : 'generate graphic'))])])}
+export function appPanelTemplateHtml(this: AppPanel) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticStyle:{"display":"flex","align-items":"center","height":"50px"}},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.styleGuideKey),expression:"styleGuideKey"}],staticStyle:{"width":"80px"},attrs:{"type":"text"},domProps:{"value":(_vm.styleGuideKey)},on:{"input":function($event){if($event.target.composing){ return; }_vm.styleGuideKey=$event.target.value}}}),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.loadStyleGuide()}}},[_vm._v("load style guide")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.saveStyleGuide()}}},[_vm._v("save style guide")]),_vm._v(" "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.templateModelKey),expression:"templateModelKey"}],staticStyle:{"width":"120px"},attrs:{"type":"text"},domProps:{"value":(_vm.templateModelKey)},on:{"input":function($event){if($event.target.composing){ return; }_vm.templateModelKey=$event.target.value}}}),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.loadTemplateModel()}}},[_vm._v("load template model")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.saveTemplateModel()}}},[_vm._v("save template model")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.editTemplateModel()}}},[_vm._v("edit template model")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.precompile()}}},[_vm._v("precompile")]),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.generate()}}},[_vm._v(_vm._s(_vm.appState.graphicCanvasState ? 'back to template' : 'generate graphic'))]),_vm._v(" "),_c('button',{on:{"click":_vm.runTests}},[_vm._v("run tests")])])}
 // @ts-ignore
 export var appPanelTemplateHtmlStatic = [  ]
 export const distStyleguideSchemaJson = {
@@ -56,6 +56,12 @@ export const distStyleguideSchemaJson = {
                     "type": "array",
                     "items": {
                         "type": "string"
+                    }
+                },
+                "tests": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/GenerationTest"
                     }
                 }
             },
@@ -695,6 +701,26 @@ export const distStyleguideSchemaJson = {
                 "color"
             ],
             "additionalProperties": false
+        },
+        "GenerationTest": {
+            "type": "object",
+            "properties": {
+                "templateId": {
+                    "type": "string"
+                },
+                "case": {},
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Template"
+                    }
+                }
+            },
+            "required": [
+                "templateId",
+                "case"
+            ],
+            "additionalProperties": false
         }
     }
 }
@@ -743,7 +769,7 @@ export function templateEditorTemplateEditorTemplateHtml(this: TemplateEditor) {
 // @ts-ignore
 export var templateEditorTemplateEditorTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function templateModelEditorTemplateHtml(this: TemplateModelEditor) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.appState.templateModelEditorVisible)?_c('div',{style:(_vm.editorStyle)},[_c('json-editor',{attrs:{"schema":_vm.schema,"initial-value":_vm.appState.templateModel},on:{"update-value":function($event){return _vm.updateValue($event)}}}),_vm._v(" "),_c('textarea',{staticStyle:{"width":"calc(100% - 40px)","height":"400px","margin-left":"20px","margin-right":"20px"},domProps:{"value":_vm.templateModel},on:{"blur":_vm.changeTemplateModel}})],1):_vm._e()}
+export function templateModelEditorTemplateHtml(this: TemplateModelEditor) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.appState.templateModelEditorVisible)?_c('div',{style:(_vm.editorStyle)},[_c('json-editor',{attrs:{"schema":_vm.schema,"initial-value":_vm.appState.templateModel},on:{"update-value":function($event){return _vm.updateValue($event)}}}),_vm._v(" "),_c('textarea',{staticStyle:{"width":"calc(100% - 40px)","height":"400px","margin-left":"20px","margin-right":"20px"},domProps:{"value":_vm.templateModel},on:{"blur":_vm.changeTemplateModel}}),_vm._v(" "),_c('button',{on:{"click":function($event){return _vm.addAsTestCase()}}},[_vm._v("add as test case")])],1):_vm._e()}
 // @ts-ignore
 export var templateModelEditorTemplateHtmlStatic = [  ]
 /* eslint-enable */

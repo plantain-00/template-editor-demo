@@ -119,54 +119,78 @@ export class AppPanel extends Vue {
       return
     }
     if (this.appState.canvasState.selection.kind === 'template') {
-      const selection = this.appState.canvasState.selection
-      const styleGuide = this.appState.canvasState.styleGuide
-      const now = Date.now()
-      const reasons: ExpressionErrorReason[] = []
-      let result: Template[]
-      if (styleGuide.variables && styleGuide.variables.length > 0) {
-        result = await Promise.all(styleGuide.variables.map(v => generate(
-          selection.template,
-          styleGuide,
-          {
-            ...this.appState.templateModel,
-            variable: getVariableObject(v),
-          },
-          {
-            errorHandler: (reason) => reasons.push(reason),
-            precompiledStyleGuide: this.precompiledStyleGuide,
-            stack: [selection.template.name || selection.template.id]
-          }
-        )))
-
-        let x = 0
-        for (let i = 0; i < result.length; i++) {
-          result[i].x = x
-          x += result[i].width + 10
-        }
-      } else {
-        result = [
-          await generate(
-            selection.template,
-            styleGuide,
-            this.appState.templateModel,
-            {
-              errorHandler: (reason) => reasons.push(reason),
-              precompiledStyleGuide: this.precompiledStyleGuide,
-              stack: [selection.template.name || selection.template.id]
-            }
-          )
-        ]
-      }
-      console.info(Date.now() - now)
-      for (const reason of reasons) {
-        console.info(reason.stack ? reason.stack.join(' ') : '', reason.expression, reason.error.message, reason.model)
-      }
+      const result = await this.generateByTemplate(this.appState.canvasState.selection.template)
       this.appState.loadGraphicCanvas(result)
     }
   }
 
+  private async generateByTemplate(template: Template) {
+    const styleGuide = this.appState.canvasState.styleGuide
+    const now = Date.now()
+    const reasons: ExpressionErrorReason[] = []
+    let result: Template[]
+    if (styleGuide.variables && styleGuide.variables.length > 0) {
+      result = await Promise.all(styleGuide.variables.map(v => generate(
+        template,
+        styleGuide,
+        {
+          ...this.appState.templateModel,
+          variable: getVariableObject(v),
+        },
+        {
+          errorHandler: (reason) => reasons.push(reason),
+          precompiledStyleGuide: this.precompiledStyleGuide,
+          stack: [template.name || template.id]
+        }
+      )))
+
+      let x = 0
+      for (let i = 0; i < result.length; i++) {
+        result[i].x = x
+        x += result[i].width + 10
+      }
+    } else {
+      result = [
+        await generate(
+          template,
+          styleGuide,
+          this.appState.templateModel,
+          {
+            errorHandler: (reason) => reasons.push(reason),
+            precompiledStyleGuide: this.precompiledStyleGuide,
+            stack: [template.name || template.id]
+          }
+        )
+      ]
+    }
+    console.info(Date.now() - now)
+    for (const reason of reasons) {
+      console.info(reason.stack ? reason.stack.join(' ') : '', reason.expression, reason.error.message, reason.model)
+    }
+    return result
+  }
+
   precompile() {
     this.precompiledStyleGuide = new PrecompiledStyleGuide(this.appState.canvasState.styleGuide)
+  }
+
+  async runTests() {
+    const tests = this.appState.canvasState.styleGuide.tests
+    if (tests) {
+      for (const test of tests) {
+        const template = this.appState.canvasState.styleGuide.templates.find((t) => t.id === test.templateId)
+        if (template) {
+          const result = await this.generateByTemplate(template)
+          if (!test.result) {
+            test.result = result
+          } else {
+            const operations = jsonpatch.compare(test.result, result)
+            if (operations.length > 0) {
+              console.info(operations)
+            }
+          }
+        }
+      }
+    }
   }
 }

@@ -7,6 +7,13 @@ export interface StyleGuide {
   variables?: StyleGuideVariable[][]
   collections?: StyleGuideCollection[]
   constrains?: string[]
+  tests?: GenerationTest[]
+}
+
+interface GenerationTest {
+  templateId: string
+  case: unknown
+  result?: Template[]
 }
 
 export type StyleGuideCollection = StyleGuideColor
