@@ -36,7 +36,7 @@ export class LayerPanel extends Vue {
       this.canvasState.styleGuide.templates.map((template, i) => createElement(
         'layer-node',
         {
-          key: template.id,
+          key: template.id + '_' + i,
           props: {
             canvasState: this.canvasState,
             template,

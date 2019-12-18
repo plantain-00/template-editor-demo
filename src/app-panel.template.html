@@ -8,5 +8,6 @@
   <button @click="editTemplateModel()">edit template model</button>
   <button @click="precompile()">precompile</button>
   <button @click="generate()">{{appState.graphicCanvasState ? 'back to template' : 'generate graphic'}}</button>
-  <button @click="runTests">run tests</button>
+  <button @click="runTests(false)">run tests</button>
+  <button @click="runTests(true)">update tests</button>
 </div>
