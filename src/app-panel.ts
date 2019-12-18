@@ -174,14 +174,14 @@ export class AppPanel extends Vue {
     this.precompiledStyleGuide = new PrecompiledStyleGuide(this.appState.canvasState.styleGuide)
   }
 
-  async runTests() {
+  async runTests(update: boolean) {
     const tests = this.appState.canvasState.styleGuide.tests
     if (tests) {
       for (const test of tests) {
         const template = this.appState.canvasState.styleGuide.templates.find((t) => t.id === test.templateId)
         if (template) {
           const result = await this.generateByTemplate(template)
-          if (!test.result) {
+          if (!test.result || update) {
             test.result = result
           } else {
             const operations = jsonpatch.compare(test.result, result)
