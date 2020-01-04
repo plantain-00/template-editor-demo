@@ -284,7 +284,8 @@ export const distStyleguideSchemaJson = {
                     "type": "string"
                 },
                 "else": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                 },
                 "repeat": {
                     "type": "string"
@@ -296,7 +297,8 @@ export const distStyleguideSchemaJson = {
                     "type": "boolean"
                 },
                 "rotate": {
-                    "type": "number"
+                    "type": "number",
+                    "default": 0
                 },
                 "rotateExpression": {
                     "type": "string"
@@ -404,7 +406,8 @@ export const distStyleguideSchemaJson = {
                     "type": "string"
                 },
                 "else": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                 },
                 "repeat": {
                     "type": "string"
@@ -416,7 +419,8 @@ export const distStyleguideSchemaJson = {
                     "type": "boolean"
                 },
                 "rotate": {
-                    "type": "number"
+                    "type": "number",
+                    "default": 0
                 },
                 "rotateExpression": {
                     "type": "string"
@@ -503,7 +507,8 @@ export const distStyleguideSchemaJson = {
                     "type": "string"
                 },
                 "else": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                 },
                 "repeat": {
                     "type": "string"
@@ -515,7 +520,8 @@ export const distStyleguideSchemaJson = {
                     "type": "boolean"
                 },
                 "rotate": {
-                    "type": "number"
+                    "type": "number",
+                    "default": 0
                 },
                 "rotateExpression": {
                     "type": "string"
@@ -587,7 +593,8 @@ export const distStyleguideSchemaJson = {
                     "type": "string"
                 },
                 "else": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                 },
                 "repeat": {
                     "type": "string"
@@ -599,7 +606,8 @@ export const distStyleguideSchemaJson = {
                     "type": "boolean"
                 },
                 "rotate": {
-                    "type": "number"
+                    "type": "number",
+                    "default": 0
                 }
             },
             "required": [
@@ -651,7 +659,8 @@ export const distStyleguideSchemaJson = {
                     "type": "boolean"
                 },
                 "rotate": {
-                    "type": "number"
+                    "type": "number",
+                    "default": 0
                 }
             },
             "required": [
@@ -719,6 +728,611 @@ export const distStyleguideSchemaJson = {
             "required": [
                 "templateId",
                 "case"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
+export const distTemplateSchemaJson = {
+    "$ref": "#/definitions/Template",
+    "definitions": {
+        "Template": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "contents": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/TemplateContent"
+                    }
+                },
+                "parameters": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "z": {
+                    "type": "integer"
+                },
+                "width": {
+                    "type": "number"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "widthExpression": {
+                    "type": "string"
+                },
+                "heightExpression": {
+                    "type": "string"
+                },
+                "widthExpressionId": {
+                    "type": "string"
+                },
+                "heightExpressionId": {
+                    "type": "string"
+                },
+                "display": {
+                    "type": "string",
+                    "const": "flex"
+                },
+                "flexDirection": {
+                    "type": "string",
+                    "enum": [
+                        "row",
+                        "column"
+                    ]
+                },
+                "justifyContent": {
+                    "type": "string",
+                    "enum": [
+                        "start",
+                        "end",
+                        "center",
+                        "between"
+                    ]
+                },
+                "alignItems": {
+                    "type": "string",
+                    "enum": [
+                        "start",
+                        "end",
+                        "center"
+                    ]
+                },
+                "marginLeft": {
+                    "type": "number"
+                },
+                "marginRight": {
+                    "type": "number"
+                },
+                "marginTop": {
+                    "type": "number"
+                },
+                "marginBottom": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "id",
+                "contents",
+                "x",
+                "y",
+                "width",
+                "height"
+            ],
+            "additionalProperties": false
+        },
+        "TemplateContent": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/TemplateTextContent"
+                },
+                {
+                    "$ref": "#/definitions/TemplateImageContent"
+                },
+                {
+                    "$ref": "#/definitions/TemplateColorContent"
+                },
+                {
+                    "$ref": "#/definitions/TemplateReferenceContent"
+                },
+                {
+                    "$ref": "#/definitions/TemplateSnapshotContent"
+                }
+            ]
+        },
+        "TemplateTextContent": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "type": "string",
+                    "const": "text"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "textExpression": {
+                    "type": "string"
+                },
+                "textExpressionId": {
+                    "type": "string"
+                },
+                "fontFamily": {
+                    "type": "string"
+                },
+                "fontSize": {
+                    "type": "number"
+                },
+                "fontSizeExpression": {
+                    "type": "string"
+                },
+                "fontSizeExpressionId": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "colorExpression": {
+                    "type": "string"
+                },
+                "colorExpressionId": {
+                    "type": "string"
+                },
+                "characters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/TextCharacter"
+                    }
+                },
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "z": {
+                    "type": "integer"
+                },
+                "width": {
+                    "type": "number"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "xExpression": {
+                    "type": "string"
+                },
+                "yExpression": {
+                    "type": "string"
+                },
+                "zExpression": {
+                    "type": "string"
+                },
+                "xExpressionId": {
+                    "type": "string"
+                },
+                "yExpressionId": {
+                    "type": "string"
+                },
+                "zExpressionId": {
+                    "type": "string"
+                },
+                "widthExpression": {
+                    "type": "string"
+                },
+                "heightExpression": {
+                    "type": "string"
+                },
+                "widthExpressionId": {
+                    "type": "string"
+                },
+                "heightExpressionId": {
+                    "type": "string"
+                },
+                "if": {
+                    "type": "string"
+                },
+                "ifId": {
+                    "type": "string"
+                },
+                "else": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "repeat": {
+                    "type": "string"
+                },
+                "repeatId": {
+                    "type": "string"
+                },
+                "hidden": {
+                    "type": "boolean"
+                },
+                "rotate": {
+                    "type": "number",
+                    "default": 0
+                },
+                "rotateExpression": {
+                    "type": "string"
+                },
+                "rotateExpressionId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "kind",
+                "text",
+                "fontFamily",
+                "fontSize",
+                "color",
+                "x",
+                "y",
+                "width",
+                "height"
+            ],
+            "additionalProperties": false
+        },
+        "TextCharacter": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "text"
+            ],
+            "additionalProperties": false
+        },
+        "TemplateImageContent": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "type": "string",
+                    "const": "image"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "urlExpression": {
+                    "type": "string"
+                },
+                "urlExpressionId": {
+                    "type": "string"
+                },
+                "opacity": {
+                    "type": "number"
+                },
+                "base64": {
+                    "type": "string"
+                },
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "z": {
+                    "type": "integer"
+                },
+                "width": {
+                    "type": "number"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "xExpression": {
+                    "type": "string"
+                },
+                "yExpression": {
+                    "type": "string"
+                },
+                "zExpression": {
+                    "type": "string"
+                },
+                "xExpressionId": {
+                    "type": "string"
+                },
+                "yExpressionId": {
+                    "type": "string"
+                },
+                "zExpressionId": {
+                    "type": "string"
+                },
+                "widthExpression": {
+                    "type": "string"
+                },
+                "heightExpression": {
+                    "type": "string"
+                },
+                "widthExpressionId": {
+                    "type": "string"
+                },
+                "heightExpressionId": {
+                    "type": "string"
+                },
+                "if": {
+                    "type": "string"
+                },
+                "ifId": {
+                    "type": "string"
+                },
+                "else": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "repeat": {
+                    "type": "string"
+                },
+                "repeatId": {
+                    "type": "string"
+                },
+                "hidden": {
+                    "type": "boolean"
+                },
+                "rotate": {
+                    "type": "number",
+                    "default": 0
+                },
+                "rotateExpression": {
+                    "type": "string"
+                },
+                "rotateExpressionId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "kind",
+                "url",
+                "x",
+                "y",
+                "width",
+                "height"
+            ],
+            "additionalProperties": false
+        },
+        "TemplateColorContent": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "type": "string",
+                    "const": "color"
+                },
+                "color": {
+                    "type": "string"
+                },
+                "colorExpression": {
+                    "type": "string"
+                },
+                "colorExpressionId": {
+                    "type": "string"
+                },
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "z": {
+                    "type": "integer"
+                },
+                "width": {
+                    "type": "number"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "xExpression": {
+                    "type": "string"
+                },
+                "yExpression": {
+                    "type": "string"
+                },
+                "zExpression": {
+                    "type": "string"
+                },
+                "xExpressionId": {
+                    "type": "string"
+                },
+                "yExpressionId": {
+                    "type": "string"
+                },
+                "zExpressionId": {
+                    "type": "string"
+                },
+                "widthExpression": {
+                    "type": "string"
+                },
+                "heightExpression": {
+                    "type": "string"
+                },
+                "widthExpressionId": {
+                    "type": "string"
+                },
+                "heightExpressionId": {
+                    "type": "string"
+                },
+                "if": {
+                    "type": "string"
+                },
+                "ifId": {
+                    "type": "string"
+                },
+                "else": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "repeat": {
+                    "type": "string"
+                },
+                "repeatId": {
+                    "type": "string"
+                },
+                "hidden": {
+                    "type": "boolean"
+                },
+                "rotate": {
+                    "type": "number",
+                    "default": 0
+                },
+                "rotateExpression": {
+                    "type": "string"
+                },
+                "rotateExpressionId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "kind",
+                "color",
+                "x",
+                "y",
+                "width",
+                "height"
+            ],
+            "additionalProperties": false
+        },
+        "TemplateReferenceContent": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "type": "string",
+                    "const": "reference"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "props": {
+                    "type": "string"
+                },
+                "propsIds": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "z": {
+                    "type": "integer"
+                },
+                "xExpression": {
+                    "type": "string"
+                },
+                "yExpression": {
+                    "type": "string"
+                },
+                "zExpression": {
+                    "type": "string"
+                },
+                "xExpressionId": {
+                    "type": "string"
+                },
+                "yExpressionId": {
+                    "type": "string"
+                },
+                "zExpressionId": {
+                    "type": "string"
+                },
+                "if": {
+                    "type": "string"
+                },
+                "ifId": {
+                    "type": "string"
+                },
+                "else": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "repeat": {
+                    "type": "string"
+                },
+                "repeatId": {
+                    "type": "string"
+                },
+                "hidden": {
+                    "type": "boolean"
+                },
+                "rotate": {
+                    "type": "number",
+                    "default": 0
+                }
+            },
+            "required": [
+                "kind",
+                "id",
+                "x",
+                "y"
+            ],
+            "additionalProperties": false
+        },
+        "TemplateSnapshotContent": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "type": "string",
+                    "const": "snapshot"
+                },
+                "snapshot": {
+                    "$ref": "#/definitions/Template"
+                },
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "z": {
+                    "type": "integer"
+                },
+                "xExpression": {
+                    "type": "string"
+                },
+                "yExpression": {
+                    "type": "string"
+                },
+                "zExpression": {
+                    "type": "string"
+                },
+                "xExpressionId": {
+                    "type": "string"
+                },
+                "yExpressionId": {
+                    "type": "string"
+                },
+                "zExpressionId": {
+                    "type": "string"
+                },
+                "hidden": {
+                    "type": "boolean"
+                },
+                "rotate": {
+                    "type": "number",
+                    "default": 0
+                }
+            },
+            "required": [
+                "kind",
+                "snapshot",
+                "x",
+                "y"
             ],
             "additionalProperties": false
         }

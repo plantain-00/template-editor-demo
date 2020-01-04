@@ -3,8 +3,9 @@ import Component from 'vue-class-component'
 import Ajv from 'ajv'
 import * as jsonpatch from 'fast-json-patch'
 import { setWsHeartbeat } from 'ws-heartbeat/client'
+import { removeDefault } from 'remove-default'
 
-import { appPanelTemplateHtml, appPanelTemplateHtmlStatic, distStyleguideSchemaJson } from './variables'
+import { appPanelTemplateHtml, appPanelTemplateHtmlStatic, distStyleguideSchemaJson, distTemplateSchemaJson } from './variables'
 import { generate, PrecompiledStyleGuide } from './engine/template-engine'
 import { StyleGuide, Template } from './model'
 import { AppState } from './app-state'
@@ -84,7 +85,7 @@ export class AppPanel extends Vue {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(this.appState.canvasState.styleGuide)
+        body: JSON.stringify(this.appState.canvasState.styleGuide.templates.map((r) => removeDefault<Template>(r, distTemplateSchemaJson) as Template))
       })
     }
   }
@@ -167,7 +168,7 @@ export class AppPanel extends Vue {
     for (const reason of reasons) {
       console.info(reason.stack ? reason.stack.join(' ') : '', reason.expression, reason.error.message, reason.model)
     }
-    return result
+    return result.map((r) => removeDefault<Template>(r, distTemplateSchemaJson) as Template)
   }
 
   precompile() {

@@ -30,6 +30,9 @@ export interface StyleGuideVariable {
   value: unknown
 }
 
+/**
+ * @entry template.schema.json
+ */
 export interface Template extends Region, SizeExpression, FlexField {
   id: string
   name?: string
@@ -126,6 +129,9 @@ export interface SizeExpression {
 }
 
 export interface Rotate {
+  /**
+   * @default 0
+   */
   rotate?: number
 }
 
@@ -141,6 +147,9 @@ interface RegionExpression extends PositionExpression, SizeExpression { }
 interface GenerationField {
   if?: string
   ifId?: string
+  /**
+   * @default false
+   */
   else?: boolean
   repeat?: string
   repeatId?: string
