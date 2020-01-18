@@ -44,7 +44,7 @@ export class AppPanel extends Vue {
 
   async loadStyleGuide() {
     if (this.styleGuideKey) {
-      const res = await fetch(`https://storage.yorkyao.xyz/${this.styleGuideKey}`)
+      const res = await fetch(`https://storage.yorkyao.com/${this.styleGuideKey}`)
       const json: StyleGuide = await res.json()
       const valid = validateStyleGuide(json)
       if (valid) {
@@ -54,7 +54,7 @@ export class AppPanel extends Vue {
             this.ws.close()
           }
           this.key = this.styleGuideKey
-          this.ws = new WebSocket(`wss://storage.yorkyao.xyz/ws/template-editor-demo?key=${this.key}`)
+          this.ws = new WebSocket(`wss://storage.yorkyao.com/ws/template-editor-demo?key=${this.key}`)
           setWsHeartbeat(this.ws, '{"method":"ping"}')
           this.ws.onmessage = (data) => {
             if (typeof data.data === 'string' && data.data) { // type-coverage:ignore-line
@@ -80,7 +80,7 @@ export class AppPanel extends Vue {
 
   async saveStyleGuide() {
     if (this.styleGuideKey) {
-      await fetch(`https://storage.yorkyao.xyz/${this.styleGuideKey}`, {
+      await fetch(`https://storage.yorkyao.com/${this.styleGuideKey}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -92,7 +92,7 @@ export class AppPanel extends Vue {
 
   async loadTemplateModel() {
     if (this.templateModelKey) {
-      const res = await fetch(`https://storage.yorkyao.xyz/${this.templateModelKey}`)
+      const res = await fetch(`https://storage.yorkyao.com/${this.templateModelKey}`)
       const json: { [key: string]: unknown } = await res.json()
       this.appState.templateModel = json
     }
@@ -100,7 +100,7 @@ export class AppPanel extends Vue {
 
   async saveTemplateModel() {
     if (this.templateModelKey) {
-      await fetch(`https://storage.yorkyao.xyz/${this.templateModelKey}`, {
+      await fetch(`https://storage.yorkyao.com/${this.templateModelKey}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
