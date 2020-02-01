@@ -1,6 +1,6 @@
-import test from 'ava'
+const test = require('ava')
 
-import { iterateAllTemplateRegions } from '../test-dist/utils'
+const { iterateAllTemplateRegions } = require('../test-dist/utils')
 
 const title = 'select price template'
 

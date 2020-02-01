@@ -1,6 +1,6 @@
-import test from 'ava'
+const test = require('ava')
 
-import { iterateAllNameRegions } from '../test-dist/utils'
+const { iterateAllNameRegions } = require('../test-dist/utils')
 
 const title = 'select every name'
 

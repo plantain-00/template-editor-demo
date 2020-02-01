@@ -1,8 +1,8 @@
-import test from 'ava'
-import Vue from 'vue'
-import * as vueServerRenderer from 'vue-server-renderer'
+const test = require('ava')
+const Vue = require('vue')
+const vueServerRenderer = require('vue-server-renderer')
 
-import { TemplateRenderer } from '../test-dist/engine/vue-renderer'
+const { TemplateRenderer } = require('../test-dist/engine/vue-renderer')
 
 const title = 'render every ui component'
 
