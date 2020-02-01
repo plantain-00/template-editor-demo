@@ -1,7 +1,7 @@
-import test from 'ava'
+const test = require('ava')
 
-import { generate } from '../test-dist/engine/template-engine'
-import { renderTemplateOnCanvas } from '../test-dist/engine/canvas-renderer'
+const { generate } = require('../test-dist/engine/template-engine')
+const { renderTemplateOnCanvas } = require('../test-dist/engine/canvas-renderer')
 
 const title = 'generate and render'
 

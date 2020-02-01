@@ -1,6 +1,6 @@
-import test from 'ava'
+const test = require('ava')
 
-import { iterateAllContentRegions } from '../test-dist/utils'
+const { iterateAllContentRegions } = require('../test-dist/utils')
 
 const title = 'select all contents'
 

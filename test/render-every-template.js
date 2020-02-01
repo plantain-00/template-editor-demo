@@ -1,6 +1,6 @@
-import test from 'ava'
+const test = require('ava')
 
-import { renderTemplateOnCanvas } from '../test-dist/engine/canvas-renderer'
+const { renderTemplateOnCanvas } = require('../test-dist/engine/canvas-renderer')
 
 const title = 'render every template'
 
