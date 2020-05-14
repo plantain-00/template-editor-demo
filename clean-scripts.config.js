@@ -1,8 +1,8 @@
-const { Service, executeScriptAsync } = require('clean-scripts')
+const { executeScriptAsync } = require('clean-scripts')
 const { watch } = require('watch-then-execute')
 
-const tsFiles = `"src/**/*.ts" "spec/**/*.ts"`
-const jsFiles = `"*.config.js" "spec/**/*.config.js"`
+const tsFiles = `"src/**/*.ts"`
+const jsFiles = `"*.config.js"`
 const lessFiles = `"*.less"`
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -45,10 +45,7 @@ module.exports = {
     typeCoverage: 'type-coverage -p . --ignore-files src/variables.ts --ignore-catch'
   },
   test: [
-    'tsc -p tsconfig.test.json',
-    'ava',
-    'tsc -p spec',
-    'karma start spec/karma.config.js'
+    'ava'
   ],
   fix: {
     ts: `eslint --ext .js,.ts ${tsFiles} ${jsFiles} --fix`,
@@ -59,17 +56,5 @@ module.exports = {
     webpack: `${webpackCommand} --watch`,
     less: () => watch(['*.less'], [], () => executeScriptAsync(cssCommand)),
     rev: `${revStaticCommand} --watch`
-  },
-  screenshot: [
-    new Service('http-server -p 8000'),
-    'tsc -p screenshots',
-    'node screenshots/index.js'
-  ],
-  prerender: [
-    new Service('http-server -p 8000'),
-    'tsc -p prerender',
-    'node prerender/index.js',
-    revStaticCommand,
-    swCommand
-  ]
+  }
 }
