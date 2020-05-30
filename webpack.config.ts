@@ -1,22 +1,20 @@
-const isDev = process.env.NODE_ENV === 'development'
-
-module.exports = {
+export default {
   mode: process.env.NODE_ENV,
   entry: {
-    index: './dist/index'
+    index: './src/index'
   },
   output: {
     path: __dirname,
     filename: '[name].bundle.js'
   },
-  resolve: isDev ? {
+  resolve: {
     extensions: ['.ts', '.tsx', '.js']
-  } : undefined,
-  module: isDev ? {
+  },
+  module: {
     rules: [
       { test: /\.tsx?$/, loader: 'ts-loader' }
     ]
-  } : undefined,
+  },
   optimization: {
     splitChunks: {
       cacheGroups: {

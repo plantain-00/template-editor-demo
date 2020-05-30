@@ -5,7 +5,7 @@ import * as jsonpatch from 'fast-json-patch'
 import { setWsHeartbeat } from 'ws-heartbeat/client'
 import { removeDefault } from 'remove-default'
 
-import { appPanelTemplateHtml, appPanelTemplateHtmlStatic, distStyleguideSchemaJson, distTemplateSchemaJson } from './variables'
+import { appPanelTemplateHtml, appPanelTemplateHtmlStatic, styleguideSchemaJson, templateSchemaJson } from './variables'
 import { generate, PrecompiledStyleGuide } from './engine/template-engine'
 import { StyleGuide, Template } from './model'
 import { AppState } from './app-state'
@@ -13,7 +13,7 @@ import { ExpressionErrorReason } from './engine/expression'
 import { getVariableObject } from './utils'
 
 const ajv = new Ajv()
-const validateStyleGuide = ajv.compile(distStyleguideSchemaJson)
+const validateStyleGuide = ajv.compile(styleguideSchemaJson)
 
 @Component({
   render: appPanelTemplateHtml,
@@ -85,7 +85,7 @@ export class AppPanel extends Vue {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(this.appState.canvasState.styleGuide.templates.map((r) => removeDefault<Template>(r, distTemplateSchemaJson) as Template))
+        body: JSON.stringify(this.appState.canvasState.styleGuide.templates.map((r) => removeDefault<Template>(r, templateSchemaJson) as Template))
       })
     }
   }
@@ -168,7 +168,7 @@ export class AppPanel extends Vue {
     for (const reason of reasons) {
       console.info(reason.stack ? reason.stack.join(' ') : '', reason.expression, reason.error.message, reason.model)
     }
-    return result.map((r) => removeDefault<Template>(r, distTemplateSchemaJson) as Template)
+    return result.map((r) => removeDefault<Template>(r, templateSchemaJson) as Template)
   }
 
   precompile() {

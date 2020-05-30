@@ -1,14 +1,14 @@
-const path = require('path')
+import * as path from 'path'
+import { Configuration } from 'file2variable-cli'
 
-module.exports = {
+const isDev = process.env.NODE_ENV === 'development'
+
+export default {
   base: 'src',
   files: [
     'src/**/*.template.html',
-    'dist/**/*.schema.json'
+    'src/**/*.schema.json'
   ],
-  /**
-   * @argument {string} file
-   */
   handler: (file) => {
     if (file.endsWith('.schema.json')) {
       return {
@@ -19,6 +19,7 @@ module.exports = {
       return {
         type: 'vue',
         name: 'App',
+        position: isDev,
         path: './index'
       }
     }
@@ -29,6 +30,7 @@ module.exports = {
       const names = filename.substring(0, filename.length - '.template.html'.length).split('-')
       return {
         type: 'vue',
+        position: isDev,
         name: names.map((n) => n[0].toUpperCase() + n.substring(1)).join(''),
         path: (dirname === '.' ? '.' : './' + dirname) + '/' + names.join('-')
       }
@@ -36,4 +38,4 @@ module.exports = {
     return { type: 'text' }
   },
   out: 'src/variables.ts'
-}
+} as Configuration

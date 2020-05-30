@@ -74,3 +74,4 @@ service-worker.js
 #index.html
 *.data
 test-dist
+*.schema.json

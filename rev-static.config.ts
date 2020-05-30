@@ -1,4 +1,6 @@
-module.exports = {
+import { ConfigData } from 'rev-static'
+
+export default {
   inputFiles: [
     '*.bundle.js',
     '*.bundle.css',
@@ -20,4 +22,4 @@ module.exports = {
   sha: 256,
   customNewFileName: (filePath, fileString, md5String, baseName, extensionName) => baseName + '-' + md5String + extensionName,
   fileSize: 'file-size.json'
-}
+} as ConfigData
