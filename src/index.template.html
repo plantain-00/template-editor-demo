@@ -1,8 +1,8 @@
 <div style="display: flex; flex-direction: column">
   <div style="height: 50px">
-    <app-panel :appState="appState"></app-panel>
-    <template-model-editor :appState="appState"></template-model-editor>
+    <app-panel :app-state="appState"></app-panel>
+    <template-model-editor :app-state="appState"></template-model-editor>
   </div>
-  <template-editor v-if="appState.graphicCanvasState" :canvasState="appState.graphicCanvasState"></template-editor>
-  <template-editor v-show="!appState.graphicCanvasState" :canvasState="appState.canvasState"></template-editor>
+  <template-editor v-if="appState.graphicCanvasState" :canvas-state="appState.graphicCanvasState"></template-editor>
+  <template-editor v-show="!appState.graphicCanvasState" :canvas-state="appState.canvasState"></template-editor>
 </div>

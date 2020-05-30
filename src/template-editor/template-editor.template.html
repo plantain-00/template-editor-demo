@@ -1,17 +1,17 @@
 <div style="display: flex">
   <div :style="layerPanelStyle">
-    <layer-panel :canvasState="canvasState"></layer-panel>
+    <layer-panel :canvas-state="canvasState"></layer-panel>
   </div>
   <div :style="canvasStyle">
-    <render-layer :canvasState="canvasState"></render-layer>
-    <selection-layer :canvasState="canvasState"></selection-layer>
-    <hover-layer :canvasState="canvasState"></hover-layer>
-    <dragging-for-selection-layer :canvasState="canvasState"></dragging-for-selection-layer>
-    <mask-layer :canvasState="canvasState"></mask-layer>
-    <context-menu :canvasState="canvasState"></context-menu>
+    <render-layer :canvas-state="canvasState"></render-layer>
+    <selection-layer :canvas-state="canvasState"></selection-layer>
+    <hover-layer :canvas-state="canvasState"></hover-layer>
+    <dragging-for-selection-layer :canvas-state="canvasState"></dragging-for-selection-layer>
+    <mask-layer :canvas-state="canvasState"></mask-layer>
+    <context-menu :canvas-state="canvasState"></context-menu>
   </div>
   <div :style="operationPanelStyle">
-    <operation-panel :canvasState="canvasState"></operation-panel>
+    <operation-panel :canvas-state="canvasState"></operation-panel>
   </div>
-  <common-editor :canvasState="canvasState"></common-editor>
+  <common-editor :canvas-state="canvasState"></common-editor>
 </div>

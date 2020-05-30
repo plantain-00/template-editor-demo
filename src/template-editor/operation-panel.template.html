@@ -2,7 +2,7 @@
   <div v-if="canvasState.selection.kind === 'content'">
     <div v-if="canvasState.selection.content.kind === 'text'">
       text
-      <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.text" literalType="text"
+      <expression-input :canvas-state="canvasState" :literal="canvasState.selection.content.text" literalType="text"
         :expression="canvasState.selection.content.textExpression"
         :expressionId="canvasState.selection.content.textExpressionId" @change="changeTextExpression" />
       <br />
@@ -10,18 +10,18 @@
       <input type="text" :value="canvasState.selection.content.fontFamily" @change="changeFontFamily" />
       <br />
       font size
-      <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.fontSize"
+      <expression-input :canvas-state="canvasState" :literal="canvasState.selection.content.fontSize"
         literalType="number" :expression="canvasState.selection.content.fontSizeExpression"
         :expressionId="canvasState.selection.content.fontSizeExpressionId" @change="changeFontSizeExpression" />
       <br />
       color
-      <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.color" literalType="color"
+      <expression-input :canvas-state="canvasState" :literal="canvasState.selection.content.color" literalType="color"
         :expression="canvasState.selection.content.colorExpression"
         :expressionId="canvasState.selection.content.colorExpressionId" @change="changeColorExpression" />
     </div>
     <div v-if="canvasState.selection.content.kind === 'image'">
       url
-      <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.url" literalType="text"
+      <expression-input :canvas-state="canvasState" :literal="canvasState.selection.content.url" literalType="text"
         :expression="canvasState.selection.content.urlExpression"
         :expressionId="canvasState.selection.content.urlExpressionId" @change="changeImageUrlExpression" />
       <div>
@@ -31,25 +31,25 @@
     </div>
     <div v-if="canvasState.selection.content.kind === 'color'">
       color
-      <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.color" literalType="color"
+      <expression-input :canvas-state="canvasState" :literal="canvasState.selection.content.color" literalType="color"
         :expression="canvasState.selection.content.colorExpression"
         :expressionId="canvasState.selection.content.colorExpressionId" @change="changeColorExpression" />
     </div>
     <div>
       x
-      <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.x" literalType="number"
+      <expression-input :canvas-state="canvasState" :literal="canvasState.selection.content.x" literalType="number"
         :expression="canvasState.selection.content.xExpression"
         :expressionId="canvasState.selection.content.xExpressionId" @change="changePositionExpression($event, 'x')" />
     </div>
     <div>
       y
-      <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.y" literalType="number"
+      <expression-input :canvas-state="canvasState" :literal="canvasState.selection.content.y" literalType="number"
         :expression="canvasState.selection.content.yExpression"
         :expressionId="canvasState.selection.content.yExpressionId" @change="changePositionExpression($event, 'y')" />
     </div>
     <div>
       z
-      <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.z" literalType="number"
+      <expression-input :canvas-state="canvasState" :literal="canvasState.selection.content.z" literalType="number"
         :expression="canvasState.selection.content.zExpression"
         :expressionId="canvasState.selection.content.zExpressionId" @change="changePositionExpression($event, 'z')" />
     </div>
@@ -57,14 +57,14 @@
       v-if="canvasState.selection.content.kind === 'text' || canvasState.selection.content.kind === 'image' || canvasState.selection.content.kind === 'color'">
       <div>
         width
-        <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.width" literalType="number"
+        <expression-input :canvas-state="canvasState" :literal="canvasState.selection.content.width" literalType="number"
           :expression="canvasState.selection.content.widthExpression"
           :expressionId="canvasState.selection.content.widthExpressionId"
           @change="changeSizeExpression($event, 'width')" />
       </div>
       <div>
         height
-        <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.height"
+        <expression-input :canvas-state="canvasState" :literal="canvasState.selection.content.height"
           literalType="number" :expression="canvasState.selection.content.heightExpression"
           :expressionId="canvasState.selection.content.heihtExpressionId"
           @change="changeSizeExpression($event, 'height')" />
@@ -72,7 +72,7 @@
     </div>
     <div>
       rotate
-      <expression-input :canvasState="canvasState" :literal="canvasState.selection.content.rotate" literalType="number"
+      <expression-input :canvas-state="canvasState" :literal="canvasState.selection.content.rotate" literalType="number"
         :expression="canvasState.selection.content.rotateExpression"
         :expressionId="canvasState.selection.content.rotateExpressionId" @change="changeRotateExpression($event)" />
     </div>
@@ -85,12 +85,12 @@
         <option value="false">if</option>
         <option value="true">else if</option>
       </select>
-      <expression-input :canvasState="canvasState" :expression="canvasState.selection.content.if"
+      <expression-input :canvas-state="canvasState" :expression="canvasState.selection.content.if"
         :expressionId="canvasState.selection.content.ifId" @change="changeIf" />
     </div>
     <div>
       repeat
-      <expression-input :canvasState="canvasState" :expression="repeat.expression"
+      <expression-input :canvas-state="canvasState" :expression="repeat.expression"
         :expressionId="canvasState.selection.content.repeatId" @change="changeRepeatExpression" />
       <input type="text" :value="repeat.itemName" @change="changeRepeatItemName" placeholder="item name"
         style="width: 150px; margin-left: 25px;" />
@@ -103,7 +103,7 @@
       <div v-if="parameters" style="margin-left: 10px;">
         <div v-for="parameter of parameters">
           {{parameter}}
-          <expression-input :canvasState="canvasState" :expression="getParameterValue(parameter)"
+          <expression-input :canvas-state="canvasState" :expression="getParameterValue(parameter)"
             :expressionId="getParameterExpressionId(parameter)" @change="changeParameterValue($event, parameter)" />
         </div>
       </div>
@@ -132,14 +132,14 @@
     </div>
     <div>
       width
-      <expression-input :canvasState="canvasState" :literal="canvasState.selection.template.width" literalType="number"
+      <expression-input :canvas-state="canvasState" :literal="canvasState.selection.template.width" literalType="number"
         :expression="canvasState.selection.template.widthExpression"
         :expressionId="canvasState.selection.template.widthExpressionId"
         @change="changeSizeExpression($event, 'width')" />
     </div>
     <div>
       height
-      <expression-input :canvasState="canvasState" :literal="canvasState.selection.template.height" literalType="number"
+      <expression-input :canvas-state="canvasState" :literal="canvasState.selection.template.height" literalType="number"
         :expression="canvasState.selection.template.heightExpression"
         :expressionId="canvasState.selection.template.heightExpressionId"
         @change="changeSizeExpression($event, 'height')" />
