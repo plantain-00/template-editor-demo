@@ -85,7 +85,10 @@ export class AppPanel extends Vue {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(this.appState.canvasState.styleGuide.templates.map((r) => removeDefault<Template>(r, templateSchemaJson) as Template))
+        body: JSON.stringify({
+          ...this.appState.canvasState.styleGuide,
+          templates: this.appState.canvasState.styleGuide.templates.map((r) => removeDefault<Template>(r, templateSchemaJson) as Template)
+        })
       })
     }
   }
