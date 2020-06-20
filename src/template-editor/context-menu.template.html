@@ -2,5 +2,6 @@
   <div :style="maskStyle"></div>
   <div :style="contextMenuStyle">
     <button @click="remove">remove</button>
+    <button v-for="target of targets" @click="select(target)">{{getTargetDisplayName(target)}}</button>
   </div>
 </div>

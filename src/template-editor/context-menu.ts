@@ -4,6 +4,7 @@ import Component from 'vue-class-component'
 import { CanvasState } from './canvas-state'
 import { templateEditorContextMenuTemplateHtml, templateEditorContextMenuTemplateHtmlStatic } from '../variables'
 import { isInRegion } from '../utils'
+import { iterateContentOrTemplateByPosition, ContentOrTemplateRegion, getTemplateDisplayName, getContentDisplayName } from './utils'
 
 @Component({
   render: templateEditorContextMenuTemplateHtml,
@@ -31,6 +32,22 @@ export class ContextMenu extends Vue {
       height: this.canvasState.canvasHeight + 'px',
       opacity: 0,
     }
+  }
+
+  get targets() {
+    const x = this.canvasState.mapX(this.canvasState.contextMenuX)
+    const y = this.canvasState.mapY(this.canvasState.contextMenuY)
+    return Array.from(iterateContentOrTemplateByPosition(this.canvasState, {
+      x,
+      y,
+    }))
+  }
+
+  getTargetDisplayName(target: ContentOrTemplateRegion) {
+    if (target.kind === 'template') {
+      return getTemplateDisplayName(target.region.template)
+    }
+    return getContentDisplayName(target.region.content, this.canvasState.styleGuide)
   }
 
   close(e: MouseEvent) {
@@ -73,5 +90,21 @@ export class ContextMenu extends Vue {
         return
       }
     }
+  }
+
+  select(target: ContentOrTemplateRegion) {
+    if (target.kind === 'content') {
+      this.canvasState.selection = {
+        kind: 'content',
+        content: target.region.content,
+        template: target.region.template
+      }
+    } else if (target.kind === 'template') {
+      this.canvasState.selection = {
+        kind: 'template',
+        template: target.region.template
+      }
+    }
+    this.canvasState.hasRelationWithSelection = false
   }
 }
