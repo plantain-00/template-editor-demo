@@ -11,6 +11,25 @@ export function* iterateAllTemplateRegions(
   }
 }
 
+export type TemplateRegion = Required<Region> & Rotate & {
+  parent?: TemplateParent
+  template: Template
+}
+export type ContentRegion = Required<Region> & Rotate & {
+  index: number
+  contents: TemplateContent[]
+  content: TemplateContent
+  parent: Template
+  template: Template
+  rotates: Array<Required<Rotate> & Position>
+}
+
+interface TemplateParent {
+  content: TemplateReferenceContent
+  template: Template
+  index: number
+}
+
 export function* iterateAllContentRegions(
   target: TemplateContent | undefined,
   styleGuide: StyleGuide,
@@ -65,7 +84,7 @@ function* iterateAllTemplate(
   rotate: number,
   props: unknown,
   parent?: { content: TemplateReferenceContent, template: Template, index: number },
-): Generator<Required<Region> & Rotate & { parent?: { content: TemplateReferenceContent, template: Template, index: number }, template: Template }, void, unknown> {
+): Generator<TemplateRegion, void, unknown> {
   if (template === target || target === undefined) {
     const width = evaluateSizeExpression('width', template, { props })
     const height = evaluateSizeExpression('height', template, { props })
@@ -117,7 +136,7 @@ function* iterateAllContent(
   styleGuide: StyleGuide,
   rotates: Array<Required<Rotate> & Position>,
   props: unknown,
-): Generator<Required<Region> & Rotate & { index: number, contents: TemplateContent[], content: TemplateContent, parent: Template, template: Template, rotates: Array<Required<Rotate> & Position> }, void, unknown> {
+): Generator<ContentRegion, void, unknown> {
   for (let i = 0; i < parent.contents.length; i++) {
     const content = parent.contents[i]
     if (content === target || target === undefined) {
@@ -192,7 +211,7 @@ export function getPosition(props: unknown, type: 'x' | 'y' | 'z', content: Temp
   return evaluatePositionExpression(type, content, { props })
 }
 
-export function* iterateAllNameRegions(target: Template | undefined, styleGuide: StyleGuide, scale: number) {
+export function* iterateAllNameRegions(target: Template | undefined, styleGuide: StyleGuide, scale: number): Generator<TemplateRegion, void, unknown> {
   const realNameSize = nameSize / scale
   for (const template of styleGuide.templates) {
     if ((target === undefined || target === template) && template.name) {

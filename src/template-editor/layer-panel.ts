@@ -5,6 +5,7 @@ import { DropPosition } from 'tree-vue-component'
 
 import { CanvasState } from './canvas-state'
 import { TemplateContent, Template } from '../model'
+import { getTemplateDisplayName, getContentDisplayName } from './utils'
 
 @Component({
   props: ['canvasState']
@@ -102,26 +103,10 @@ class LayerNode extends Vue {
   }
 
   private get contentName() {
-    const content = this.content
-    if (!content) {
-      return this.template.name || 'template'
+    if (!this.content) {
+      return getTemplateDisplayName(this.template)
     }
-    if (content.kind === 'text' && content.text) {
-      return content.text
-    }
-    if (content.kind === 'color' && content.color) {
-      return content.color
-    }
-    if (content.kind === 'reference') {
-      const template = this.canvasState.styleGuide.templates.find((t) => t.id === content.id)
-      if (template && template.name) {
-        return template.name
-      }
-    }
-    if (content.kind === 'snapshot' && content.snapshot.name) {
-      return content.snapshot.name
-    }
-    return content.kind
+    return getContentDisplayName(this.content, this.canvasState.styleGuide)
   }
 
   private get contents() {

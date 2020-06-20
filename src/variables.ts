@@ -742,7 +742,7 @@ export function templateEditorCommonEditorTemplateHtml(this: CommonEditor) {var 
 // @ts-ignore
 export var templateEditorCommonEditorTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function templateEditorContextMenuTemplateHtml(this: ContextMenu) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.canvasState.contextMenuEnabled)?_c('div',{on:{"click":_vm.close}},[_c('div',{style:(_vm.maskStyle)}),_vm._v(" "),_c('div',{style:(_vm.contextMenuStyle)},[_c('button',{on:{"click":_vm.remove}},[_vm._v("remove")])])]):_vm._e()}
+export function templateEditorContextMenuTemplateHtml(this: ContextMenu) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.canvasState.contextMenuEnabled)?_c('div',{on:{"click":_vm.close}},[_c('div',{style:(_vm.maskStyle)}),_vm._v(" "),_c('div',{style:(_vm.contextMenuStyle)},[_c('button',{on:{"click":_vm.remove}},[_vm._v("remove")]),_vm._v(" "),_vm._l((_vm.targets),function(target){return _c('button',{on:{"click":function($event){return _vm.select(target)}}},[_vm._v(_vm._s(_vm.getTargetDisplayName(target)))])})],2)]):_vm._e()}
 // @ts-ignore
 export var templateEditorContextMenuTemplateHtmlStatic = [  ]
 // @ts-ignore
