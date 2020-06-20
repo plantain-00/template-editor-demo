@@ -154,15 +154,15 @@ export class CanvasState extends Vue {
   }
 
   get targetTemplateRegions() {
-    return Array.from(iterateAllTemplateRegions(undefined, this.styleGuide)).sort((a, b) => a.z - b.z).reverse()
+    return sortByZ(Array.from(iterateAllTemplateRegions(undefined, this.styleGuide)))
   }
 
   get targetContentRegions() {
-    return Array.from(iterateAllContentRegions(undefined, this.styleGuide)).sort((a, b) => a.z - b.z).reverse()
+    return sortByZ(Array.from(iterateAllContentRegions(undefined, this.styleGuide)))
   }
 
   get targetNameRegions() {
-    return Array.from(iterateAllNameRegions(undefined, this.styleGuide, this.styleGuideScale)).sort((a, b) => a.z - b.z).reverse()
+    return sortByZ(Array.from(iterateAllNameRegions(undefined, this.styleGuide, this.styleGuideScale)))
   }
 
   presetExpressions = presetExpressions
@@ -174,4 +174,13 @@ export class CanvasState extends Vue {
 export function equal(n1: number, n2: number) {
   const diff = n1 - n2
   return diff < Number.EPSILON && diff > -Number.EPSILON
+}
+
+function sortByZ<T extends { z: number }>(targets: T[]) {
+  return targets.map((t, i) => ({ target: t, index: i })).sort((a, b) => {
+    if (a.target.z !== b.target.z) {
+      return b.target.z - a.target.z
+    }
+    return b.index - a.index
+  }).map((t) => t.target)
 }
