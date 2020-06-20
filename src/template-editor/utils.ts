@@ -1,6 +1,6 @@
 import { CanvasState } from './canvas-state'
-import { Region, Position, TemplateContent, Template, TemplateReferenceContent, Rotate } from '../model'
-import { isInRegion, nameSize, formatPixel, rotatePosition } from '../utils'
+import { Region, Position, TemplateContent, Template, TemplateReferenceContent, Rotate, StyleGuide } from '../model'
+import { isInRegion, nameSize, formatPixel, rotatePosition, TemplateRegion, ContentRegion } from '../utils'
 
 export function selectContentOrTemplateByPosition(canvasState: CanvasState, position: Position) {
   const generator = iterateContentOrTemplateByPosition(canvasState, position)
@@ -8,21 +8,29 @@ export function selectContentOrTemplateByPosition(canvasState: CanvasState, posi
   return result.done ? undefined : result.value
 }
 
-function* iterateContentOrTemplateByPosition(canvasState: CanvasState, position: Position) {
+export type ContentOrTemplateRegion = {
+  kind: "template";
+  region: TemplateRegion;
+} | {
+  kind: "content";
+  region: ContentRegion;
+}
+
+export function* iterateContentOrTemplateByPosition(canvasState: CanvasState, position: Position): Generator<ContentOrTemplateRegion, void, unknown> {
   for (const nameRegion of canvasState.targetNameRegions) {
     if (isInRegion(position, nameRegion)) {
-      yield { kind: 'template' as const, region: nameRegion }
+      yield { kind: 'template', region: nameRegion }
     }
   }
 
   for (const contentRegion of canvasState.targetContentRegions) {
     if (isInRegion(position, contentRegion)) {
-      yield { kind: 'content' as const, region: contentRegion }
+      yield { kind: 'content', region: contentRegion }
     }
   }
 
   for (const contentRegion of iterateTemplateRegionByPosition(canvasState, position)) {
-    yield { kind: 'template' as const, region: contentRegion }
+    yield { kind: 'template', region: contentRegion }
   }
 }
 
@@ -235,3 +243,26 @@ export function decreaseTemplateSize(template: Template, kind: 'width' | 'height
 export const resizeSize = 5
 export const rotateStickLength = 40
 export const rotateCircleSize = 10
+
+export function getTemplateDisplayName(template: Template) {
+  return template.name || 'template'
+}
+
+export function getContentDisplayName(content: TemplateContent, styleGuide: StyleGuide) {
+  if (content.kind === 'text' && content.text) {
+    return content.text
+  }
+  if (content.kind === 'color' && content.color) {
+    return content.color
+  }
+  if (content.kind === 'reference') {
+    const template = styleGuide.templates.find((t) => t.id === content.id)
+    if (template && template.name) {
+      return template.name
+    }
+  }
+  if (content.kind === 'snapshot' && content.snapshot.name) {
+    return content.snapshot.name
+  }
+  return content.kind
+}
