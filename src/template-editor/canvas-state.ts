@@ -154,15 +154,15 @@ export class CanvasState extends Vue {
   }
 
   get targetTemplateRegions() {
-    return Array.from(iterateAllTemplateRegions(undefined, this.styleGuide))
+    return Array.from(iterateAllTemplateRegions(undefined, this.styleGuide)).sort((a, b) => a.z - b.z).reverse()
   }
 
   get targetContentRegions() {
-    return Array.from(iterateAllContentRegions(undefined, this.styleGuide))
+    return Array.from(iterateAllContentRegions(undefined, this.styleGuide)).sort((a, b) => a.z - b.z).reverse()
   }
 
   get targetNameRegions() {
-    return Array.from(iterateAllNameRegions(undefined, this.styleGuide, this.styleGuideScale))
+    return Array.from(iterateAllNameRegions(undefined, this.styleGuide, this.styleGuideScale)).sort((a, b) => a.z - b.z).reverse()
   }
 
   presetExpressions = presetExpressions

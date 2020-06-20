@@ -3,50 +3,41 @@ import { Region, Position, TemplateContent, Template, TemplateReferenceContent, 
 import { isInRegion, nameSize, formatPixel, rotatePosition } from '../utils'
 
 export function selectContentOrTemplateByPosition(canvasState: CanvasState, position: Position) {
-  let potentialNameRegion: Required<Region> & Rotate & {
-    template: Template;
-  } | undefined
+  const generator = iterateContentOrTemplateByPosition(canvasState, position)
+  const result = generator.next()
+  return result.done ? undefined : result.value
+}
+
+function* iterateContentOrTemplateByPosition(canvasState: CanvasState, position: Position) {
   for (const nameRegion of canvasState.targetNameRegions) {
-    if ((!potentialNameRegion || nameRegion.z >= potentialNameRegion.z) && isInRegion(position, nameRegion)) {
-      potentialNameRegion = nameRegion
+    if (isInRegion(position, nameRegion)) {
+      yield { kind: 'template' as const, region: nameRegion }
     }
   }
-  if (potentialNameRegion) {
-    return { kind: 'template' as const, region: potentialNameRegion }
-  }
 
-  let potentialContentRegion: Required<Region> & Rotate & {
-    index: number;
-    contents: TemplateContent[];
-    content: TemplateContent;
-    template: Template;
-  } | undefined
   for (const contentRegion of canvasState.targetContentRegions) {
-    if ((!potentialContentRegion || contentRegion.z >= potentialContentRegion.z) && isInRegion(position, contentRegion)) {
-      potentialContentRegion = contentRegion
+    if (isInRegion(position, contentRegion)) {
+      yield { kind: 'content' as const, region: contentRegion }
     }
   }
-  if (potentialContentRegion) {
-    return { kind: 'content' as const, region: potentialContentRegion }
-  }
 
-  const potentialTemplateRegion = selectTemplateRegionByPosition(canvasState, position)
-  if (potentialTemplateRegion) {
-    return { kind: 'template' as const, region: potentialTemplateRegion }
+  for (const contentRegion of iterateTemplateRegionByPosition(canvasState, position)) {
+    yield { kind: 'template' as const, region: contentRegion }
   }
-  return undefined
 }
 
 export function selectTemplateRegionByPosition(canvasState: CanvasState, position: Position) {
-  let potentialTemplateRegion: Required<Region> & Rotate & {
-    template: Template;
-  } | undefined
+  const generator = iterateTemplateRegionByPosition(canvasState, position)
+  const result = generator.next()
+  return result.done ? undefined : result.value
+}
+
+function* iterateTemplateRegionByPosition(canvasState: CanvasState, position: Position) {
   for (const templateRegion of canvasState.targetTemplateRegions) {
-    if ((!potentialTemplateRegion || (templateRegion.z || 0) >= (potentialTemplateRegion.z || 0)) && isInRegion(position, templateRegion)) {
-      potentialTemplateRegion = templateRegion
+    if (isInRegion(position, templateRegion)) {
+      yield templateRegion
     }
   }
-  return potentialTemplateRegion
 }
 
 export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, position: Position): {
