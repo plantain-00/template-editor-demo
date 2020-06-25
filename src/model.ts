@@ -79,6 +79,7 @@ export interface TemplateImageContent extends Region, RegionExpression, Generati
 
   opacity?: number
   base64?: string
+  blendMode?: 'multiply'
 }
 
 export interface TemplateColorContent extends Region, RegionExpression, GenerationField, Hidden, Rotate, RotateExpression {

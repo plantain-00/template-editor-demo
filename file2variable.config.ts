@@ -1,8 +1,6 @@
 import * as path from 'path'
 import { Configuration } from 'file2variable-cli'
 
-const isDev = process.env.NODE_ENV === 'development'
-
 export default {
   base: 'src',
   files: [
@@ -19,7 +17,6 @@ export default {
       return {
         type: 'vue',
         name: 'App',
-        position: isDev,
         path: './index'
       }
     }
@@ -30,7 +27,6 @@ export default {
       const names = filename.substring(0, filename.length - '.template.html'.length).split('-')
       return {
         type: 'vue',
-        position: isDev,
         name: names.map((n) => n[0].toUpperCase() + n.substring(1)).join(''),
         path: (dirname === '.' ? '.' : './' + dirname) + '/' + names.join('-')
       }
