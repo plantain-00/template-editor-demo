@@ -3,7 +3,7 @@ import Component from 'vue-class-component'
 
 import { Template, TemplateTextContent, TemplateImageContent, TemplateReferenceContent, TemplateSnapshotContent, TemplateColorContent, StyleGuide } from '../model'
 import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluateColorExpression, evaluateRotateExpression } from './expression'
-import { applyImageOpacity, loadImage } from './image'
+import { applyImageOpacity, loadImage, imageToCtx } from './image'
 import { getCharacters } from './mock'
 import { getPosition, getVariableObject } from '../utils'
 import { iterateSymbolRenderItem } from './renderer'
@@ -302,10 +302,9 @@ class ImageRenderer extends Vue {
       return this.content.base64
     }
     if (this.content.opacity !== undefined && this.imageLoader.result) {
-      const canvas = applyImageOpacity(this.imageLoader.result, this.content.opacity)
-      if (canvas) {
-        return canvas.toDataURL()
-      }
+      const imageCtx = imageToCtx(this.imageLoader.result)
+      applyImageOpacity(imageCtx, this.content.opacity)
+      return imageCtx.canvas.toDataURL()
     }
     return this.url
   }
@@ -322,6 +321,7 @@ class ImageRenderer extends Vue {
           top: `${this.y}px`,
           zIndex: this.zValue,
           transform: this.rotate ? `rotate(${this.rotate}deg)` : undefined,
+          mixBlendMode: this.content.blendMode,
         },
         attrs: {
           src: this.base64,

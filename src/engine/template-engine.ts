@@ -3,7 +3,7 @@ import { Expression } from 'expression-engine'
 import { Template, TemplateContent, StyleGuide } from '../model'
 import { layoutFlex } from './layout-engine'
 import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression, parseExpressionToAst, ExpressionOptions, getExpressionOptions, evaluateColorExpression, evaluateRotateExpression } from './expression'
-import { applyImageOpacity, loadImage } from './image'
+import { applyImageOpacity, loadImage, imageToCtx } from './image'
 import { getCharacters } from './mock'
 
 export async function generate(template: Template, styleGuide: StyleGuide, model: { [key: string]: unknown }, options?: ExpressionOptions): Promise<Template> {
@@ -201,10 +201,9 @@ async function generateContent(
     delete content.urlExpressionId
     if (content.opacity !== undefined) {
       const image = await loadImage(content.url)
-      const canvas = applyImageOpacity(image, content.opacity)
-      if (canvas) {
-        content.base64 = canvas.toDataURL()
-      }
+      const imageCtx = imageToCtx(image)
+      applyImageOpacity(imageCtx, content.opacity)
+      content.base64 = imageCtx.canvas.toDataURL()
     }
   }
   if (content.kind === 'color') {

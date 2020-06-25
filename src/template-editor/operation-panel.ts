@@ -102,6 +102,12 @@ export class OperationPanel extends Vue {
     }
   }
 
+  changeBlendMode(e: { target: { value: string } }) {
+    if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind === 'image') {
+      Vue.set(this.canvasState.selection.content, 'blendMode', e.target.value)
+    }
+  }
+
   changeIf(e: { expression: string, expressionId?: string }) {
     if (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content.kind !== 'snapshot') {
       Vue.set(this.canvasState.selection.content, 'if', e.expression)

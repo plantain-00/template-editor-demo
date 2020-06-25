@@ -1,7 +1,7 @@
 import { Template, Position, Rotate, StyleGuide } from '../model'
 import { evaluate, evaluateSizeExpression, evaluateUrlExpression, evaluateTextExpression, evaluateFontSizeExpression, evaluatePositionExpression, evaluateColorExpression, evaluateRotateExpression } from './expression'
 import { layoutFlex } from './layout-engine'
-import { applyImageOpacity, loadImage } from './image'
+import { applyImageOpacity, loadImage, imageToCtx, applyImageBlendMode } from './image'
 import { getCharacters } from './mock'
 import { formatPixel, formatRadian, getVariableObject } from '../utils'
 import { iterateSymbolRenderItem } from './renderer'
@@ -179,12 +179,11 @@ function renderSymbol(
       } else if (renderItem.kind === 'image') {
         const content = renderItem.content
         const url = evaluateUrlExpression(content, { variable, props })
-        let image: HTMLImageElement | HTMLCanvasElement = images[url]
+        const image: HTMLImageElement = images[url]
+        let imageCtx: CanvasRenderingContext2D | undefined
         if (content.opacity !== undefined) {
-          const imageCanvas = applyImageOpacity(image, content.opacity)
-          if (imageCanvas) {
-            image = imageCanvas
-          }
+          imageCtx = imageToCtx(image)
+          applyImageOpacity(imageCtx, content.opacity)
         }
         actions.push({
           z,
@@ -192,13 +191,22 @@ function renderSymbol(
           action: (ctx) => {
             if (ctx) {
               rotateInCanvas(ctx)
-              ctx.drawImage(image, x, y, width, height)
+              if (content.blendMode) {
+                if (!imageCtx) {
+                  imageCtx = imageToCtx(image)
+                }
+                applyImageBlendMode(imageCtx, ctx, { x, y, width, height })
+              } else {
+                ctx.drawImage(imageCtx ? imageCtx.canvas : image, x, y, width, height)
+              }
               resetTransformInCanvas(ctx)
               return []
             }
             return [
               ...rotateActions,
-              `ctx.drawImage(${url}, ${x}, ${y}, ${width}, ${height})`,
+              content.blendMode
+                ? `ctx.drawImage(${url}, ${x}, ${y}, ${width}, ${height}, ${content.blendMode})`
+                : `ctx.drawImage(${url}, ${x}, ${y}, ${width}, ${height})`,
               ...resetTransformActions,
             ]
           },

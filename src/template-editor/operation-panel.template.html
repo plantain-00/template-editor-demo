@@ -28,6 +28,13 @@
         opacity
         <input type="number" :value="canvasState.selection.content.opacity" @change="changeOpacity" />
       </div>
+      <div>
+        blend mode
+        <select :value="canvasState.selection.content.blendMode" @change="changeBlendMode">
+          <option v-bind:value="undefined"></option>
+          <option value="multiply">multiply</option>
+        </select>
+      </div>
     </div>
     <div v-if="canvasState.selection.content.kind === 'color'">
       color
