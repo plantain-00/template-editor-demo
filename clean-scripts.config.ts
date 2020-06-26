@@ -2,7 +2,6 @@ import { executeScriptAsync } from 'clean-scripts'
 import { watch } from 'watch-then-execute'
 
 const tsFiles = `"src/**/*.ts"`
-const jsFiles = `"*.config.js"`
 const lessFiles = `"*.less"`
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -35,10 +34,9 @@ export default {
     swCommand
   ],
   lint: {
-    ts: `eslint --ext .js,.ts ${tsFiles} ${jsFiles}`,
+    ts: `eslint --ext .js,.ts ${tsFiles}`,
     less: `stylelint ${lessFiles}`,
     export: `no-unused-export ${tsFiles} ${lessFiles} --strict --need-module tslib`,
-    commit: `commitlint --from=HEAD~1`,
     markdown: `markdownlint README.md`,
     typeCoverage: 'type-coverage -p . --ignore-files src/variables.ts --ignore-catch'
   },
@@ -46,7 +44,7 @@ export default {
     'ava'
   ],
   fix: {
-    ts: `eslint --ext .js,.ts ${tsFiles} ${jsFiles} --fix`,
+    ts: `eslint --ext .js,.ts ${tsFiles} --fix`,
     less: `stylelint --fix ${lessFiles}`
   },
   watch: {
