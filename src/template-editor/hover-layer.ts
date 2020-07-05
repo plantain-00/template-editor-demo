@@ -31,6 +31,9 @@ export class HoverLayer extends Vue {
   }
 
   get hoverStyle() {
+    if (this.canvasState.mousePressing) {
+      return undefined
+    }
     const content = selectContentOrTemplateByPosition(this.canvasState, { x: this.canvasState.mappedX, y: this.canvasState.mappedY })
     if (content) {
       const region = content.kind === 'content' ? content.region : content.region.template as Template & Rotate
