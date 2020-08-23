@@ -6,6 +6,7 @@
 /* eslint-disable */
 import { AppPanel } from "./app-panel"
 import { App } from "./index"
+import { AlignmentLayer } from "./template-editor/alignment-layer"
 import { CommonEditor } from "./template-editor/common-editor"
 import { ContextMenu } from "./template-editor/context-menu"
 import { DraggingForSelectionLayer } from "./template-editor/dragging-for-selection-layer"
@@ -742,6 +743,10 @@ export const styleguideSchemaJson = {
     }
 }
 // @ts-ignore
+export function templateEditorAlignmentLayerTemplateHtml(this: AlignmentLayer) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{style:(_vm.xStyle)}),_vm._v(" "),_c('div',{style:(_vm.yStyle)})])}
+// @ts-ignore
+export var templateEditorAlignmentLayerTemplateHtmlStatic = [  ]
+// @ts-ignore
 export function templateEditorCommonEditorTemplateHtml(this: CommonEditor) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return (_vm.canvasState.commonEditorVisible)?_c('div',{style:(_vm.editorStyle)},[_c('textarea',{staticStyle:{"width":"calc(100% - 40px)","height":"400px","margin-left":"20px","margin-right":"20px"},domProps:{"value":_vm.value},on:{"blur":_vm.changeValue}})]):_vm._e()}
 // @ts-ignore
 export var templateEditorCommonEditorTemplateHtmlStatic = [  ]
@@ -778,7 +783,7 @@ export function templateEditorSelectionLayerTemplateHtml(this: SelectionLayer) {
 // @ts-ignore
 export var templateEditorSelectionLayerTemplateHtmlStatic = [  ]
 // @ts-ignore
-export function templateEditorTemplateEditorTemplateHtml(this: TemplateEditor) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticStyle:{"display":"flex"}},[_c('div',{style:(_vm.layerPanelStyle)},[_c('layer-panel',{attrs:{"canvas-state":_vm.canvasState}})],1),_vm._v(" "),_c('div',{style:(_vm.canvasStyle)},[_c('render-layer',{attrs:{"canvas-state":_vm.canvasState}}),_vm._v(" "),_c('selection-layer',{attrs:{"canvas-state":_vm.canvasState}}),_vm._v(" "),_c('hover-layer',{attrs:{"canvas-state":_vm.canvasState}}),_vm._v(" "),_c('dragging-for-selection-layer',{attrs:{"canvas-state":_vm.canvasState}}),_vm._v(" "),_c('mask-layer',{attrs:{"canvas-state":_vm.canvasState}}),_vm._v(" "),_c('context-menu',{attrs:{"canvas-state":_vm.canvasState}})],1),_vm._v(" "),_c('div',{style:(_vm.operationPanelStyle)},[_c('operation-panel',{attrs:{"canvas-state":_vm.canvasState}})],1),_vm._v(" "),_c('common-editor',{attrs:{"canvas-state":_vm.canvasState}})],1)}
+export function templateEditorTemplateEditorTemplateHtml(this: TemplateEditor) {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticStyle:{"display":"flex"}},[_c('div',{style:(_vm.layerPanelStyle)},[_c('layer-panel',{attrs:{"canvas-state":_vm.canvasState}})],1),_vm._v(" "),_c('div',{style:(_vm.canvasStyle)},[_c('render-layer',{attrs:{"canvas-state":_vm.canvasState}}),_vm._v(" "),_c('selection-layer',{attrs:{"canvas-state":_vm.canvasState}}),_vm._v(" "),_c('hover-layer',{attrs:{"canvas-state":_vm.canvasState}}),_vm._v(" "),_c('dragging-for-selection-layer',{attrs:{"canvas-state":_vm.canvasState}}),_vm._v(" "),_c('alignment-layer',{attrs:{"canvas-state":_vm.canvasState}}),_vm._v(" "),_c('mask-layer',{attrs:{"canvas-state":_vm.canvasState}}),_vm._v(" "),_c('context-menu',{attrs:{"canvas-state":_vm.canvasState}})],1),_vm._v(" "),_c('div',{style:(_vm.operationPanelStyle)},[_c('operation-panel',{attrs:{"canvas-state":_vm.canvasState}})],1),_vm._v(" "),_c('common-editor',{attrs:{"canvas-state":_vm.canvasState}})],1)}
 // @ts-ignore
 export var templateEditorTemplateEditorTemplateHtmlStatic = [  ]
 // @ts-ignore

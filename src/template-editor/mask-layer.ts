@@ -8,6 +8,7 @@ import { templateEditorMaskLayerTemplateHtml, templateEditorMaskLayerTemplateHtm
 import { formatPixel, rotatePositionByCenter } from '../utils'
 import { resizeTemplate, resizeContent, rotateContent } from './resize'
 import { getCursor } from './cursor'
+import { getTemplateAlignment } from './alignment'
 
 @Component({
   render: templateEditorMaskLayerTemplateHtml,
@@ -228,8 +229,28 @@ export class MaskLayer extends Vue {
         } else if (this.draggingSelectionKind) {
           const template = this.canvasState.selection.template
           if (this.draggingSelectionKind === 'move') {
-            template.x = formatPixel(x)
-            template.y = formatPixel(y)
+            if (e.shiftKey) {
+              template.x = formatPixel(x)
+              template.y = formatPixel(y)
+              this.canvasState.xAlignment = null
+              this.canvasState.yAlignment = null
+              return
+            }
+            const region = getTemplateAlignment(x, y, template, this.canvasState.targetTemplateRegions)
+            if (region.x !== undefined) {
+              template.x = formatPixel(region.x)
+              this.canvasState.xAlignment = region.x
+            } else {
+              template.x = formatPixel(x)
+              this.canvasState.xAlignment = null
+            }
+            if (region.y !== undefined) {
+              template.y = formatPixel(region.y)
+              this.canvasState.yAlignment = region.y
+            } else {
+              template.y = formatPixel(y)
+              this.canvasState.yAlignment = null
+            }
             return
           }
           resizeTemplate(template, x, y, this.draggingSelectionWidth, this.draggingSelectionHeight, this.draggingSelectionKind)
@@ -271,6 +292,9 @@ export class MaskLayer extends Vue {
   }
 
   mouseup(e: MouseEvent) {
+    this.canvasState.xAlignment = null
+    this.canvasState.yAlignment = null
+
     if (!this.mouseIsDown) {
       return
     }
