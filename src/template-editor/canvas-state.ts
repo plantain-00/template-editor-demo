@@ -118,6 +118,14 @@ export class CanvasState extends Vue {
     return (y - ((this.styleGuideTranslateY - this.styleGuideHeight / 2) * this.styleGuideScale + this.styleGuideHeight / 2)) / this.styleGuideScale
   }
 
+  mapBackX(x: number) {
+    return x * this.styleGuideScale + ((this.styleGuideTranslateX - this.styleGuideWidth / 2) * this.styleGuideScale + this.styleGuideWidth / 2)
+  }
+
+  mapBackY(y: number) {
+    return y * this.styleGuideScale + ((this.styleGuideTranslateY - this.styleGuideHeight / 2) * this.styleGuideScale + this.styleGuideHeight / 2)
+  }
+
   private styleGuideHistory: StyleGuide[] = []
   action() {
     this.styleGuideHistory.push(JSON.parse(JSON.stringify(this.styleGuide)))
@@ -164,6 +172,9 @@ export class CanvasState extends Vue {
   get targetNameRegions() {
     return sortByZ(Array.from(iterateAllNameRegions(undefined, this.styleGuide, this.styleGuideScale)))
   }
+
+  xAlignment: number | null = null
+  yAlignment: number | null = null
 
   presetExpressions = presetExpressions
 

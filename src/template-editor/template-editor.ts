@@ -6,6 +6,7 @@ import { templateEditorTemplateEditorTemplateHtml, templateEditorTemplateEditorT
 import { CanvasState } from './canvas-state'
 import { RenderLayer } from './render-layer'
 import { DraggingForSelectionLayer } from './dragging-for-selection-layer'
+import { AlignmentLayer } from './alignment-layer'
 import { SelectionLayer } from './selection-layer'
 import { HoverLayer } from './hover-layer'
 import { MaskLayer } from './mask-layer'
@@ -21,6 +22,7 @@ import { CommonEditor } from './common-editor'
   components: {
     'render-layer': RenderLayer,
     'dragging-for-selection-layer': DraggingForSelectionLayer,
+    'alignment-layer': AlignmentLayer,
     'selection-layer': SelectionLayer,
     'hover-layer': HoverLayer,
     'mask-layer': MaskLayer,
