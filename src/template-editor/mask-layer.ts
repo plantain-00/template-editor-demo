@@ -236,17 +236,17 @@ export class MaskLayer extends Vue {
               this.canvasState.yAlignment = null
               return
             }
-            const region = getTemplateAlignment(x, y, template, this.canvasState.targetTemplateRegions)
+            const region = getTemplateAlignment(x, y, this.canvasState.styleGuideScale, template, this.canvasState.targetTemplateRegions)
             if (region.x !== undefined) {
-              template.x = formatPixel(region.x)
-              this.canvasState.xAlignment = region.x
+              template.x = formatPixel(region.x.template)
+              this.canvasState.xAlignment = region.x.alignment
             } else {
               template.x = formatPixel(x)
               this.canvasState.xAlignment = null
             }
             if (region.y !== undefined) {
-              template.y = formatPixel(region.y)
-              this.canvasState.yAlignment = region.y
+              template.y = formatPixel(region.y.template)
+              this.canvasState.yAlignment = region.y.alignment
             } else {
               template.y = formatPixel(y)
               this.canvasState.yAlignment = null
