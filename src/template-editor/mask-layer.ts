@@ -230,27 +230,27 @@ export class MaskLayer extends Vue {
           const template = this.canvasState.selection.template
           if (this.draggingSelectionKind === 'move') {
             if (e.shiftKey) {
-              const region = getTemplateAlignment(x, y, template, this.canvasState.targetTemplateRegions)
-              if (region.x !== undefined) {
-                template.x = formatPixel(region.x)
-                this.canvasState.xAlignment = region.x
-              } else {
-                template.x = formatPixel(x)
-                this.canvasState.xAlignment = null
-              }
-              if (region.y !== undefined) {
-                template.y = formatPixel(region.y)
-                this.canvasState.yAlignment = region.y
-              } else {
-                template.y = formatPixel(y)
-                this.canvasState.yAlignment = null
-              }
+              template.x = formatPixel(x)
+              template.y = formatPixel(y)
+              this.canvasState.xAlignment = null
+              this.canvasState.yAlignment = null
               return
             }
-            template.x = formatPixel(x)
-            template.y = formatPixel(y)
-            this.canvasState.xAlignment = null
-            this.canvasState.yAlignment = null
+            const region = getTemplateAlignment(x, y, template, this.canvasState.targetTemplateRegions)
+            if (region.x !== undefined) {
+              template.x = formatPixel(region.x)
+              this.canvasState.xAlignment = region.x
+            } else {
+              template.x = formatPixel(x)
+              this.canvasState.xAlignment = null
+            }
+            if (region.y !== undefined) {
+              template.y = formatPixel(region.y)
+              this.canvasState.yAlignment = region.y
+            } else {
+              template.y = formatPixel(y)
+              this.canvasState.yAlignment = null
+            }
             return
           }
           resizeTemplate(template, x, y, this.draggingSelectionWidth, this.draggingSelectionHeight, this.draggingSelectionKind)
@@ -294,7 +294,7 @@ export class MaskLayer extends Vue {
   mouseup(e: MouseEvent) {
     this.canvasState.xAlignment = null
     this.canvasState.yAlignment = null
-    
+
     if (!this.mouseIsDown) {
       return
     }
