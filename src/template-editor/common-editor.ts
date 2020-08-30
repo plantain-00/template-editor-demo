@@ -30,7 +30,7 @@ export class CommonEditor extends Vue {
   changeValue(e: { target: { value: string } }) {
     try {
       this.canvasState.styleGuide[this.canvasState.commonEditorEditingFieldName] = JSON.parse(e.target.value)
-    } catch (error) {
+    } catch {
       // do nothing
     }
   }

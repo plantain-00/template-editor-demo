@@ -169,7 +169,8 @@ export class AppPanel extends Vue {
     }
     console.info(Date.now() - now)
     for (const reason of reasons) {
-      console.info(reason.stack ? reason.stack.join(' ') : '', reason.expression, reason.error.message, reason.model)
+      const message = reason.error instanceof Error ? reason.error.message : String(reason.error)
+      console.info(reason.stack ? reason.stack.join(' ') : '', reason.expression, message, reason.model)
     }
     return result.map((r) => removeDefault<Template>(r, templateSchemaJson) as Template)
   }

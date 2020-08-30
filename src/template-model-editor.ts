@@ -85,7 +85,7 @@ export class TemplateModelEditor extends Vue {
   changeTemplateModel(e: { target: { value: string } }) {
     try {
       this.appState.templateModel = JSON.parse(e.target.value)
-    } catch (error) {
+    } catch {
       // do nothing
     }
   }

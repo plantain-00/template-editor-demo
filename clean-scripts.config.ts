@@ -38,7 +38,7 @@ export default {
     less: `stylelint ${lessFiles}`,
     export: `no-unused-export ${tsFiles} ${lessFiles} --strict --need-module tslib`,
     markdown: `markdownlint README.md`,
-    typeCoverage: 'type-coverage -p . --ignore-files src/variables.ts --ignore-catch'
+    typeCoverage: 'type-coverage -p . --ignore-files src/variables.ts'
   },
   test: [
     'ava'
