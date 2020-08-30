@@ -16,7 +16,7 @@ export function evaluate(expression: string | undefined, model: { [key: string]:
       return evaluateExpression(ast, model)
     }
     return evaluateExpression(parseExpression(tokenizeExpression(expression)), model)
-  } catch (error) {
+  } catch (error: unknown) {
     if (options && options.errorHandler) {
       options.errorHandler({ error, expression, model, stack: options.stack })
     }
@@ -31,7 +31,7 @@ export interface ExpressionOptions {
 }
 
 export interface ExpressionErrorReason {
-  error: Error
+  error: unknown
   expression: string
   model: { [key: string]: unknown }
   stack?: (string | number)[]
@@ -40,7 +40,7 @@ export interface ExpressionErrorReason {
 export function parseExpressionToAst(expression: string) {
   try {
     return parseExpression(tokenizeExpression(expression))
-  } catch (error) {
+  } catch (error: unknown) {
     return error as Error
   }
 }
