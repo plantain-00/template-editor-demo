@@ -1,30 +1,35 @@
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import 'vue-schema-based-json-editor'
+import { createApp, defineComponent } from 'vue'
+import { ArrayEditor, ObjectEditor, JSONEditor } from 'vue-schema-based-json-editor'
+import { Node } from 'tree-vue-component'
 
-import { indexTemplateHtml, indexTemplateHtmlStatic } from './variables'
+import { indexTemplateHtml } from './variables'
 import { AppPanel } from './app-panel'
 import { TemplateModelEditor } from './template-model-editor'
-import { AppState } from './app-state'
+import { createAppState } from './app-state'
 import { TemplateEditor } from './template-editor/template-editor'
 
-@Component({
+const App = defineComponent({
   render: indexTemplateHtml,
-  staticRenderFns: indexTemplateHtmlStatic,
   components: {
     'app-panel': AppPanel,
     'template-model-editor': TemplateModelEditor,
     'template-editor': TemplateEditor,
-  }
-})
-export class App extends Vue {
-  appState = new AppState()
-
+  },
+  data: () => {
+    return {
+      appState: createAppState()
+    }
+  },
   mounted() {
     window.addEventListener('resize', () => {
       this.appState.resize()
     })
   }
-}
+})
 
-new App({ el: '#container' })
+const app = createApp(App)
+app.component('array-editor', ArrayEditor)
+app.component('object-editor', ObjectEditor)
+app.component('json-editor', JSONEditor)
+app.component('node', Node)
+app.mount('#container')
