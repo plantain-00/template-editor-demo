@@ -18,6 +18,8 @@ export function createAppState() {
     canvasState: createCanvasState(styleGuide, window.innerWidth - offsetWidth, window.innerHeight - offsetHeight),
     graphicCanvasState: null as CanvasState | null,
 
+    debug: !!localStorage.getItem('debug'),
+
     resize() {
       this.canvasState.canvasWidth = window.innerWidth - offsetWidth
       this.canvasState.canvasHeight = window.innerHeight - offsetHeight

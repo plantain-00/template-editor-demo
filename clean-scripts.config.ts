@@ -41,7 +41,7 @@ export default {
     typeCoverage: 'type-coverage -p . --ignore-files src/variables.ts'
   },
   test: [
-    // 'ava'
+    'ava'
   ],
   fix: {
     ts: `eslint --ext .js,.ts ${tsFiles} --fix`,

@@ -9,12 +9,9 @@ const title = 'render every ui component'
 import { styleGuide } from './data'
 
 test(title, async (t) => {
-  const app = createSSRApp(TemplateRenderer)
-  const infos = await Promise.all(styleGuide.templates.map((a) => renderToString(new Constructor({
-    propsData: {
-      template: a,
-      styleGuide
-    },
+  const infos = await Promise.all(styleGuide.templates.map((a) => renderToString(createSSRApp(TemplateRenderer, {
+    template: a,
+    styleGuide
   }))))
   t.snapshot({ infos }, { id: title })
 })
