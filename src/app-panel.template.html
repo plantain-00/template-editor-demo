@@ -1,10 +1,10 @@
 <div style="display: flex; align-items: center; height: 50px;">
   <input type="text" style="width: 80px" v-model="styleGuideKey" />
   <button @click="loadStyleGuide()">load style guide</button>
-  <button @click="saveStyleGuide()">save style guide</button>
+  <button v-if="appState.debug" @click="saveStyleGuide()">save style guide</button>
   <input type="text" style="width: 120px" v-model="templateModelKey" />
   <button @click="loadTemplateModel()">load template model</button>
-  <button @click="saveTemplateModel()">save template model</button>
+  <button v-if="appState.debug" @click="saveTemplateModel()">save template model</button>
   <button @click="editTemplateModel()">edit template model</button>
   <button @click="precompile()">precompile</button>
   <button @click="generate()">{{appState.graphicCanvasState ? 'back to template' : 'generate graphic'}}</button>

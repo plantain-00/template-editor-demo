@@ -19,9 +19,12 @@ export function appPanelTemplateHtml(_ctx, _cache) {
     _createVNode("button", {
       onClick: _cache[2] || (_cache[2] = $event => (_ctx.loadStyleGuide()))
     }, "load style guide"),
-    _createVNode("button", {
-      onClick: _cache[3] || (_cache[3] = $event => (_ctx.saveStyleGuide()))
-    }, "save style guide"),
+    (_ctx.appState.debug)
+      ? (_openBlock(), _createBlock("button", {
+          key: 0,
+          onClick: _cache[3] || (_cache[3] = $event => (_ctx.saveStyleGuide()))
+        }, "save style guide"))
+      : _createCommentVNode("v-if", true),
     _withDirectives(_createVNode("input", {
       type: "text",
       style: {"width":"120px"},
@@ -32,9 +35,12 @@ export function appPanelTemplateHtml(_ctx, _cache) {
     _createVNode("button", {
       onClick: _cache[5] || (_cache[5] = $event => (_ctx.loadTemplateModel()))
     }, "load template model"),
-    _createVNode("button", {
-      onClick: _cache[6] || (_cache[6] = $event => (_ctx.saveTemplateModel()))
-    }, "save template model"),
+    (_ctx.appState.debug)
+      ? (_openBlock(), _createBlock("button", {
+          key: 1,
+          onClick: _cache[6] || (_cache[6] = $event => (_ctx.saveTemplateModel()))
+        }, "save template model"))
+      : _createCommentVNode("v-if", true),
     _createVNode("button", {
       onClick: _cache[7] || (_cache[7] = $event => (_ctx.editTemplateModel()))
     }, "edit template model"),
