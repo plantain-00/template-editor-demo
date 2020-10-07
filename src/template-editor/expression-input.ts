@@ -1,50 +1,48 @@
-import Vue from 'vue'
-import Component from 'vue-class-component'
+import { defineComponent, h, PropType, VNode } from 'vue'
 import { tokenizeExpression, Token } from 'expression-engine'
 
 import { CanvasState } from './canvas-state'
 import { PresetExpression } from '../model'
 import { ExpressionEditor } from './expression-editor'
 
-@Component({
-  props: ['literal', 'literalType', 'expression', 'expressionId', 'canvasState'],
+export const ExpressionInput = defineComponent({
+  props: {
+    literal: [String, Number] as PropType<unknown>,
+    literalType: String as PropType<'string' | 'number' | 'color'>,
+    expression: String,
+    canvasState: {
+      type: Object as PropType<CanvasState>,
+      required: true,
+    },
+    expressionId: String
+  },
   components: {
     'expression-editor': ExpressionEditor,
-  }
-})
-export class ExpressionInput extends Vue {
-  literal?: unknown
-  literalType?: 'string' | 'number' | 'color'
-  expression?: string
-  canvasState!: CanvasState
-  expressionId?: string
-
-  private editingAst = false
-
-  private get id() {
-    return this.expressionId || ''
-  }
-
-  private get presetExpression() {
-    if (this.id) {
-      return this.canvasState.presetExpressions.find((p) => p.id === this.id)
+  },
+  data: () => {
+    return {
+      editingAst: false
     }
-    return undefined
-  }
-
-  private get currentTokens() {
-    if (this.expression) {
-      return tokenizeExpression(this.expression)
-    }
-    return []
-  }
-
-  private emitChange(value: ExpressionInputChangeData) {
-    this.$emit('change', value)
-  }
-
-  render(createElement: Vue.CreateElement): Vue.VNode {
-    const input = this.renderInput(createElement)
+  },
+  computed: {
+    id(): string {
+      return this.expressionId || ''
+    },
+    presetExpression(): PresetExpression | undefined {
+      if (this.id) {
+        return this.canvasState.presetExpressions.find((p) => p.id === this.id)
+      }
+      return undefined
+    },
+    currentTokens(): Token[] {
+      if (this.expression) {
+        return tokenizeExpression(this.expression)
+      }
+      return []
+    },
+  },
+  render(): VNode {
+    const input = this.renderInput()
     let type: string
     if (this.id) {
       type = this.id
@@ -53,47 +51,43 @@ export class ExpressionInput extends Vue {
     } else {
       type = 'literal'
     }
-    const typeOptions = this.renderTypeOptions(createElement)
-    return createElement(
+    const typeOptions = this.renderTypeOptions()
+    return h(
       'span',
       [
-        createElement(
+        h(
           'select',
           {
-            domProps: {
-              value: type,
-            },
-            on: {
-              change: (e: { target: { value: string } }) => {
-                const id = e.target.value
-                if (id === 'literal') {
-                  this.emitChange({})
-                } else if (id === 'f(x)') {
-                  this.emitChange({
-                    expression: this.expression || '',
-                  })
-                } else {
-                  const presetExpression = this.canvasState.presetExpressions.find((p) => p.id === id)
-                  if (presetExpression) {
-                    if (this.expression && matchPattern(presetExpression, this.currentTokens)) {
-                      this.emitChange({
-                        expression: this.expression,
-                        expressionId: id,
-                      })
-                    } else {
-                      this.emitChange({
-                        expression: presetExpression.expression,
-                        expressionId: id,
-                      })
-                    }
+            value: type,
+            onChange: (e: { target: { value: string } }) => {
+              const id = e.target.value
+              if (id === 'literal') {
+                this.emitChange({})
+              } else if (id === 'f(x)') {
+                this.emitChange({
+                  expression: this.expression || '',
+                })
+              } else {
+                const presetExpression = this.canvasState.presetExpressions.find((p) => p.id === id)
+                if (presetExpression) {
+                  if (this.expression && matchPattern(presetExpression, this.currentTokens)) {
+                    this.emitChange({
+                      expression: this.expression,
+                      expressionId: id,
+                    })
+                  } else {
+                    this.emitChange({
+                      expression: presetExpression.expression,
+                      expressionId: id,
+                    })
                   }
                 }
-              },
-            }
+              }
+            },
           },
           typeOptions
         ),
-        createElement(
+        h(
           'div',
           {
             style: {
@@ -104,76 +98,67 @@ export class ExpressionInput extends Vue {
         ),
       ]
     )
-  }
-
-  private renderTypeOptions(createElement: Vue.CreateElement) {
-    const options: Vue.VNode[] = []
-    if (this.literalType) {
+  },
+  methods: {
+    emitChange(value: ExpressionInputChangeData) {
+      this.$emit('change', value)
+    },
+    renderTypeOptions() {
+      const options: VNode[] = []
+      if (this.literalType) {
+        options.push(
+          h(
+            'option',
+            {
+              key: 'literal',
+              value: 'literal'
+            },
+            'literal'
+          )
+        )
+      }
       options.push(
-        createElement(
+        h(
           'option',
           {
-            key: 'literal',
-            attrs: {
-              value: 'literal'
-            }
-          },
-          'literal'
-        )
-      )
-    }
-    options.push(
-      createElement(
-        'option',
-        {
-          key: 'f(x)',
-          attrs: {
+            key: 'f(x)',
             value: 'f(x)'
-          }
-        },
-        'f(x)'
-      ),
-      ...this.canvasState.presetExpressions.map((p) => createElement(
-        'option',
-        {
-          key: p.id,
-          attrs: {
+          },
+          'f(x)'
+        ),
+        ...this.canvasState.presetExpressions.map((p) => h(
+          'option',
+          {
+            key: p.id,
             value: p.id
+          },
+          p.name
+        ))
+      )
+      return options
+    },
+    renderInput() {
+      let input: (string | VNode)[]
+      const presetExpression = this.presetExpression
+      if (presetExpression && presetExpression.variables.every((v) => typeof v === 'string' || v.tokenIndex < this.currentTokens.length)) {
+        input = presetExpression.variables.map((v) => {
+          if (typeof v === 'string') {
+            return h(
+              'span',
+              v
+            )
           }
-        },
-        p.name
-      ))
-    )
-    return options
-  }
-
-  private renderInput(createElement: Vue.CreateElement) {
-    let input: (string | Vue.VNode)[]
-    const presetExpression = this.presetExpression
-    if (presetExpression && presetExpression.variables.every((v) => typeof v === 'string' || v.tokenIndex < this.currentTokens.length)) {
-      input = presetExpression.variables.map((v) => {
-        if (typeof v === 'string') {
-          return createElement(
-            'span',
-            v
-          )
-        }
-        const currentToken = this.currentTokens[v.tokenIndex]
-        if (currentToken.type === 'NumericLiteral') {
-          return createElement(
-            'input',
-            {
-              attrs: {
-                type: 'number'
-              },
-              domProps: {
-                value: currentToken.value
-              },
-              style: {
-                width: '50px',
-              },
-              on: {
-                change: (e: { target: { value: string } }) => {
+          const currentToken = this.currentTokens[v.tokenIndex]
+          if (currentToken.type === 'NumericLiteral') {
+            return h(
+              'input',
+              {
+                type: 'number',
+                value: currentToken.value,
+                style: {
+                  width: '50px',
+                },
+                onChange: (e: { target: { value: string } }) => {
                   const newExpression = replaceNonStringToken(presetExpression.expression, e.target.value, currentToken.range, '0')
                   this.emitChange({
                     expression: newExpression,
@@ -181,21 +166,15 @@ export class ExpressionInput extends Vue {
                   })
                 }
               }
-            }
-          )
-        }
-        if (currentToken.type === 'StringLiteral') {
-          return createElement(
-            'input',
-            {
-              attrs: {
-                type: 'text'
-              },
-              domProps: {
-                value: currentToken.value
-              },
-              on: {
-                change: (e: { target: { value: string } }) => {
+            )
+          }
+          if (currentToken.type === 'StringLiteral') {
+            return h(
+              'input',
+              {
+                type: 'text',
+                value: currentToken.value,
+                onChange: (e: { target: { value: string } }) => {
                   const newExpression = replaceStringToken(presetExpression.expression, e.target.value, currentToken.range)
                   this.emitChange({
                     expression: newExpression,
@@ -203,68 +182,56 @@ export class ExpressionInput extends Vue {
                   })
                 }
               }
-            }
-          )
-        }
-        if (currentToken.type === 'Identifier') {
-          if (v.enum || v.internal) {
-            let enums: (string | { value: string, name: string })[]
-            if (v.internal === 'component parameters' && (this.canvasState.selection.kind === 'content' || this.canvasState.selection.kind === 'template')) {
-              enums = this.canvasState.selection.template.parameters || []
-            } else if (v.internal === 'variable') {
-              const variables = this.canvasState.styleGuide.variables?.[0]
-              enums = variables ? variables.map((v) => ({
-                value: v.name,
-                name: v.displayName || v.name,
-              })) : []
-            } else if (v.enum) {
-              enums = v.enum
-            } else {
-              enums = []
-            }
-            return createElement(
-              'select',
-              {
-                domProps: {
-                  value: currentToken.name
-                },
-                on: {
-                  change: (e: { target: { value: string } }) => {
+            )
+          }
+          if (currentToken.type === 'Identifier') {
+            if (v.enum || v.internal) {
+              let enums: (string | { value: string, name: string })[]
+              if (v.internal === 'component parameters' && (this.canvasState.selection.kind === 'content' || this.canvasState.selection.kind === 'template')) {
+                enums = this.canvasState.selection.template.parameters || []
+              } else if (v.internal === 'variable') {
+                const variables = this.canvasState.styleGuide.variables?.[0]
+                enums = variables ? variables.map((v) => ({
+                  value: v.name,
+                  name: v.displayName || v.name,
+                })) : []
+              } else if (v.enum) {
+                enums = v.enum
+              } else {
+                enums = []
+              }
+              return h(
+                'select',
+                {
+                  value: currentToken.name,
+                  onChange: (e: { target: { value: string } }) => {
                     const newExpression = replaceNonStringToken(presetExpression.expression, e.target.value, currentToken.range, 'a')
                     this.emitChange({
                       expression: newExpression,
                       expressionId: this.expressionId,
                     })
                   }
-                }
-              },
-              enums.map((p) => {
-                const name = typeof p === 'string' ? p : p.name
-                const value = typeof p === 'string' ? p : p.value
-                return createElement(
-                  'option',
-                  {
-                    key: value,
-                    attrs: {
+                },
+                enums.map((p) => {
+                  const name = typeof p === 'string' ? p : p.name
+                  const value = typeof p === 'string' ? p : p.value
+                  return h(
+                    'option',
+                    {
+                      key: value,
                       value
-                    }
-                  },
-                  name
-                )
-              })
-            )
-          }
-          return createElement(
-            'input',
-            {
-              attrs: {
-                type: 'text'
-              },
-              domProps: {
-                value: currentToken.name
-              },
-              on: {
-                change: (e: { target: { value: string } }) => {
+                    },
+                    name
+                  )
+                })
+              )
+            }
+            return h(
+              'input',
+              {
+                type: 'text',
+                value: currentToken.name,
+                onChange: (e: { target: { value: string } }) => {
                   const newExpression = replaceNonStringToken(presetExpression.expression, e.target.value, currentToken.range, 'a')
                   this.emitChange({
                     expression: newExpression,
@@ -272,88 +239,72 @@ export class ExpressionInput extends Vue {
                   })
                 }
               }
-            }
-          )
-        }
-        return ''
-      })
-    } else if (this.expression !== undefined || !this.literalType) {
-      input = [
-        createElement(
-          'input',
-          {
-            attrs: {
-              type: 'text'
-            },
-            domProps: {
-              value: this.expression
-            },
-            on: {
-              change: (e: { target: { value: string } }) => {
+            )
+          }
+          return ''
+        })
+      } else if (this.expression !== undefined || !this.literalType) {
+        input = [
+          h(
+            'input',
+            {
+              type: 'text',
+              value: this.expression,
+              onChange: (e: { target: { value: string } }) => {
                 this.emitChange({
                   expression: e.target.value,
                 })
               }
             }
-          }
-        ),
-        createElement(
-          'button',
-          {
-            on: {
-              click: () => {
+          ),
+          h(
+            'button',
+            {
+              onClick: () => {
                 this.editingAst = !this.editingAst
               }
-            }
-          },
-          'ast'
-        )
-      ]
-      if (this.editingAst) {
-        input.push(
-          createElement(
-            'expression-editor',
-            {
-              props: {
-                canvasState: this.canvasState,
-                expression: this.expression
-              },
-              on: {
-                change: (value: string) => {
+            },
+            'ast'
+          )
+        ]
+        if (this.editingAst) {
+          input.push(
+            h(
+              'expression-editor',
+              {
+                props: {
+                  canvasState: this.canvasState,
+                  expression: this.expression
+                },
+                onChange: (value: string) => {
                   this.emitChange({
                     expression: value,
                   })
                 }
               }
-            }
+            )
           )
-        )
-      }
-    } else {
-      input = [
-        createElement(
-          'input',
-          {
-            attrs: {
-              type: this.literalType
-            },
-            domProps: {
-              value: this.literal
-            },
-            on: {
-              change: (e: { target: { value: string } }) => {
+        }
+      } else {
+        input = [
+          h(
+            'input',
+            {
+              type: this.literalType,
+              value: this.literal,
+              onChange: (e: { target: { value: string } }) => {
                 this.emitChange({
                   literal: e.target.value,
                 })
               }
             }
-          }
-        )
-      ]
+          )
+        ]
+      }
+      return input
     }
-    return input
   }
-}
+})
 
 function matchPattern(presetExpression: PresetExpression, currentTokens: Token[]) {
   const tokens = tokenizeExpression(presetExpression.expression)
