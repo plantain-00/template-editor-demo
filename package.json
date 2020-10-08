@@ -50,7 +50,7 @@
     "ts-node": "9.0.0",
     "tsconfig-plantain": "0.0.1",
     "tslib": "2.0.1",
-    "type-coverage": "2.13.0",
+    "type-coverage": "2.13.3",
     "types-as-schema": "1.36.2",
     "typescript": "4.0.3",
     "uglify-js": "3",
@@ -64,12 +64,12 @@
     "expression-engine": "1.8.1",
     "fast-json-patch": "^3.0.0-1",
     "remove-default": "1.1.1",
-    "tree-vue-component": "6.0.0",
+    "tree-vue-component": "6.0.1",
     "vue": "3.0.0",
-    "vue-schema-based-json-editor": "8.0.0",
+    "vue-schema-based-json-editor": "8.0.1",
     "ws-heartbeat": "^1.1.0"
   },
   "typeCoverage": {
-    "atLeast": 100
+    "atLeast": 99.85
   }
 }

@@ -153,7 +153,7 @@
     </div>
     <div>
       display
-      <select :value="canvasState.selection.template.display" @change="changeFlex('display', $event.target.value)">
+      <select :value="canvasState.selection.template.display" @change="changeFlexDisplay($event.target.value)">
         <option v-bind:value="undefined"></option>
         <option value="flex">flex</option>
       </select>
@@ -161,7 +161,7 @@
     <div>
       flex direction
       <select :value="canvasState.selection.template.flexDirection"
-        @change="changeFlex('flexDirection', $event.target.value)">
+        @change="changeFlexDirection($event.target.value)">
         <option value="row">row</option>
         <option value="column">column</option>
       </select>
@@ -169,7 +169,7 @@
     <div>
       justify content
       <select :value="canvasState.selection.template.justifyContent"
-        @change="changeFlex('justifyContent', $event.target.value)">
+        @change="changeFlexJustifyContent($event.target.value)">
         <option value="start">start</option>
         <option value="end">end</option>
         <option value="center">center</option>
@@ -179,7 +179,7 @@
     <div>
       align items
       <select :value="canvasState.selection.template.alignItems"
-        @change="changeFlex('alignItems', $event.target.value)">
+        @change="changeFlexAlignItems($event.target.value)">
         <option value="start">start</option>
         <option value="end">end</option>
         <option value="center">center</option>
