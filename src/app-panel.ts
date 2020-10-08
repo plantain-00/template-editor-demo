@@ -58,8 +58,8 @@ export const AppPanel = defineComponent({
             this.key = this.styleGuideKey
             this.ws = new WebSocket(`wss://storage.yorkyao.com/ws/template-editor-demo?key=${this.key}`)
             setWsHeartbeat(this.ws, '{"method":"ping"}')
-            this.ws.onmessage = (data) => {
-              if (typeof data.data === 'string' && data.data) { // type-coverage:ignore-line
+            this.ws.onmessage = (data: MessageEvent<unknown>) => {
+              if (typeof data.data === 'string' && data.data) {
                 const json = JSON.parse(data.data) as {
                   method: 'patch'
                   operations: jsonpatch.Operation[]
@@ -88,7 +88,7 @@ export const AppPanel = defineComponent({
           },
           body: JSON.stringify({
             ...this.appState.canvasState.styleGuide,
-            templates: this.appState.canvasState.styleGuide.templates.map((r) => removeDefault<Template>(r, templateSchemaJson) as Template)
+            templates: this.appState.canvasState.styleGuide.templates.map((r) => removeDefault<Template>(r, templateSchemaJson))
           })
         })
       }

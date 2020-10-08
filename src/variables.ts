@@ -1178,7 +1178,7 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             _createTextVNode(" display "),
             _createVNode("select", {
               value: _ctx.canvasState.selection.template.display,
-              onChange: _cache[21] || (_cache[21] = $event => (_ctx.changeFlex('display', $event.target.value)))
+              onChange: _cache[21] || (_cache[21] = $event => (_ctx.changeFlexDisplay($event.target.value)))
             }, [
               _createVNode("option", { value: undefined }),
               _createVNode("option", { value: "flex" }, "flex")
@@ -1188,7 +1188,7 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             _createTextVNode(" flex direction "),
             _createVNode("select", {
               value: _ctx.canvasState.selection.template.flexDirection,
-              onChange: _cache[22] || (_cache[22] = $event => (_ctx.changeFlex('flexDirection', $event.target.value)))
+              onChange: _cache[22] || (_cache[22] = $event => (_ctx.changeFlexDirection($event.target.value)))
             }, [
               _createVNode("option", { value: "row" }, "row"),
               _createVNode("option", { value: "column" }, "column")
@@ -1198,7 +1198,7 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             _createTextVNode(" justify content "),
             _createVNode("select", {
               value: _ctx.canvasState.selection.template.justifyContent,
-              onChange: _cache[23] || (_cache[23] = $event => (_ctx.changeFlex('justifyContent', $event.target.value)))
+              onChange: _cache[23] || (_cache[23] = $event => (_ctx.changeFlexJustifyContent($event.target.value)))
             }, [
               _createVNode("option", { value: "start" }, "start"),
               _createVNode("option", { value: "end" }, "end"),
@@ -1210,7 +1210,7 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             _createTextVNode(" align items "),
             _createVNode("select", {
               value: _ctx.canvasState.selection.template.alignItems,
-              onChange: _cache[24] || (_cache[24] = $event => (_ctx.changeFlex('alignItems', $event.target.value)))
+              onChange: _cache[24] || (_cache[24] = $event => (_ctx.changeFlexAlignItems($event.target.value)))
             }, [
               _createVNode("option", { value: "start" }, "start"),
               _createVNode("option", { value: "end" }, "end"),

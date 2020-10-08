@@ -231,12 +231,27 @@ export const OperationPanel = defineComponent({
     addColor() {
       this.canvasState.addKind = 'color'
     },
-    changeFlex(field: 'display' | 'flexDirection' | 'justifyContent' | 'alignItems', value: unknown) {
+    changeFlexDisplay(value: 'flex' | '' | undefined) {
       if (this.canvasState.selection.kind === 'template') {
-        if (field === 'display' && value === '') {
+        if (value === '') {
           value = undefined
         }
-        this.canvasState.selection.template[field] = value as any
+        this.canvasState.selection.template.display = value
+      }
+    },
+    changeFlexDirection(value: "row" | "column" | undefined) {
+      if (this.canvasState.selection.kind === 'template') {
+        this.canvasState.selection.template.flexDirection = value
+      }
+    },
+    changeFlexJustifyContent(value: "start" | "end" | "center" | "between" | undefined) {
+      if (this.canvasState.selection.kind === 'template') {
+        this.canvasState.selection.template.justifyContent = value 
+      }
+    },
+    changeFlexAlignItems(value: "start" | "end" | "center" | undefined) {
+      if (this.canvasState.selection.kind === 'template') {
+        this.canvasState.selection.template.alignItems = value
       }
     },
     extractAsComponent() {
@@ -337,8 +352,8 @@ export const OperationPanel = defineComponent({
           const predicate = getPropertyPredicate(parameter)
           const propertyIndex = this.propsAst.properties.findIndex(predicate)
           if (propertyIndex >= 0) {
-            const property = this.propsAst.properties[propertyIndex] as Property
-            if (propertyAst) {
+            const property = this.propsAst.properties[propertyIndex]
+            if (propertyAst && property.type === 'Property') {
               property.value = propertyAst
             } else {
               this.propsAst.properties.splice(propertyIndex, 1)

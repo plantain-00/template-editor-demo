@@ -5796,10 +5796,10 @@ safer-buffer@^2.1.0:
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
-schema-based-json-editor@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/schema-based-json-editor/-/schema-based-json-editor-8.0.0.tgz#d447d767a06a6e182ca8bae3f3a63fc51f2bbadc"
-  integrity sha512-jeBEFgPALXpk6kQW0iEPQhtt/Yg0KNrCGamCrUVHW177aOV9sgWM3UT38Owmx2oQwpSQiVsRCV3DvbLHWkRhOg==
+schema-based-json-editor@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/schema-based-json-editor/-/schema-based-json-editor-8.0.1.tgz#898c0a3f62e59852bc595ceab34167c2b20f2c0e"
+  integrity sha512-U6NSABgZLlMcKyreB8BGSt8+QI53FCBcGAMoCgfAp+e1SYyUayjvcLoWEe8xjEWkXcNSA40U4hbPHO8Illrk0Q==
   dependencies:
     "@types/dragula" "*"
     "@types/highlight.js" "*"
@@ -6550,10 +6550,10 @@ tree-component@^6.0.0:
   dependencies:
     tslib "2"
 
-tree-vue-component@6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/tree-vue-component/-/tree-vue-component-6.0.0.tgz#11f930c34b1a4b75cf77ed5398de7f20411dba0b"
-  integrity sha512-1vpRqigw6rZJQGgJ67tUt8oLEhTKVSmSbPa/5hjockSrh/autG3zXjN8t5qWNSLz4dlWqJ/2iCAr3xY6EDEzZQ==
+tree-vue-component@6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/tree-vue-component/-/tree-vue-component-6.0.1.tgz#4fd8cc3b85c78cb2aeae5d1d49b1eff40ae413e7"
+  integrity sha512-Pp2G1yNh7L+vva6rxWFrc3fwbQZ46YvQMsKfeL/iASH1GnjRgeySSK4gsv/yE6iGy9nGNuRTXeZTralusTsFVA==
   dependencies:
     tree-component "^6.0.0"
     vue "3"
@@ -6652,23 +6652,23 @@ type-check@^0.4.0, type-check@~0.4.0:
   dependencies:
     prelude-ls "^1.2.1"
 
-type-coverage-core@^2.13.0:
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/type-coverage-core/-/type-coverage-core-2.13.0.tgz#51e4cc12a2e87f15afc6d52720b7a76395552021"
-  integrity sha512-VXcYDVwCbUI+xeQnrTBpxytVZ/6qFyQFhRsp9Ss6bPktBHVelCzPx4Fc0+lDrKUTCHNBydorSfPE88kl1SNHIA==
+type-coverage-core@^2.13.3:
+  version "2.13.3"
+  resolved "https://registry.yarnpkg.com/type-coverage-core/-/type-coverage-core-2.13.3.tgz#dfd6a463232a4fab21cb7989e8df145aed600506"
+  integrity sha512-9L56Kp9oc66rIxyLixVAjukIz1oOnyGDhkh4qCssNBNZ+T7YEScjh25jJ2HM20kC5K1tRaHmHJfSM0Wli5KbCw==
   dependencies:
     minimatch "3"
     ts-lib-utils "^2.10.0"
     tslib "1 || 2"
     tsutils "3"
 
-type-coverage@2.13.0:
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/type-coverage/-/type-coverage-2.13.0.tgz#38c49e16b419563dc74d1ee9fd1d507498dc31f4"
-  integrity sha512-4qvRmTvGxuxwRpvNbljheETdOE10mNfyQDbcv8nEHqx//qk3ITi91VVTI9dAiZl56GDh1ggF6yYIcdzcyTklbA==
+type-coverage@2.13.3:
+  version "2.13.3"
+  resolved "https://registry.yarnpkg.com/type-coverage/-/type-coverage-2.13.3.tgz#b57290238db75884541865d8f12a68ba57e1e577"
+  integrity sha512-/ggNw/RohGRE06SWSAe6I9aAbhG31WBaq+m3rMVJfLI8KaMX800B+z2jbDdLzztPZq6Vlz03Tv7TYt/Yx6INJg==
   dependencies:
     minimist "1"
-    type-coverage-core "^2.13.0"
+    type-coverage-core "^2.13.3"
 
 type-fest@^0.13.1:
   version "0.13.1"
@@ -7018,10 +7018,10 @@ vm-browserify@^1.0.1:
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
-vue-schema-based-json-editor@8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/vue-schema-based-json-editor/-/vue-schema-based-json-editor-8.0.0.tgz#234b6f22d12ac34db2ed54923d9eb3c5c7bfd880"
-  integrity sha512-DtKRVOuQXBc+Kr+WQ22hvDO4Lk6w0Xisw/ERfnHFPon1XBW72y0/kJ0+OBPpxVfKGwQpQFxeadNwCji1TUpr8Q==
+vue-schema-based-json-editor@8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/vue-schema-based-json-editor/-/vue-schema-based-json-editor-8.0.1.tgz#0d57199cdb2690dc98cb4d295d2983c95d739daa"
+  integrity sha512-zZOFyD1mxfGxh1QMeCQAFpymDHHCnJp3dMVJW8ZfxpetmzwckNk2muwd8fXWiaipCB3Y4VPRgwCAWtBjAV8t2Q==
   dependencies:
     "@types/dragula" "*"
     "@types/highlight.js" "*"
@@ -7030,7 +7030,7 @@ vue-schema-based-json-editor@8.0.0:
     file-uploader-vue-component "8"
     json5 "2"
     markdown-tip-vue "7"
-    schema-based-json-editor "^8.0.0"
+    schema-based-json-editor "^8.0.1"
     select2-vue-component "6"
     vue "3"
 

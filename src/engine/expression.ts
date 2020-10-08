@@ -41,7 +41,7 @@ export function parseExpressionToAst(expression: string) {
   try {
     return parseExpression(tokenizeExpression(expression))
   } catch (error: unknown) {
-    return error as Error
+    return error instanceof Error ? error : new Error(String(error))
   }
 }
 
