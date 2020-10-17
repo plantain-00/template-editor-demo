@@ -851,7 +851,7 @@ export function templateEditorExpressionEditorTemplateHtml(_ctx, _cache) {
     _createVNode(_component_json_editor, {
       schema: _ctx.schema,
       "initial-value": _ctx.ast,
-      "onUpdate-value": _cache[1] || (_cache[1] = $event => (_ctx.updateValue($event)))
+      onUpdateValue: _cache[1] || (_cache[1] = $event => (_ctx.updateValue($event)))
     }, null, 8 /* PROPS */, ["schema", "initial-value"])
   ], 4 /* STYLE */))
 }
@@ -1391,7 +1391,7 @@ export function templateModelEditorTemplateHtml(_ctx, _cache) {
         _createVNode(_component_json_editor, {
           schema: _ctx.schema,
           "initial-value": _ctx.appState.templateModel,
-          "onUpdate-value": _cache[1] || (_cache[1] = $event => (_ctx.updateValue($event)))
+          onUpdateValue: _cache[1] || (_cache[1] = $event => (_ctx.updateValue($event)))
         }, null, 8 /* PROPS */, ["schema", "initial-value"]),
         _createVNode("textarea", {
           value: _ctx.templateModel,
