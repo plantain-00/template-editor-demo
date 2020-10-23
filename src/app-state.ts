@@ -21,13 +21,13 @@ export function createAppState() {
     debug: !!localStorage.getItem('debug'),
 
     resize() {
-      this.canvasState.canvasWidth = window.innerWidth - offsetWidth
-      this.canvasState.canvasHeight = window.innerHeight - offsetHeight
+      this.canvasState.viewport.width = window.innerWidth - offsetWidth
+      this.canvasState.viewport.height = window.innerHeight - offsetHeight
       this.canvasState.applyCanvasSizeChange()
 
       if (this.graphicCanvasState) {
-        this.graphicCanvasState.canvasWidth = window.innerWidth - offsetWidth
-        this.graphicCanvasState.canvasHeight = window.innerHeight - offsetHeight
+        this.graphicCanvasState.viewport.width = window.innerWidth - offsetWidth
+        this.graphicCanvasState.viewport.height = window.innerHeight - offsetHeight
         this.graphicCanvasState.applyCanvasSizeChange()
       }
     },

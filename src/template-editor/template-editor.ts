@@ -36,8 +36,8 @@ export const TemplateEditor = defineComponent({
   computed: {
     canvasStyle(): { [name: string]: unknown } {
       return {
-        width: this.canvasState.canvasWidth + 'px',
-        height: this.canvasState.canvasHeight + 'px',
+        width: this.canvasState.viewport.width + 'px',
+        height: this.canvasState.viewport.height + 'px',
         left: layerPanelWidth + 'px',
         position: 'absolute',
       }

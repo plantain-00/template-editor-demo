@@ -40,14 +40,14 @@ export const SelectionLayer = defineComponent({
     canvasStyle(): { [name: string]: unknown } {
       return {
         position: 'absolute',
-        width: this.canvasState.canvasWidth + 'px',
-        height: this.canvasState.canvasHeight + 'px',
+        width: this.canvasState.viewport.width + 'px',
+        height: this.canvasState.viewport.height + 'px',
         overflow: 'hidden',
       }
     },
     styleGuideStyle(): { [name: string]: unknown } {
       return {
-        transform: `scale(${this.canvasState.styleGuideScale}) translate(${this.canvasState.styleGuideTranslateX}px, ${this.canvasState.styleGuideTranslateY}px)`,
+        transform: `scale(${this.canvasState.viewport.scale}) translate(${this.canvasState.viewport.translateX}px, ${this.canvasState.viewport.translateY}px)`,
         width: this.canvasState.styleGuideWidth + 'px',
         height: this.canvasState.styleGuideHeight + 'px',
       }
@@ -62,8 +62,8 @@ export const SelectionLayer = defineComponent({
       if (!this.rotateAreaStyle) {
         return undefined
       }
-      const length = rotateStickLength / this.canvasState.styleGuideScale
-      const border = 1 / this.canvasState.styleGuideScale
+      const length = rotateStickLength / this.canvasState.viewport.scale
+      const border = 1 / this.canvasState.viewport.scale
       return {
         left: `calc(50% - ${border / 2}px)`,
         top: -length + `px`,
@@ -77,9 +77,9 @@ export const SelectionLayer = defineComponent({
       if (!this.rotateAreaStyle) {
         return undefined
       }
-      const length = rotateStickLength / this.canvasState.styleGuideScale
-      const border = 1 / this.canvasState.styleGuideScale
-      const width = rotateCircleSize / this.canvasState.styleGuideScale
+      const length = rotateStickLength / this.canvasState.viewport.scale
+      const border = 1 / this.canvasState.viewport.scale
+      const width = rotateCircleSize / this.canvasState.viewport.scale
       return {
         left: `calc(50% - ${border / 2 + width / 2}px)`,
         top: -length - width + `px`,
@@ -92,8 +92,8 @@ export const SelectionLayer = defineComponent({
       }
     },
     resizeRegions(): { [name: string]: unknown }[] {
-      const width = resizeSize / this.canvasState.styleGuideScale
-      const border = 1 / this.canvasState.styleGuideScale
+      const width = resizeSize / this.canvasState.viewport.scale
+      const border = 1 / this.canvasState.viewport.scale
       const leftTop = width / 2
       const rightBottom = width / 2 - border
       const style = {
@@ -151,7 +151,7 @@ export const SelectionLayer = defineComponent({
     getSelectionAreaStyle(region: Region & Rotate) {
       return {
         ...this.getResizeStyle(region),
-        border: `${1 / this.canvasState.styleGuideScale}px solid green`
+        border: `${1 / this.canvasState.viewport.scale}px solid green`
       }
     },
     getResizeStyle(region: Region & Rotate) {

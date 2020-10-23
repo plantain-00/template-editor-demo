@@ -20,7 +20,7 @@ export const LayerPanel = defineComponent({
   computed: {
     panelStyle(): { [name: string]: unknown } {
       return {
-        height: this.canvasState.canvasHeight + 'px',
+        height: this.canvasState.viewport.height + 'px',
         overflow: 'auto',
         whiteSpace: 'nowrap',
         userSelect: 'none',

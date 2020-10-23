@@ -16,14 +16,14 @@ export const HoverLayer = defineComponent({
     canvasStyle(): { [name: string]: unknown } {
       return {
         position: 'absolute',
-        width: this.canvasState.canvasWidth + 'px',
-        height: this.canvasState.canvasHeight + 'px',
+        width: this.canvasState.viewport.width + 'px',
+        height: this.canvasState.viewport.height + 'px',
         overflow: 'hidden',
       }
     },
     styleGuideStyle(): { [name: string]: unknown } {
       return {
-        transform: `scale(${this.canvasState.styleGuideScale}) translate(${this.canvasState.styleGuideTranslateX}px, ${this.canvasState.styleGuideTranslateY}px)`,
+        transform: `scale(${this.canvasState.viewport.scale}) translate(${this.canvasState.viewport.translateX}px, ${this.canvasState.viewport.translateY}px)`,
         width: this.canvasState.styleGuideWidth + 'px',
         height: this.canvasState.styleGuideHeight + 'px',
       }
