@@ -20,7 +20,7 @@ export const CommonEditor = defineComponent({
         top: '50px',
         backgroundColor: 'white',
         zIndex: 1,
-        height: props.canvasState.canvasHeight + 'px',
+        height: props.canvasState.viewport.height + 'px',
         overflow: 'auto',
       }
     }

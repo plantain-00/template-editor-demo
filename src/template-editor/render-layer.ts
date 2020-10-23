@@ -20,15 +20,15 @@ export const RenderLayer = defineComponent({
     canvasStyle(): { [name: string]: unknown } {
       return {
         position: 'absolute',
-        width: this.canvasState.canvasWidth + 'px',
-        height: this.canvasState.canvasHeight + 'px',
+        width: this.canvasState.viewport.width + 'px',
+        height: this.canvasState.viewport.height + 'px',
         overflow: 'hidden',
         backgroundColor: '#ddd',
       }
     },
     styleGuideStyle(): { [name: string]: unknown } {
       return {
-        transform: `scale(${this.canvasState.styleGuideScale}) translate(${this.canvasState.styleGuideTranslateX}px, ${this.canvasState.styleGuideTranslateY}px)`,
+        transform: `scale(${this.canvasState.viewport.scale}) translate(${this.canvasState.viewport.translateX}px, ${this.canvasState.viewport.translateY}px)`,
         width: this.canvasState.styleGuideWidth + 'px',
         height: this.canvasState.styleGuideHeight + 'px',
       }
@@ -51,7 +51,7 @@ export const RenderLayer = defineComponent({
         fontSize: '12px',
         width: `${template.name ? template.name.length * nameSize : 0}px`,
         zIndex: Math.round(template.z || 0),
-        transform: `scale(${1 / this.canvasState.styleGuideScale})`,
+        transform: `scale(${1 / this.canvasState.viewport.scale})`,
         transformOrigin: 'left bottom',
       }
     }

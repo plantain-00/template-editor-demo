@@ -60,8 +60,8 @@ export const MaskLayer = defineComponent({
       }
       return {
         position: 'absolute',
-        width: this.canvasState.canvasWidth + 'px',
-        height: this.canvasState.canvasHeight + 'px',
+        width: this.canvasState.viewport.width + 'px',
+        height: this.canvasState.viewport.height + 'px',
         opacity: 0,
         cursor
       }
@@ -69,26 +69,8 @@ export const MaskLayer = defineComponent({
   },
   methods: {
     wheel(e: WheelEvent) {
-      if (e.ctrlKey) {
-        // zoom canvas
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        let newScale = 1
-        if (e.deltaY > 0) {
-          newScale = this.canvasState.styleGuideScale * 0.98
-        } else if (e.deltaY < 0) {
-          newScale = this.canvasState.styleGuideScale / 0.98
-        }
-        const newTranslateX = (e.offsetX - this.canvasState.mapX(e.offsetX) * newScale - this.canvasState.styleGuideWidth / 2) / newScale + this.canvasState.styleGuideWidth / 2
-        const newTranslateY = (e.offsetY - this.canvasState.mapY(e.offsetY) * newScale - this.canvasState.styleGuideHeight / 2) / newScale + this.canvasState.styleGuideHeight / 2
-        this.canvasState.styleGuideScale = newScale
-        this.canvasState.styleGuideTranslateX = newTranslateX
-        this.canvasState.styleGuideTranslateY = newTranslateY
-      } else {
-        // move canvas
-        this.canvasState.styleGuideTranslateX -= e.deltaX / this.canvasState.styleGuideScale
-        this.canvasState.styleGuideTranslateY -= e.deltaY / this.canvasState.styleGuideScale
-      }
+      this.canvasState.viewport.zoom(e, this.canvasState.styleGuideWidth, this.canvasState.styleGuideHeight)
+      this.canvasState.viewport.move(e)
     },
     mousedown(e: MouseEvent) {
       this.mouseIsDown = true
@@ -238,7 +220,7 @@ export const MaskLayer = defineComponent({
                 this.canvasState.yAlignment = null
                 return
               }
-              const region = getTemplateAlignment(x, y, this.canvasState.styleGuideScale, template, this.canvasState.targetTemplateRegions)
+              const region = getTemplateAlignment(x, y, this.canvasState.viewport.scale, template, this.canvasState.targetTemplateRegions)
               if (region.x !== undefined) {
                 template.x = formatPixel(region.x.template)
                 this.canvasState.xAlignment = region.x.alignment
@@ -305,13 +287,13 @@ export const MaskLayer = defineComponent({
 
       if (this.canvasState.hasRelationWithSelection) {
         // contants before and after moving
-        const constantsX = (this.canvasState.styleGuideTranslateX - this.canvasState.styleGuideWidth / 2) * this.canvasState.styleGuideScale + this.canvasState.styleGuideWidth / 2
-        const constantsY = (this.canvasState.styleGuideTranslateY - this.canvasState.styleGuideHeight / 2) * this.canvasState.styleGuideScale + this.canvasState.styleGuideHeight / 2
+        const constantsX = (this.canvasState.viewport.translateX - this.canvasState.styleGuideWidth / 2) * this.canvasState.viewport.scale + this.canvasState.styleGuideWidth / 2
+        const constantsY = (this.canvasState.viewport.translateY - this.canvasState.styleGuideHeight / 2) * this.canvasState.viewport.scale + this.canvasState.styleGuideHeight / 2
 
         this.canvasState.hasRelationWithSelection = false
         // keep canvas stable
-        this.canvasState.styleGuideTranslateX = (constantsX - this.canvasState.styleGuideWidth / 2) / this.canvasState.styleGuideScale + this.canvasState.styleGuideWidth / 2
-        this.canvasState.styleGuideTranslateY = (constantsY - this.canvasState.styleGuideHeight / 2) / this.canvasState.styleGuideScale + this.canvasState.styleGuideHeight / 2
+        this.canvasState.viewport.translateX = (constantsX - this.canvasState.styleGuideWidth / 2) / this.canvasState.viewport.scale + this.canvasState.styleGuideWidth / 2
+        this.canvasState.viewport.translateY = (constantsY - this.canvasState.styleGuideHeight / 2) / this.canvasState.viewport.scale + this.canvasState.styleGuideHeight / 2
 
         this.canvasState.mousePressing = false
         if (this.canvasState.moved) {

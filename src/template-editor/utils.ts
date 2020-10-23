@@ -62,7 +62,7 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
         return {
           kind: 'move',
           offsetX: nameRegion.x,
-          offsetY: nameRegion.y + nameSize / canvasState.styleGuideScale,
+          offsetY: nameRegion.y + nameSize / canvasState.viewport.scale,
           rotate: 0,
         }
       }
@@ -103,7 +103,7 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
     for (const contentRegion of canvasState.allContentRegions) {
       const rotate = contentRegion.rotates.reduce((p, c) => p + c.rotate, 0)
       if (contentRegion.content.kind !== 'reference') {
-        const canGrabToRotate = getCanGrabToRotate(position, contentRegion, canvasState.styleGuideScale)
+        const canGrabToRotate = getCanGrabToRotate(position, contentRegion, canvasState.viewport.scale)
         if (canGrabToRotate) {
           return {
             kind: 'grab',

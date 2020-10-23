@@ -75,7 +75,7 @@ export const TemplateModelEditor = defineComponent({
         top: '50px',
         backgroundColor: 'white',
         zIndex: 1,
-        height: props.appState.canvasState.canvasHeight + 'px',
+        height: props.appState.canvasState.viewport.height + 'px',
         overflow: 'auto',
       }
     }

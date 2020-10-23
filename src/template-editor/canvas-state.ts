@@ -3,27 +3,21 @@ import { reactive } from 'vue'
 import { CanvasSelection, StyleGuide, Template } from '../model'
 import { iterateAllTemplateRegions, iterateAllContentRegions, iterateAllNameRegions } from '../utils'
 import { presetExpressions } from '../preset-expressions'
+import { createViewport } from './viewport'
 
 export function createCanvasState(styleGuide: StyleGuide, width: number, height: number) {
   const canvasState = reactive({
     applyCanvasSizeChange() {
-      const widthScale = this.canvasWidth / this.styleGuideWidth
-      const heightScale = this.canvasHeight / this.styleGuideHeight
-      this.styleGuideScale = Math.min(widthScale, heightScale) * 0.9
-      const x = this.styleGuideWidth * (widthScale - this.styleGuideScale) / 2
-      const y = this.styleGuideHeight * (heightScale - this.styleGuideScale) / 2
-      this.styleGuideTranslateX = (x - this.styleGuideX * this.styleGuideScale - this.styleGuideWidth / 2) / this.styleGuideScale + this.styleGuideWidth / 2
-      this.styleGuideTranslateY = (y - this.styleGuideY * this.styleGuideScale - this.styleGuideHeight / 2) / this.styleGuideScale + this.styleGuideHeight / 2
+      const widthScale = this.viewport.width / this.styleGuideWidth
+      const heightScale = this.viewport.height / this.styleGuideHeight
+      this.viewport.scale = Math.min(widthScale, heightScale) * 0.9
+      const x = this.styleGuideWidth * (widthScale - this.viewport.scale) / 2
+      const y = this.styleGuideHeight * (heightScale - this.viewport.scale) / 2
+      this.viewport.translateX = (x - this.styleGuideX * this.viewport.scale - this.styleGuideWidth / 2) / this.viewport.scale + this.styleGuideWidth / 2
+      this.viewport.translateY = (y - this.styleGuideY * this.viewport.scale - this.styleGuideHeight / 2) / this.viewport.scale + this.styleGuideHeight / 2
     },
-    styleGuide: {
-      name: '',
-      templates: []
-    } as StyleGuide,
-    styleGuideTranslateX: 0,
-    styleGuideTranslateY: 0,
-    styleGuideScale: 1,
-    canvasWidth: 1200,
-    canvasHeight: 400,
+    viewport: createViewport(width, height),
+    styleGuide,
     selection: {
       kind: 'none'
     } as CanvasSelection,
@@ -90,16 +84,16 @@ export function createCanvasState(styleGuide: StyleGuide, width: number, height:
       return this.mapY(this.y)
     },
     mapX(x: number) {
-      return (x - ((this.styleGuideTranslateX - this.styleGuideWidth / 2) * this.styleGuideScale + this.styleGuideWidth / 2)) / this.styleGuideScale
+      return this.viewport.mapX(x, this.styleGuideWidth)
     },
     mapY(y: number) {
-      return (y - ((this.styleGuideTranslateY - this.styleGuideHeight / 2) * this.styleGuideScale + this.styleGuideHeight / 2)) / this.styleGuideScale
+      return this.viewport.mapY(y, this.styleGuideHeight)
     },
     mapBackX(x: number) {
-      return x * this.styleGuideScale + ((this.styleGuideTranslateX - this.styleGuideWidth / 2) * this.styleGuideScale + this.styleGuideWidth / 2)
+      return this.viewport.mapBackX(x, this.styleGuideWidth)
     },
     mapBackY(y: number) {
-      return y * this.styleGuideScale + ((this.styleGuideTranslateY - this.styleGuideHeight / 2) * this.styleGuideScale + this.styleGuideHeight / 2)
+      return this.viewport.mapBackY(y, this.styleGuideHeight)
     },
     styleGuideHistory: [] as StyleGuide[],
     action() {
@@ -128,7 +122,7 @@ export function createCanvasState(styleGuide: StyleGuide, width: number, height:
     },
     get allNameRegions() {
       if (this.selection.kind === 'template') {
-        return Array.from(iterateAllNameRegions(this.selection.template, this.styleGuide, this.styleGuideScale))
+        return Array.from(iterateAllNameRegions(this.selection.template, this.styleGuide, this.viewport.scale))
       }
       return []
     },
@@ -139,7 +133,7 @@ export function createCanvasState(styleGuide: StyleGuide, width: number, height:
       return sortByZ(Array.from(iterateAllContentRegions(undefined, this.styleGuide)))
     },
     get targetNameRegions() {
-      return sortByZ(Array.from(iterateAllNameRegions(undefined, this.styleGuide, this.styleGuideScale)))
+      return sortByZ(Array.from(iterateAllNameRegions(undefined, this.styleGuide, this.viewport.scale)))
     },
     xAlignment: null as number | null,
     yAlignment: null as number | null,
@@ -148,10 +142,6 @@ export function createCanvasState(styleGuide: StyleGuide, width: number, height:
     commonEditorVisible: false,
     commonEditorEditingFieldName: 'variables' as 'variables' | 'collections' | 'constrains',
   })
-  canvasState.styleGuide = styleGuide
-  canvasState.canvasWidth = width
-  canvasState.canvasHeight = height
-
   canvasState.applyCanvasSizeChange()
   return canvasState
 }

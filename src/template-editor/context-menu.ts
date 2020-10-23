@@ -27,8 +27,8 @@ export const ContextMenu = defineComponent({
     maskStyle(): { [name: string]: unknown } {
       return {
         position: 'absolute',
-        width: this.canvasState.canvasWidth + 'px',
-        height: this.canvasState.canvasHeight + 'px',
+        width: this.canvasState.viewport.width + 'px',
+        height: this.canvasState.viewport.height + 'px',
         opacity: 0,
       }
     },
