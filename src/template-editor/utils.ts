@@ -23,7 +23,7 @@ export function* iterateContentOrTemplateByPosition(canvasState: CanvasState, po
     }
   }
 
-  for (const contentRegion of canvasState.targetContentRegions) {
+  for (const contentRegion of canvasState.styleGuide.targetContentRegions) {
     if (isInRegion(position, contentRegion)) {
       yield { kind: 'content', region: contentRegion }
     }
@@ -41,7 +41,7 @@ export function selectTemplateRegionByPosition(canvasState: CanvasState, positio
 }
 
 function* iterateTemplateRegionByPosition(canvasState: CanvasState, position: Position) {
-  for (const templateRegion of canvasState.targetTemplateRegions) {
+  for (const templateRegion of canvasState.styleGuide.targetTemplateRegions) {
     if (isInRegion(position, templateRegion)) {
       yield templateRegion
     }
@@ -55,7 +55,7 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
   rotate: number,
   content?: TemplateReferenceContent
 } | undefined {
-  if (canvasState.selection.kind === 'template') {
+  if (canvasState.styleGuide.selection.kind === 'template') {
     for (const nameRegion of canvasState.allNameRegions) {
       const isInSelectionRegion = isInRegion(position, nameRegion)
       if (isInSelectionRegion) {
@@ -67,7 +67,7 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
         }
       }
     }
-    for (const templateRegion of canvasState.allTemplateRegions) {
+    for (const templateRegion of canvasState.styleGuide.allTemplateRegions) {
       if (!templateRegion.parent) {
         const side = getRegionSide(position, templateRegion)
         if (side) {
@@ -98,9 +98,9 @@ export function getPositionAndSelectionAreaRelation(canvasState: CanvasState, po
         }
       }
     }
-  } else if (canvasState.selection.kind === 'content') {
-    const content = canvasState.selection.content
-    for (const contentRegion of canvasState.allContentRegions) {
+  } else if (canvasState.styleGuide.selection.kind === 'content') {
+    const content = canvasState.styleGuide.selection.content
+    for (const contentRegion of canvasState.styleGuide.allContentRegions) {
       const rotate = contentRegion.rotates.reduce((p, c) => p + c.rotate, 0)
       if (contentRegion.content.kind !== 'reference') {
         const canGrabToRotate = getCanGrabToRotate(position, contentRegion, canvasState.viewport.scale)
@@ -207,7 +207,7 @@ export function selectTemplateByArea(canvasState: CanvasState, position1: Positi
     height: Math.abs(position1.y - position2.y),
   }
   let potentialTemplateRegion: Required<Region> & { parent?: { content: TemplateReferenceContent, template: Template, index: number }, template: Template } | undefined
-  for (const templateRegion of canvasState.targetTemplateRegions) {
+  for (const templateRegion of canvasState.styleGuide.targetTemplateRegions) {
     const positions: Position[] = [
       {
         x: templateRegion.x,

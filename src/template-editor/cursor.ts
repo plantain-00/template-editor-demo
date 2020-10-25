@@ -9,11 +9,11 @@ export function getCursor(kind: 'move' | 'grab' | 'grabbing' | RegionSide, canva
     return kind
   }
   let offset = 0
-  if (canvasState.selection.kind === 'content'
-    && canvasState.selection.content.kind !== 'reference'
-    && canvasState.selection.content.kind !== 'snapshot'
-    && canvasState.selection.content.rotate) {
-    const rotate = canvasState.selection.content.rotate % 180
+  if (canvasState.styleGuide.selection.kind === 'content'
+    && canvasState.styleGuide.selection.content.kind !== 'reference'
+    && canvasState.styleGuide.selection.content.kind !== 'snapshot'
+    && canvasState.styleGuide.selection.content.rotate) {
+    const rotate = canvasState.styleGuide.selection.content.rotate % 180
     if (rotate > 22.5) {
       if (rotate < 67.5) {
         offset += 1

@@ -24,12 +24,12 @@ export const HoverLayer = defineComponent({
     styleGuideStyle(): { [name: string]: unknown } {
       return {
         transform: `scale(${this.canvasState.viewport.scale}) translate(${this.canvasState.viewport.translateX}px, ${this.canvasState.viewport.translateY}px)`,
-        width: this.canvasState.styleGuideWidth + 'px',
-        height: this.canvasState.styleGuideHeight + 'px',
+        width: this.canvasState.styleGuide.width + 'px',
+        height: this.canvasState.styleGuide.height + 'px',
       }
     },
     hoverStyle(): { [name: string]: unknown } | undefined {
-      if (this.canvasState.mousePressing) {
+      if (this.canvasState.mask.mousePressing) {
         return undefined
       }
       const content = selectContentOrTemplateByPosition(this.canvasState, { x: this.canvasState.mappedX, y: this.canvasState.mappedY })

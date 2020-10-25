@@ -35,13 +35,13 @@ export const LayerPanel = defineComponent({
         data: [],
         draggable: true,
       },
-      () => this.canvasState.styleGuide.templates.map((template, i) => h(
+      () => this.canvasState.styleGuide.data.templates.map((template, i) => h(
         LayerNode,
         {
           key: template.id + '_' + i,
           canvasState: this.canvasState,
           template,
-          last: i === this.canvasState.styleGuide.templates.length - 1,
+          last: i === this.canvasState.styleGuide.data.templates.length - 1,
           path: [i],
           dragIndex: this.childrenDragIndex,
           onDrag: (index: number) => {
@@ -52,7 +52,7 @@ export const LayerPanel = defineComponent({
               && this.childrenDragIndex !== e.index
               && (this.childrenDragIndex !== e.index + 1 || e.dropPosition !== DropPosition.down)
               && (this.childrenDragIndex !== e.index - 1 || e.dropPosition !== DropPosition.up)) {
-              const template = this.canvasState.styleGuide.templates.splice(this.childrenDragIndex, 1)[0]
+              const template = this.canvasState.styleGuide.data.templates.splice(this.childrenDragIndex, 1)[0]
               let index = e.index
               if (e.dropPosition === DropPosition.down) {
                 index++
@@ -60,7 +60,7 @@ export const LayerPanel = defineComponent({
               if (this.childrenDragIndex < e.index) {
                 index--
               }
-              this.canvasState.styleGuide.templates.splice(index, 0, template)
+              this.canvasState.styleGuide.data.templates.splice(index, 0, template)
             }
           },
         },
@@ -99,8 +99,8 @@ const LayerNode = defineComponent({
   },
   computed: {
     selected(): boolean {
-      return (this.canvasState.selection.kind === 'content' && this.canvasState.selection.content === this.content)
-        || (this.canvasState.selection.kind === 'template' && this.canvasState.selection.template === this.template && !this.content)
+      return (this.canvasState.styleGuide.selection.kind === 'content' && this.canvasState.styleGuide.selection.content === this.content)
+        || (this.canvasState.styleGuide.selection.kind === 'template' && this.canvasState.styleGuide.selection.template === this.template && !this.content)
     },
     dropAllowed(): boolean {
       return this.dragIndex !== null
@@ -115,7 +115,7 @@ const LayerNode = defineComponent({
       if (!this.content) {
         return getTemplateDisplayName(this.template)
       }
-      return getContentDisplayName(this.content, this.canvasState.styleGuide)
+      return getContentDisplayName(this.content, this.canvasState.styleGuide.data)
     },
     contents(): TemplateContent[] {
       if (this.content) {
@@ -185,13 +185,13 @@ const LayerNode = defineComponent({
         },
         onChange: () => {
           if (this.content) {
-            this.canvasState.selection = {
+            this.canvasState.styleGuide.selection = {
               kind: 'content',
               content: this.content,
               template: this.template,
             }
           } else {
-            this.canvasState.selection = {
+            this.canvasState.styleGuide.selection = {
               kind: 'template',
               template: this.template,
             }

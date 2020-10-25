@@ -1,6 +1,6 @@
 import { defineComponent, PropType } from 'vue'
 
-import { CanvasState } from './canvas-state'
+import { CanvasState, equal } from './canvas-state'
 import { TemplateContent, Template, TemplateReferenceContent, CanvasSelection } from '../model'
 import { selectTemplateRegionByPosition, selectContentOrTemplateByPosition, getPositionAndSelectionAreaRelation, selectTemplateByArea, RegionSide } from './utils'
 import { templateEditorMaskLayerTemplateHtml } from '../variables'
@@ -39,7 +39,7 @@ export const MaskLayer = defineComponent({
       let cursor: string
       if (this.canvasState.addKind) {
         cursor = 'grabbing'
-      } else if (this.canvasState.hasRelationWithSelection) {
+      } else if (this.canvasState.styleGuide.hasRelationWithSelection) {
         if (this.draggingSelectionKind) {
           cursor = getCursor(this.draggingSelectionKind, this.canvasState)
         } else {
@@ -65,18 +65,30 @@ export const MaskLayer = defineComponent({
         opacity: 0,
         cursor
       }
-    }
+    },
+    mouseupMappedX(): number {
+      return this.canvasState.mapX(this.canvasState.mask.mouseupX)
+    },
+    mouseupMappedY(): number {
+      return this.canvasState.mapY(this.canvasState.mask.mouseupY)
+    },
+    mousedownMappedX(): number {
+      return this.canvasState.mapX(this.canvasState.mask.mousedownX)
+    },
+    mousedownMappedY(): number {
+      return this.canvasState.mapY(this.canvasState.mask.mousedownY)
+    },
   },
   methods: {
     wheel(e: WheelEvent) {
-      this.canvasState.viewport.zoom(e, this.canvasState.styleGuideWidth, this.canvasState.styleGuideHeight)
+      this.canvasState.viewport.zoom(e, this.canvasState.styleGuide.width, this.canvasState.styleGuide.height)
       this.canvasState.viewport.move(e)
     },
     mousedown(e: MouseEvent) {
       this.mouseIsDown = true
       // add content
       if (this.canvasState.addKind) {
-        this.canvasState.action()
+        this.canvasState.styleGuide.action()
         const x = this.canvasState.mapX(e.offsetX)
         const y = this.canvasState.mapY(e.offsetY)
         if (this.canvasState.addKind === 'template') {
@@ -88,8 +100,8 @@ export const MaskLayer = defineComponent({
             height: 300,
             contents: [],
           }
-          this.canvasState.styleGuide.templates.push(newTemplate)
-          this.canvasState.selection = {
+          this.canvasState.styleGuide.data.templates.push(newTemplate)
+          this.canvasState.styleGuide.selection = {
             kind: 'template',
             template: newTemplate,
           }
@@ -111,7 +123,7 @@ export const MaskLayer = defineComponent({
                 height: 100,
               }
               templateRegion.template.contents.push(newContent)
-              this.canvasState.selection = {
+              this.canvasState.styleGuide.selection = {
                 kind: 'content',
                 content: newContent,
                 template: templateRegion.template,
@@ -126,7 +138,7 @@ export const MaskLayer = defineComponent({
                 height: 100,
               }
               templateRegion.template.contents.push(newContent)
-              this.canvasState.selection = {
+              this.canvasState.styleGuide.selection = {
                 kind: 'content',
                 content: newContent,
                 template: templateRegion.template,
@@ -141,7 +153,7 @@ export const MaskLayer = defineComponent({
                 height: 100,
               }
               templateRegion.template.contents.push(newContent)
-              this.canvasState.selection = {
+              this.canvasState.styleGuide.selection = {
                 kind: 'content',
                 content: newContent,
                 template: templateRegion.template,
@@ -153,17 +165,17 @@ export const MaskLayer = defineComponent({
         return
       }
 
-      this.canvasState.mousedownX = e.offsetX
-      this.canvasState.mousedownY = e.offsetY
-      this.canvasState.mouseupX = e.offsetX
-      this.canvasState.mouseupY = e.offsetY
-      this.canvasState.mousePressing = true
+      this.canvasState.mask.mousedownX = e.offsetX
+      this.canvasState.mask.mousedownY = e.offsetY
+      this.canvasState.mask.mouseupX = e.offsetX
+      this.canvasState.mask.mouseupY = e.offsetY
+      this.canvasState.mask.mousePressing = true
 
       const relation = getPositionAndSelectionAreaRelation(this.canvasState, {
-        x: this.canvasState.mousedownMappedX,
-        y: this.canvasState.mousedownMappedY
+        x: this.mousedownMappedX,
+        y: this.mousedownMappedY
       })
-      this.canvasState.hasRelationWithSelection = !!relation
+      this.canvasState.styleGuide.hasRelationWithSelection = !!relation
       if (relation) {
         this.draggingSelectionOffsetX = relation.offsetX
         this.draggingSelectionOffsetY = relation.offsetY
@@ -174,11 +186,11 @@ export const MaskLayer = defineComponent({
         } else {
           this.draggingSelectionKind = relation.kind
         }
-        if (this.canvasState.selection.kind === 'template') {
-          this.draggingSelectionWidth = this.canvasState.selection.template.width
-          this.draggingSelectionHeight = this.canvasState.selection.template.height
-        } else if (this.canvasState.selection.kind === 'content') {
-          const content = this.canvasState.selection.content
+        if (this.canvasState.styleGuide.selection.kind === 'template') {
+          this.draggingSelectionWidth = this.canvasState.styleGuide.selection.template.width
+          this.draggingSelectionHeight = this.canvasState.styleGuide.selection.template.height
+        } else if (this.canvasState.styleGuide.selection.kind === 'content') {
+          const content = this.canvasState.styleGuide.selection.content
           if (content.kind !== 'reference') {
             this.draggingSelectionX = content.x
             this.draggingSelectionY = content.y
@@ -194,24 +206,24 @@ export const MaskLayer = defineComponent({
       }
     },
     mousemove(e: MouseEvent) {
-      this.canvasState.x = e.offsetX
-      this.canvasState.y = e.offsetY
+      this.canvasState.mask.x = e.offsetX
+      this.canvasState.mask.y = e.offsetY
 
-      if (this.canvasState.mousePressing) {
-        this.canvasState.mouseupX = e.offsetX
-        this.canvasState.mouseupY = e.offsetY
+      if (this.canvasState.mask.mousePressing) {
+        this.canvasState.mask.mouseupX = e.offsetX
+        this.canvasState.mask.mouseupY = e.offsetY
       }
 
       // move, resize, rotate content or template
-      if (this.canvasState.hasRelationWithSelection) {
-        if (this.canvasState.selection.kind === 'template') {
-          const x = this.canvasState.mouseupMappedX - this.canvasState.mousedownMappedX + this.draggingSelectionOffsetX
-          const y = this.canvasState.mouseupMappedY - this.canvasState.mousedownMappedY + this.draggingSelectionOffsetY
+      if (this.canvasState.styleGuide.hasRelationWithSelection) {
+        if (this.canvasState.styleGuide.selection.kind === 'template') {
+          const x = this.mouseupMappedX - this.mousedownMappedX + this.draggingSelectionOffsetX
+          const y = this.mouseupMappedY - this.mousedownMappedY + this.draggingSelectionOffsetY
           if (this.draggingSelectionContent) {
             this.draggingSelectionContent.x = formatPixel(x)
             this.draggingSelectionContent.y = formatPixel(y)
           } else if (this.draggingSelectionKind) {
-            const template = this.canvasState.selection.template
+            const template = this.canvasState.styleGuide.selection.template
             if (this.draggingSelectionKind === 'move') {
               if (e.shiftKey) {
                 template.x = formatPixel(x)
@@ -220,7 +232,7 @@ export const MaskLayer = defineComponent({
                 this.canvasState.alignment.y = undefined
                 return
               }
-              const region = getTemplateAlignment(x, y, this.canvasState.viewport.scale, template, this.canvasState.targetTemplateRegions)
+              const region = getTemplateAlignment(x, y, this.canvasState.viewport.scale, template, this.canvasState.styleGuide.targetTemplateRegions)
               if (region.x !== undefined) {
                 template.x = formatPixel(region.x.template)
                 this.canvasState.alignment.x = region.x.alignment
@@ -239,13 +251,13 @@ export const MaskLayer = defineComponent({
             }
             resizeTemplate(template, x, y, this.draggingSelectionWidth, this.draggingSelectionHeight, this.draggingSelectionKind)
           }
-        } else if (this.canvasState.selection.kind === 'content') {
-          if (this.canvasState.selection.template.display === 'flex' || !this.draggingSelectionKind) {
+        } else if (this.canvasState.styleGuide.selection.kind === 'content') {
+          if (this.canvasState.styleGuide.selection.template.display === 'flex' || !this.draggingSelectionKind) {
             return
           }
-          const content = this.canvasState.selection.content
-          const offsetX = this.canvasState.mouseupMappedX - this.canvasState.mousedownMappedX
-          const offsetY = this.canvasState.mouseupMappedY - this.canvasState.mousedownMappedY
+          const content = this.canvasState.styleGuide.selection.content
+          const offsetX = this.mouseupMappedX - this.mousedownMappedX
+          const offsetY = this.mouseupMappedY - this.mousedownMappedY
           const newPosition = rotatePositionByCenter({ x: offsetX, y: offsetY }, { x: 0, y: 0 }, this.draggingSelectionRotate)
           const x = newPosition.x + this.draggingSelectionOffsetX
           const y = newPosition.y + this.draggingSelectionOffsetY
@@ -255,7 +267,7 @@ export const MaskLayer = defineComponent({
             return
           }
           if (this.draggingSelectionKind === 'grabbing' && content.kind !== 'reference') {
-            const rotate = rotateContent(this.canvasState.mouseupMappedX - this.draggingSelectionOffsetX, this.canvasState.mouseupMappedY - this.draggingSelectionOffsetY)
+            const rotate = rotateContent(this.mouseupMappedX - this.draggingSelectionOffsetX, this.mouseupMappedY - this.draggingSelectionOffsetY)
             if (rotate !== undefined) {
               content.rotate = rotate - this.draggingSelectionRotate
             }
@@ -282,97 +294,114 @@ export const MaskLayer = defineComponent({
         return
       }
       this.mouseIsDown = false
-      this.canvasState.mouseupX = e.offsetX
-      this.canvasState.mouseupY = e.offsetY
+      this.canvasState.mask.mouseupX = e.offsetX
+      this.canvasState.mask.mouseupY = e.offsetY
 
-      if (this.canvasState.hasRelationWithSelection) {
+      if (this.canvasState.styleGuide.hasRelationWithSelection) {
         // contants before and after moving
-        const constantsX = (this.canvasState.viewport.translateX - this.canvasState.styleGuideWidth / 2) * this.canvasState.viewport.scale + this.canvasState.styleGuideWidth / 2
-        const constantsY = (this.canvasState.viewport.translateY - this.canvasState.styleGuideHeight / 2) * this.canvasState.viewport.scale + this.canvasState.styleGuideHeight / 2
+        const constantsX = (this.canvasState.viewport.translateX - this.canvasState.styleGuide.width / 2) * this.canvasState.viewport.scale + this.canvasState.styleGuide.width / 2
+        const constantsY = (this.canvasState.viewport.translateY - this.canvasState.styleGuide.height / 2) * this.canvasState.viewport.scale + this.canvasState.styleGuide.height / 2
 
-        this.canvasState.hasRelationWithSelection = false
+        this.canvasState.styleGuide.hasRelationWithSelection = false
         // keep canvas stable
-        this.canvasState.viewport.translateX = (constantsX - this.canvasState.styleGuideWidth / 2) / this.canvasState.viewport.scale + this.canvasState.styleGuideWidth / 2
-        this.canvasState.viewport.translateY = (constantsY - this.canvasState.styleGuideHeight / 2) / this.canvasState.viewport.scale + this.canvasState.styleGuideHeight / 2
+        this.canvasState.viewport.translateX = (constantsX - this.canvasState.styleGuide.width / 2) / this.canvasState.viewport.scale + this.canvasState.styleGuide.width / 2
+        this.canvasState.viewport.translateY = (constantsY - this.canvasState.styleGuide.height / 2) / this.canvasState.viewport.scale + this.canvasState.styleGuide.height / 2
 
-        this.canvasState.mousePressing = false
-        if (this.canvasState.moved) {
+        this.canvasState.mask.mousePressing = false
+        if (this.canvasState.mask.moved) {
           return
         }
       }
 
       // set selection after dragging or click
-      const x = this.canvasState.mouseupMappedX
-      const y = this.canvasState.mouseupMappedY
+      const x = this.mouseupMappedX
+      const y = this.mouseupMappedY
       if (this.canvasState.isDraggingForSelection) {
-        const template = selectTemplateByArea(this.canvasState, { x, y }, { x: this.canvasState.mousedownMappedX, y: this.canvasState.mousedownMappedY })
-        this.canvasState.selection = template ? { kind: 'template', template } : { kind: 'none' }
+        const template = selectTemplateByArea(this.canvasState, { x, y }, { x: this.mousedownMappedX, y: this.mousedownMappedY })
+        this.canvasState.styleGuide.selection = template ? { kind: 'template', template } : { kind: 'none' }
       } else {
         const content = selectContentOrTemplateByPosition(this.canvasState, { x, y })
         if (content) {
           if (content.kind === 'content') {
-            this.canvasState.selection = {
+            this.canvasState.styleGuide.selection = {
               kind: 'content',
               content: content.region.content,
               template: content.region.template
             }
           } else if (content.kind === 'template') {
-            this.canvasState.selection = {
+            this.canvasState.styleGuide.selection = {
               kind: 'template',
               template: content.region.template
             }
           }
         } else {
-          this.canvasState.selection = { kind: 'none' }
+          this.canvasState.styleGuide.selection = { kind: 'none' }
         }
       }
 
-      this.canvasState.mousePressing = false
+      this.canvasState.mask.mousePressing = false
     },
     contextmenu(e: MouseEvent) {
-      this.canvasState.mousePressing = false
+      this.canvasState.mask.mousePressing = false
       this.canvasState.contextMenu.open(e)
     },
     keydown(e: KeyboardEvent) {
       if (e.ctrlKey || e.metaKey) {
         if (e.key === 'c') {
-          if (this.canvasState.selection.kind !== 'none') {
-            this.clipboard = this.canvasState.selection
+          if (this.canvasState.styleGuide.selection.kind !== 'none') {
+            this.clipboard = this.canvasState.styleGuide.selection
           }
         } else if (e.key === 'v') {
           if (this.clipboard.kind === 'template') {
-            this.canvasState.action()
-            if (this.canvasState.selection.kind === 'template') {
-              if (this.clipboard.template !== this.canvasState.selection.template) {
+            this.canvasState.styleGuide.action()
+            if (this.canvasState.styleGuide.selection.kind === 'template') {
+              if (this.clipboard.template !== this.canvasState.styleGuide.selection.template) {
                 const newContent: TemplateContent = {
                   kind: 'reference',
                   id: this.clipboard.template.id,
                   x: 0,
                   y: 0,
                 }
-                this.canvasState.selection.template.contents.push(newContent)
-                this.canvasState.selection = {
+                this.canvasState.styleGuide.selection.template.contents.push(newContent)
+                this.canvasState.styleGuide.selection = {
                   kind: 'content',
                   content: newContent,
-                  template: this.canvasState.selection.template,
+                  template: this.canvasState.styleGuide.selection.template,
                 }
               }
-            } else if (this.canvasState.selection.kind === 'none') {
+            } else if (this.canvasState.styleGuide.selection.kind === 'none') {
               const newTemplate: Template = JSON.parse(JSON.stringify(this.clipboard.template))
               newTemplate.id = Math.random().toString()
               newTemplate.x = 0
               newTemplate.y = 0
-              this.canvasState.styleGuide.templates.push(newTemplate)
-              this.canvasState.selection = {
+              this.canvasState.styleGuide.data.templates.push(newTemplate)
+              this.canvasState.styleGuide.selection = {
                 kind: 'template',
                 template: newTemplate,
               }
             }
           }
         } else if (e.key === 'z') {
-          this.canvasState.undo()
+          this.canvasState.styleGuide.undo()
         }
       }
     }
   }
 })
+
+export function createMask() {
+  return {
+    mousedownX: 0,
+    mousedownY: 0,
+    mouseupX: 0,
+    mouseupY: 0,
+    mousePressing: false,
+    x: 0,
+    y: 0,
+    get moved() {
+      return !equal(this.mouseupX, this.mousedownX) || !equal(this.mouseupY, this.mousedownY)
+    },
+  }
+}
+
+export type Mask = ReturnType<typeof createMask>

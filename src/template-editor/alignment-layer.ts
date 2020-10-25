@@ -1,38 +1,47 @@
 import { defineComponent, PropType } from 'vue'
 
-import { CanvasState } from './canvas-state'
 import { templateEditorAlignmentLayerTemplateHtml } from '../variables'
+import { Viewport } from './viewport'
+import { StyleGuideModel } from './style-guide'
 
 export const AlignmentLayer = defineComponent({
   render: templateEditorAlignmentLayerTemplateHtml,
   props: {
-    canvasState: {
-      type: Object as PropType<CanvasState>,
+    viewport: {
+      type: Object as PropType<Viewport>,
+      required: true,
+    },
+    styleGuide: {
+      type: Object as PropType<StyleGuideModel>,
+      required: true,
+    },
+    alignment: {
+      type: Object as PropType<Alignment>,
       required: true,
     }
   },
   computed: {
     xStyle(): { [name: string]: unknown } {
-      if (this.canvasState.alignment.x === undefined) {
+      if (this.alignment.x === undefined) {
         return {}
       }
       return {
         position: 'absolute',
         borderLeft: '1px dashed black',
-        left: this.canvasState.mapBackX(this.canvasState.alignment.x) + 'px',
+        left: this.viewport.mapBackX(this.alignment.x, this.styleGuide.width) + 'px',
         top: '0px',
         width: '1px',
         height: '100%',
       }
     },
     yStyle(): { [name: string]: unknown } {
-      if (this.canvasState.alignment.y === undefined) {
+      if (this.alignment.y === undefined) {
         return {}
       }
       return {
         position: 'absolute',
         borderTop: '1px dashed black',
-        top: this.canvasState.mapBackY(this.canvasState.alignment.y) + 'px',
+        top: this.viewport.mapBackY(this.alignment.y, this.styleGuide.height) + 'px',
         left: '0px',
         width: '100%',
         height: '1px%',
@@ -47,3 +56,5 @@ export function createAlignment() {
     y: undefined as number | undefined,
   }
 }
+
+type Alignment = ReturnType<typeof createAlignment>

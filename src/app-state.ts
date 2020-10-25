@@ -37,7 +37,7 @@ export function createAppState() {
         name: '',
         templates,
       }, window.innerWidth - offsetWidth, window.innerHeight - offsetHeight)
-      this.graphicCanvasState.selection = {
+      this.graphicCanvasState.styleGuide.selection = {
         kind: 'template',
         template: templates[0]
       }

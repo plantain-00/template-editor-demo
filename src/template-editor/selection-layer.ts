@@ -14,26 +14,26 @@ export const SelectionLayer = defineComponent({
   },
   computed: {
     selectionRegions(): Region[] {
-      if (this.canvasState.selection.kind === 'template') {
-        return this.canvasState.allTemplateRegions
+      if (this.canvasState.styleGuide.selection.kind === 'template') {
+        return this.canvasState.styleGuide.allTemplateRegions
       }
-      if (this.canvasState.selection.kind === 'content') {
-        return this.canvasState.allContentRegions
+      if (this.canvasState.styleGuide.selection.kind === 'content') {
+        return this.canvasState.styleGuide.allContentRegions
       }
       return []
     },
     canResizeRegions(): Region[] {
-      if (this.canvasState.selection.kind === 'template') {
-        return this.canvasState.allTemplateRegions.filter((t) => !t.parent)
+      if (this.canvasState.styleGuide.selection.kind === 'template') {
+        return this.canvasState.styleGuide.allTemplateRegions.filter((t) => !t.parent)
       }
-      if (this.canvasState.selection.kind === 'content') {
-        return this.canvasState.allContentRegions.filter((t) => t.content.kind !== 'reference')
+      if (this.canvasState.styleGuide.selection.kind === 'content') {
+        return this.canvasState.styleGuide.allContentRegions.filter((t) => t.content.kind !== 'reference')
       }
       return []
     },
     canRotateRegion(): Region | undefined {
-      if (this.canvasState.selection.kind === 'content') {
-        return this.canvasState.allContentRegions.find((c) => c.content.kind !== 'reference')
+      if (this.canvasState.styleGuide.selection.kind === 'content') {
+        return this.canvasState.styleGuide.allContentRegions.find((c) => c.content.kind !== 'reference')
       }
       return undefined
     },
@@ -48,8 +48,8 @@ export const SelectionLayer = defineComponent({
     styleGuideStyle(): { [name: string]: unknown } {
       return {
         transform: `scale(${this.canvasState.viewport.scale}) translate(${this.canvasState.viewport.translateX}px, ${this.canvasState.viewport.translateY}px)`,
-        width: this.canvasState.styleGuideWidth + 'px',
-        height: this.canvasState.styleGuideHeight + 'px',
+        width: this.canvasState.styleGuide.width + 'px',
+        height: this.canvasState.styleGuide.height + 'px',
       }
     },
     rotateAreaStyle(): { [name: string]: unknown } | undefined {

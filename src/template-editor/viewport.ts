@@ -42,3 +42,5 @@ export function createViewport(initialWidth: number, initialHeight: number) {
     },
   }
 }
+
+export type Viewport = ReturnType<typeof createViewport>
