@@ -4,6 +4,7 @@ import { CanvasSelection, StyleGuide, Template } from '../model'
 import { iterateAllTemplateRegions, iterateAllContentRegions, iterateAllNameRegions } from '../utils'
 import { presetExpressions } from '../preset-expressions'
 import { createViewport } from './viewport'
+import { createContextMenu } from './context-menu'
 
 export function createCanvasState(styleGuide: StyleGuide, width: number, height: number) {
   const canvasState = reactive({
@@ -30,9 +31,7 @@ export function createCanvasState(styleGuide: StyleGuide, width: number, height:
     addKind: undefined as 'template' | 'image' | 'text' | 'color' | undefined,
     x: 0,
     y: 0,
-    contextMenuEnabled: false,
-    contextMenuX: 0,
-    contextMenuY: 0,
+    contextMenu: createContextMenu(),
     get styleGuideX() {
       return Math.min(...this.styleGuide.templates.map((t: Template) => t.x))
     },

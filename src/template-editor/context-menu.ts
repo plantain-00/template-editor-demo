@@ -17,8 +17,8 @@ export const ContextMenu = defineComponent({
     contextMenuStyle(): { [name: string]: unknown } {
       return {
         position: 'absolute',
-        left: this.canvasState.contextMenuX + 'px',
-        top: this.canvasState.contextMenuY + 'px',
+        left: this.canvasState.contextMenu.x + 'px',
+        top: this.canvasState.contextMenu.y + 'px',
         width: '100px',
         height: '200px',
         backgroundColor: '#eee',
@@ -33,8 +33,8 @@ export const ContextMenu = defineComponent({
       }
     },
     targets(): ContentOrTemplateRegion[] {
-      const x = this.canvasState.mapX(this.canvasState.contextMenuX)
-      const y = this.canvasState.mapY(this.canvasState.contextMenuY)
+      const x = this.canvasState.mapX(this.canvasState.contextMenu.x)
+      const y = this.canvasState.mapY(this.canvasState.contextMenu.y)
       return Array.from(iterateContentOrTemplateByPosition(this.canvasState, {
         x,
         y,
@@ -49,12 +49,11 @@ export const ContextMenu = defineComponent({
       return getContentDisplayName(target.region.content, this.canvasState.styleGuide)
     },
     close(e: MouseEvent) {
-      this.canvasState.contextMenuEnabled = false
-      e.stopPropagation()
+      this.canvasState.contextMenu.close(e)
     },
     remove() {
-      const x = this.canvasState.mapX(this.canvasState.contextMenuX)
-      const y = this.canvasState.mapY(this.canvasState.contextMenuY)
+      const x = this.canvasState.mapX(this.canvasState.contextMenu.x)
+      const y = this.canvasState.mapY(this.canvasState.contextMenu.y)
       this.canvasState.action()
       if (this.canvasState.selection.kind === 'template') {
         for (const templateRegion of this.canvasState.allTemplateRegions) {
@@ -105,3 +104,21 @@ export const ContextMenu = defineComponent({
     }
   }
 })
+
+export function createContextMenu() {
+  return {
+    enabled: false,
+    x: 0,
+    y: 0,
+    close(e: MouseEvent) {
+      this.enabled = false
+      e.stopPropagation()
+    },
+    open(e: MouseEvent) {
+      this.enabled = true
+      this.x = e.offsetX
+      this.y = e.offsetY
+      e.preventDefault()
+    },
+  }
+}
