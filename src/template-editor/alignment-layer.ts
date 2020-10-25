@@ -1,7 +1,7 @@
 import { defineComponent, PropType } from 'vue'
 
 import { templateEditorAlignmentLayerTemplateHtml } from '../variables'
-import { Viewport } from './viewport'
+import { Viewport } from '../engine/viewport'
 import { StyleGuideModel } from './style-guide'
 
 export const AlignmentLayer = defineComponent({

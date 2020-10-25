@@ -20,6 +20,9 @@
         :expression-id="canvasState.styleGuide.selection.content.colorExpressionId" @change="changeColorExpression" />
     </div>
     <div v-if="canvasState.styleGuide.selection.content.kind === 'image'">
+      <div>
+        <button @click="showImageViewer()">show image viewer</button>
+      </div>
       url
       <expression-input :canvas-state="canvasState" :literal="canvasState.styleGuide.selection.content.url" literal-type="text"
         :expression="canvasState.styleGuide.selection.content.urlExpression"

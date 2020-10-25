@@ -69,6 +69,9 @@ export const OperationPanel = defineComponent({
     }
   },
   methods: {
+    showImageViewer() {
+      this.canvasState.showImageViewer = !this.canvasState.showImageViewer
+    },
     changeName(e: { target: { value: string } }) {
       if (this.canvasState.styleGuide.selection.kind === 'template') {
         this.canvasState.styleGuide.selection.template.name = e.target.value || undefined

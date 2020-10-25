@@ -12,6 +12,7 @@ import { ContextMenu } from './context-menu'
 import { OperationPanel } from './operation-panel'
 import { LayerPanel } from './layer-panel'
 import { CommonEditor } from './common-editor'
+import { ImageViewer } from '../image-viewer/image-viewer'
 
 export const TemplateEditor = defineComponent({
   render: templateEditorTemplateEditorTemplateHtml,
@@ -32,6 +33,7 @@ export const TemplateEditor = defineComponent({
     'operation-panel': OperationPanel,
     'layer-panel': LayerPanel,
     'common-editor': CommonEditor,
+    'image-viewer': ImageViewer,
   },
   computed: {
     canvasStyle(): { [name: string]: unknown } {

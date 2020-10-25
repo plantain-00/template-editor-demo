@@ -5,6 +5,15 @@ export function createViewport(initialWidth: number, initialHeight: number) {
     scale: 1,
     width: initialWidth,
     height: initialHeight,
+    applyRegionChange(region: { width: number, height: number, x: number, y: number }) {
+      const widthScale = this.width / region.width
+      const heightScale = this.height / region.height
+      this.scale = Math.min(widthScale, heightScale) * 0.9
+      const x = region.width * (widthScale - this.scale) / 2
+      const y = region.height * (heightScale - this.scale) / 2
+      this.translateX = (x - region.x * this.scale - region.width / 2) / this.scale + region.width / 2
+      this.translateY = (y - region.y * this.scale - region.height / 2) / this.scale + region.height / 2
+    },
     mapX(x: number, width: number) {
       return (x - ((this.translateX - width / 2) * this.scale + width / 2)) / this.scale
     },
@@ -16,6 +25,9 @@ export function createViewport(initialWidth: number, initialHeight: number) {
     },
     mapBackY(y: number, height: number) {
       return y * this.scale + ((this.translateY - height / 2) * this.scale + height / 2)
+    },
+    get transform() {
+      return `scale(${this.scale}) translate(${this.translateX}px, ${this.translateY}px)`
     },
     move(e: WheelEvent) {
       if (!e.ctrlKey) {
