@@ -1,0 +1,4 @@
+<div v-if="imageWidth && imageHeight" :style="canvasStyle">
+  <render-layer :viewport="viewport" :width="imageWidth" :height="imageHeight" :url="url"></render-layer>
+  <mask-layer :viewport="viewport" :width="imageWidth" :height="imageHeight"></mask-layer>
+</div>

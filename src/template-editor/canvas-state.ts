@@ -3,7 +3,7 @@ import { reactive } from 'vue'
 import { StyleGuide } from '../model'
 import { iterateAllNameRegions } from '../utils'
 import { presetExpressions } from '../preset-expressions'
-import { createViewport } from './viewport'
+import { createViewport } from '../engine/viewport'
 import { createContextMenu } from './context-menu'
 import { createAlignment } from './alignment-layer'
 import { createStyleGuide, sortByZ } from './style-guide'
@@ -12,13 +12,7 @@ import { createMask } from './mask-layer'
 export function createCanvasState(styleGuide: StyleGuide, width: number, height: number) {
   const canvasState = reactive({
     applyCanvasSizeChange() {
-      const widthScale = this.viewport.width / this.styleGuide.width
-      const heightScale = this.viewport.height / this.styleGuide.height
-      this.viewport.scale = Math.min(widthScale, heightScale) * 0.9
-      const x = this.styleGuide.width * (widthScale - this.viewport.scale) / 2
-      const y = this.styleGuide.height * (heightScale - this.viewport.scale) / 2
-      this.viewport.translateX = (x - this.styleGuide.x * this.viewport.scale - this.styleGuide.width / 2) / this.viewport.scale + this.styleGuide.width / 2
-      this.viewport.translateY = (y - this.styleGuide.y * this.viewport.scale - this.styleGuide.height / 2) / this.viewport.scale + this.styleGuide.height / 2
+      this.viewport.applyRegionChange(this.styleGuide)
     },
     viewport: createViewport(width, height),
     mask: createMask(),
@@ -54,6 +48,8 @@ export function createCanvasState(styleGuide: StyleGuide, width: number, height:
 
     commonEditorVisible: false,
     commonEditorEditingFieldName: 'variables' as 'variables' | 'collections' | 'constrains',
+
+    showImageViewer: false,
   })
   canvasState.applyCanvasSizeChange()
   return canvasState

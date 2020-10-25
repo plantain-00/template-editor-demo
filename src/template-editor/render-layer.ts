@@ -28,7 +28,7 @@ export const RenderLayer = defineComponent({
     },
     styleGuideStyle(): { [name: string]: unknown } {
       return {
-        transform: `scale(${this.canvasState.viewport.scale}) translate(${this.canvasState.viewport.translateX}px, ${this.canvasState.viewport.translateY}px)`,
+        transform: this.canvasState.viewport.transform,
         width: this.canvasState.styleGuide.width + 'px',
         height: this.canvasState.styleGuide.height + 'px',
       }

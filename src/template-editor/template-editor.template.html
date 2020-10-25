@@ -7,9 +7,15 @@
     <selection-layer :canvas-state="canvasState"></selection-layer>
     <hover-layer :canvas-state="canvasState"></hover-layer>
     <dragging-for-selection-layer :canvas-state="canvasState" :mask="canvasState.mask"></dragging-for-selection-layer>
-    <alignment-layer :style-guide="canvasState.styleGuide" :viewport="canvasState.viewport" :alignment="canvasState.alignment"></alignment-layer>
+    <alignment-layer :style-guide="canvasState.styleGuide" :viewport="canvasState.viewport"
+      :alignment="canvasState.alignment"></alignment-layer>
     <mask-layer :canvas-state="canvasState"></mask-layer>
     <context-menu :canvas-state="canvasState"></context-menu>
+    <image-viewer
+      v-if="canvasState.showImageViewer && canvasState.styleGuide.selection.kind === 'content' && canvasState.styleGuide.selection.content.kind === 'image'"
+      :width="canvasState.viewport.width" :height="canvasState.viewport.height"
+      :url="canvasState.styleGuide.selection.content.url">
+    </image-viewer>
   </div>
   <div :style="operationPanelStyle">
     <operation-panel :canvas-state="canvasState"></operation-panel>
