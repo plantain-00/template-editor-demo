@@ -330,11 +330,8 @@ export const MaskLayer = defineComponent({
       this.canvasState.mousePressing = false
     },
     contextmenu(e: MouseEvent) {
-      this.canvasState.contextMenuEnabled = true
-      this.canvasState.contextMenuX = e.offsetX
-      this.canvasState.contextMenuY = e.offsetY
       this.canvasState.mousePressing = false
-      e.preventDefault()
+      this.canvasState.contextMenu.open(e)
     },
     keydown(e: KeyboardEvent) {
       if (e.ctrlKey || e.metaKey) {

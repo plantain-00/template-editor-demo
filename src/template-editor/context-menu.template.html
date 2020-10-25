@@ -1,4 +1,4 @@
-<div v-if="canvasState.contextMenuEnabled" @click="close">
+<div v-if="canvasState.contextMenu.enabled" @click="close">
   <div :style="maskStyle"></div>
   <div :style="contextMenuStyle">
     <button @click="remove">remove</button>

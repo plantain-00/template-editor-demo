@@ -817,7 +817,7 @@ export function templateEditorCommonEditorTemplateHtml(_ctx, _cache) {
     : _createCommentVNode("v-if", true)
 }
 export function templateEditorContextMenuTemplateHtml(_ctx, _cache) {
-  return (_ctx.canvasState.contextMenuEnabled)
+  return (_ctx.canvasState.contextMenu.enabled)
     ? (_openBlock(), _createBlock("div", {
         key: 0,
         onClick: _cache[2] || (_cache[2] = (...args) => (_ctx.close(...args)))
