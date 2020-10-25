@@ -46,7 +46,7 @@ export const ContextMenu = defineComponent({
       if (target.kind === 'template') {
         return getTemplateDisplayName(target.region.template)
       }
-      return getContentDisplayName(target.region.content, this.canvasState.styleGuide)
+      return getContentDisplayName(target.region.content, this.canvasState.styleGuide.data)
     },
     close(e: MouseEvent) {
       this.canvasState.contextMenu.close(e)
@@ -54,19 +54,19 @@ export const ContextMenu = defineComponent({
     remove() {
       const x = this.canvasState.mapX(this.canvasState.contextMenu.x)
       const y = this.canvasState.mapY(this.canvasState.contextMenu.y)
-      this.canvasState.action()
-      if (this.canvasState.selection.kind === 'template') {
-        for (const templateRegion of this.canvasState.allTemplateRegions) {
+      this.canvasState.styleGuide.action()
+      if (this.canvasState.styleGuide.selection.kind === 'template') {
+        for (const templateRegion of this.canvasState.styleGuide.allTemplateRegions) {
           if (isInRegion({ x, y }, templateRegion)) {
             if (templateRegion.parent) {
               // delete content
               templateRegion.parent.template.contents.splice(templateRegion.parent.index, 1)
             } else {
               // delete template and all referenced contents
-              for (let i = this.canvasState.styleGuide.templates.length - 1; i >= 0; i--) {
-                const template = this.canvasState.styleGuide.templates[i]
+              for (let i = this.canvasState.styleGuide.data.templates.length - 1; i >= 0; i--) {
+                const template = this.canvasState.styleGuide.data.templates[i]
                 if (template === templateRegion.template) {
-                  this.canvasState.styleGuide.templates.splice(i, 1)
+                  this.canvasState.styleGuide.data.templates.splice(i, 1)
                   continue
                 }
                 for (let j = template.contents.length - 1; j >= 0; j--) {
@@ -80,8 +80,8 @@ export const ContextMenu = defineComponent({
             }
           }
         }
-      } else if (this.canvasState.selection.kind === 'content') {
-        for (const contentRegion of this.canvasState.allContentRegions) {
+      } else if (this.canvasState.styleGuide.selection.kind === 'content') {
+        for (const contentRegion of this.canvasState.styleGuide.allContentRegions) {
           contentRegion.contents.splice(contentRegion.index, 1)
           return
         }
@@ -89,18 +89,18 @@ export const ContextMenu = defineComponent({
     },
     select(target: ContentOrTemplateRegion) {
       if (target.kind === 'content') {
-        this.canvasState.selection = {
+        this.canvasState.styleGuide.selection = {
           kind: 'content',
           content: target.region.content,
           template: target.region.template
         }
       } else if (target.kind === 'template') {
-        this.canvasState.selection = {
+        this.canvasState.styleGuide.selection = {
           kind: 'template',
           template: target.region.template
         }
       }
-      this.canvasState.hasRelationWithSelection = false
+      this.canvasState.styleGuide.hasRelationWithSelection = false
     }
   }
 })

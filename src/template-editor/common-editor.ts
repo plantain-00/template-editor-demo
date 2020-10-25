@@ -27,13 +27,13 @@ export const CommonEditor = defineComponent({
   },
   computed: {
     value(): string {
-      return JSON.stringify(this.canvasState.styleGuide[this.canvasState.commonEditorEditingFieldName] || [], null, 2)
+      return JSON.stringify(this.canvasState.styleGuide.data[this.canvasState.commonEditorEditingFieldName] || [], null, 2)
     }
   },
   methods: {
     changeValue(e: { target: { value: string } }) {
       try {
-        this.canvasState.styleGuide[this.canvasState.commonEditorEditingFieldName] = JSON.parse(e.target.value)
+        this.canvasState.styleGuide.data[this.canvasState.commonEditorEditingFieldName] = JSON.parse(e.target.value)
       } catch {
         // do nothing
       }

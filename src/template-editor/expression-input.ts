@@ -187,10 +187,10 @@ export const ExpressionInput = defineComponent({
           if (currentToken.type === 'Identifier') {
             if (v.enum || v.internal) {
               let enums: (string | { value: string, name: string })[]
-              if (v.internal === 'component parameters' && (this.canvasState.selection.kind === 'content' || this.canvasState.selection.kind === 'template')) {
-                enums = this.canvasState.selection.template.parameters || []
+              if (v.internal === 'component parameters' && (this.canvasState.styleGuide.selection.kind === 'content' || this.canvasState.styleGuide.selection.kind === 'template')) {
+                enums = this.canvasState.styleGuide.selection.template.parameters || []
               } else if (v.internal === 'variable') {
-                const variables = this.canvasState.styleGuide.variables?.[0]
+                const variables = this.canvasState.styleGuide.data.variables?.[0]
                 enums = variables ? variables.map((v) => ({
                   value: v.name,
                   name: v.displayName || v.name,

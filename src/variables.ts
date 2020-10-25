@@ -883,71 +883,71 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
   const _component_expression_input = _resolveComponent("expression-input")
 
   return (_openBlock(), _createBlock("div", { style: _ctx.panelStyle }, [
-    (_ctx.canvasState.selection.kind === 'content')
+    (_ctx.canvasState.styleGuide.selection.kind === 'content')
       ? (_openBlock(), _createBlock("div", { key: 0 }, [
-          (_ctx.canvasState.selection.content.kind === 'text')
+          (_ctx.canvasState.styleGuide.selection.content.kind === 'text')
             ? (_openBlock(), _createBlock("div", { key: 0 }, [
                 _createTextVNode(" text "),
                 _createVNode(_component_expression_input, {
                   "canvas-state": _ctx.canvasState,
-                  literal: _ctx.canvasState.selection.content.text,
+                  literal: _ctx.canvasState.styleGuide.selection.content.text,
                   "literal-type": "text",
-                  expression: _ctx.canvasState.selection.content.textExpression,
-                  "expression-id": _ctx.canvasState.selection.content.textExpressionId,
+                  expression: _ctx.canvasState.styleGuide.selection.content.textExpression,
+                  "expression-id": _ctx.canvasState.styleGuide.selection.content.textExpressionId,
                   onChange: _ctx.changeTextExpression
                 }, null, 8 /* PROPS */, ["canvas-state", "literal", "expression", "expression-id", "onChange"]),
                 _createVNode("br"),
                 _createTextVNode(" font family "),
                 _createVNode("input", {
                   type: "text",
-                  value: _ctx.canvasState.selection.content.fontFamily,
+                  value: _ctx.canvasState.styleGuide.selection.content.fontFamily,
                   onChange: _cache[1] || (_cache[1] = (...args) => (_ctx.changeFontFamily(...args)))
                 }, null, 40 /* PROPS, HYDRATE_EVENTS */, ["value"]),
                 _createVNode("br"),
                 _createTextVNode(" font size "),
                 _createVNode(_component_expression_input, {
                   "canvas-state": _ctx.canvasState,
-                  literal: _ctx.canvasState.selection.content.fontSize,
+                  literal: _ctx.canvasState.styleGuide.selection.content.fontSize,
                   "literal-type": "number",
-                  expression: _ctx.canvasState.selection.content.fontSizeExpression,
-                  "expression-id": _ctx.canvasState.selection.content.fontSizeExpressionId,
+                  expression: _ctx.canvasState.styleGuide.selection.content.fontSizeExpression,
+                  "expression-id": _ctx.canvasState.styleGuide.selection.content.fontSizeExpressionId,
                   onChange: _ctx.changeFontSizeExpression
                 }, null, 8 /* PROPS */, ["canvas-state", "literal", "expression", "expression-id", "onChange"]),
                 _createVNode("br"),
                 _createTextVNode(" color "),
                 _createVNode(_component_expression_input, {
                   "canvas-state": _ctx.canvasState,
-                  literal: _ctx.canvasState.selection.content.color,
+                  literal: _ctx.canvasState.styleGuide.selection.content.color,
                   "literal-type": "color",
-                  expression: _ctx.canvasState.selection.content.colorExpression,
-                  "expression-id": _ctx.canvasState.selection.content.colorExpressionId,
+                  expression: _ctx.canvasState.styleGuide.selection.content.colorExpression,
+                  "expression-id": _ctx.canvasState.styleGuide.selection.content.colorExpressionId,
                   onChange: _ctx.changeColorExpression
                 }, null, 8 /* PROPS */, ["canvas-state", "literal", "expression", "expression-id", "onChange"])
               ]))
             : _createCommentVNode("v-if", true),
-          (_ctx.canvasState.selection.content.kind === 'image')
+          (_ctx.canvasState.styleGuide.selection.content.kind === 'image')
             ? (_openBlock(), _createBlock("div", { key: 1 }, [
                 _createTextVNode(" url "),
                 _createVNode(_component_expression_input, {
                   "canvas-state": _ctx.canvasState,
-                  literal: _ctx.canvasState.selection.content.url,
+                  literal: _ctx.canvasState.styleGuide.selection.content.url,
                   "literal-type": "text",
-                  expression: _ctx.canvasState.selection.content.urlExpression,
-                  "expression-id": _ctx.canvasState.selection.content.urlExpressionId,
+                  expression: _ctx.canvasState.styleGuide.selection.content.urlExpression,
+                  "expression-id": _ctx.canvasState.styleGuide.selection.content.urlExpressionId,
                   onChange: _ctx.changeImageUrlExpression
                 }, null, 8 /* PROPS */, ["canvas-state", "literal", "expression", "expression-id", "onChange"]),
                 _createVNode("div", null, [
                   _createTextVNode(" opacity "),
                   _createVNode("input", {
                     type: "number",
-                    value: _ctx.canvasState.selection.content.opacity,
+                    value: _ctx.canvasState.styleGuide.selection.content.opacity,
                     onChange: _cache[2] || (_cache[2] = (...args) => (_ctx.changeOpacity(...args)))
                   }, null, 40 /* PROPS, HYDRATE_EVENTS */, ["value"])
                 ]),
                 _createVNode("div", null, [
                   _createTextVNode(" blend mode "),
                   _createVNode("select", {
-                    value: _ctx.canvasState.selection.content.blendMode,
+                    value: _ctx.canvasState.styleGuide.selection.content.blendMode,
                     onChange: _cache[3] || (_cache[3] = (...args) => (_ctx.changeBlendMode(...args)))
                   }, [
                     _createVNode("option", { value: undefined }),
@@ -956,15 +956,15 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
                 ])
               ]))
             : _createCommentVNode("v-if", true),
-          (_ctx.canvasState.selection.content.kind === 'color')
+          (_ctx.canvasState.styleGuide.selection.content.kind === 'color')
             ? (_openBlock(), _createBlock("div", { key: 2 }, [
                 _createTextVNode(" color "),
                 _createVNode(_component_expression_input, {
                   "canvas-state": _ctx.canvasState,
-                  literal: _ctx.canvasState.selection.content.color,
+                  literal: _ctx.canvasState.styleGuide.selection.content.color,
                   "literal-type": "color",
-                  expression: _ctx.canvasState.selection.content.colorExpression,
-                  "expression-id": _ctx.canvasState.selection.content.colorExpressionId,
+                  expression: _ctx.canvasState.styleGuide.selection.content.colorExpression,
+                  "expression-id": _ctx.canvasState.styleGuide.selection.content.colorExpressionId,
                   onChange: _ctx.changeColorExpression
                 }, null, 8 /* PROPS */, ["canvas-state", "literal", "expression", "expression-id", "onChange"])
               ]))
@@ -973,10 +973,10 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             _createTextVNode(" x "),
             _createVNode(_component_expression_input, {
               "canvas-state": _ctx.canvasState,
-              literal: _ctx.canvasState.selection.content.x,
+              literal: _ctx.canvasState.styleGuide.selection.content.x,
               "literal-type": "number",
-              expression: _ctx.canvasState.selection.content.xExpression,
-              "expression-id": _ctx.canvasState.selection.content.xExpressionId,
+              expression: _ctx.canvasState.styleGuide.selection.content.xExpression,
+              "expression-id": _ctx.canvasState.styleGuide.selection.content.xExpressionId,
               onChange: _cache[4] || (_cache[4] = $event => (_ctx.changePositionExpression($event, 'x')))
             }, null, 8 /* PROPS */, ["canvas-state", "literal", "expression", "expression-id"])
           ]),
@@ -984,10 +984,10 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             _createTextVNode(" y "),
             _createVNode(_component_expression_input, {
               "canvas-state": _ctx.canvasState,
-              literal: _ctx.canvasState.selection.content.y,
+              literal: _ctx.canvasState.styleGuide.selection.content.y,
               "literal-type": "number",
-              expression: _ctx.canvasState.selection.content.yExpression,
-              "expression-id": _ctx.canvasState.selection.content.yExpressionId,
+              expression: _ctx.canvasState.styleGuide.selection.content.yExpression,
+              "expression-id": _ctx.canvasState.styleGuide.selection.content.yExpressionId,
               onChange: _cache[5] || (_cache[5] = $event => (_ctx.changePositionExpression($event, 'y')))
             }, null, 8 /* PROPS */, ["canvas-state", "literal", "expression", "expression-id"])
           ]),
@@ -995,23 +995,23 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             _createTextVNode(" z "),
             _createVNode(_component_expression_input, {
               "canvas-state": _ctx.canvasState,
-              literal: _ctx.canvasState.selection.content.z,
+              literal: _ctx.canvasState.styleGuide.selection.content.z,
               "literal-type": "number",
-              expression: _ctx.canvasState.selection.content.zExpression,
-              "expression-id": _ctx.canvasState.selection.content.zExpressionId,
+              expression: _ctx.canvasState.styleGuide.selection.content.zExpression,
+              "expression-id": _ctx.canvasState.styleGuide.selection.content.zExpressionId,
               onChange: _cache[6] || (_cache[6] = $event => (_ctx.changePositionExpression($event, 'z')))
             }, null, 8 /* PROPS */, ["canvas-state", "literal", "expression", "expression-id"])
           ]),
-          (_ctx.canvasState.selection.content.kind === 'text' || _ctx.canvasState.selection.content.kind === 'image' || _ctx.canvasState.selection.content.kind === 'color')
+          (_ctx.canvasState.styleGuide.selection.content.kind === 'text' || _ctx.canvasState.styleGuide.selection.content.kind === 'image' || _ctx.canvasState.styleGuide.selection.content.kind === 'color')
             ? (_openBlock(), _createBlock("div", { key: 3 }, [
                 _createVNode("div", null, [
                   _createTextVNode(" width "),
                   _createVNode(_component_expression_input, {
                     "canvas-state": _ctx.canvasState,
-                    literal: _ctx.canvasState.selection.content.width,
+                    literal: _ctx.canvasState.styleGuide.selection.content.width,
                     "literal-type": "number",
-                    expression: _ctx.canvasState.selection.content.widthExpression,
-                    "expression-id": _ctx.canvasState.selection.content.widthExpressionId,
+                    expression: _ctx.canvasState.styleGuide.selection.content.widthExpression,
+                    "expression-id": _ctx.canvasState.styleGuide.selection.content.widthExpressionId,
                     onChange: _cache[7] || (_cache[7] = $event => (_ctx.changeSizeExpression($event, 'width')))
                   }, null, 8 /* PROPS */, ["canvas-state", "literal", "expression", "expression-id"])
                 ]),
@@ -1019,10 +1019,10 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
                   _createTextVNode(" height "),
                   _createVNode(_component_expression_input, {
                     "canvas-state": _ctx.canvasState,
-                    literal: _ctx.canvasState.selection.content.height,
+                    literal: _ctx.canvasState.styleGuide.selection.content.height,
                     "literal-type": "number",
-                    expression: _ctx.canvasState.selection.content.heightExpression,
-                    "expression-id": _ctx.canvasState.selection.content.heihtExpressionId,
+                    expression: _ctx.canvasState.styleGuide.selection.content.heightExpression,
+                    "expression-id": _ctx.canvasState.styleGuide.selection.content.heihtExpressionId,
                     onChange: _cache[8] || (_cache[8] = $event => (_ctx.changeSizeExpression($event, 'height')))
                   }, null, 8 /* PROPS */, ["canvas-state", "literal", "expression", "expression-id"])
                 ])
@@ -1032,10 +1032,10 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             _createTextVNode(" rotate "),
             _createVNode(_component_expression_input, {
               "canvas-state": _ctx.canvasState,
-              literal: _ctx.canvasState.selection.content.rotate,
+              literal: _ctx.canvasState.styleGuide.selection.content.rotate,
               "literal-type": "number",
-              expression: _ctx.canvasState.selection.content.rotateExpression,
-              "expression-id": _ctx.canvasState.selection.content.rotateExpressionId,
+              expression: _ctx.canvasState.styleGuide.selection.content.rotateExpression,
+              "expression-id": _ctx.canvasState.styleGuide.selection.content.rotateExpressionId,
               onChange: _cache[9] || (_cache[9] = $event => (_ctx.changeRotateExpression($event)))
             }, null, 8 /* PROPS */, ["canvas-state", "literal", "expression", "expression-id"])
           ]),
@@ -1043,13 +1043,13 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             _createTextVNode(" hidden "),
             _createVNode("input", {
               type: "checkbox",
-              checked: _ctx.canvasState.selection.content.hidden,
+              checked: _ctx.canvasState.styleGuide.selection.content.hidden,
               onChange: _cache[10] || (_cache[10] = (...args) => (_ctx.changeHidden(...args)))
             }, null, 40 /* PROPS, HYDRATE_EVENTS */, ["checked"])
           ]),
           _createVNode("div", null, [
             _createVNode("select", {
-              value: _ctx.canvasState.selection.content.else ? 'true' : 'false',
+              value: _ctx.canvasState.styleGuide.selection.content.else ? 'true' : 'false',
               onChange: _cache[11] || (_cache[11] = (...args) => (_ctx.changeElse(...args)))
             }, [
               _createVNode("option", { value: "false" }, "if"),
@@ -1057,8 +1057,8 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             ], 40 /* PROPS, HYDRATE_EVENTS */, ["value"]),
             _createVNode(_component_expression_input, {
               "canvas-state": _ctx.canvasState,
-              expression: _ctx.canvasState.selection.content.if,
-              "expression-id": _ctx.canvasState.selection.content.ifId,
+              expression: _ctx.canvasState.styleGuide.selection.content.if,
+              "expression-id": _ctx.canvasState.styleGuide.selection.content.ifId,
               onChange: _ctx.changeIf
             }, null, 8 /* PROPS */, ["canvas-state", "expression", "expression-id", "onChange"])
           ]),
@@ -1067,7 +1067,7 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             _createVNode(_component_expression_input, {
               "canvas-state": _ctx.canvasState,
               expression: _ctx.repeat.expression,
-              "expression-id": _ctx.canvasState.selection.content.repeatId,
+              "expression-id": _ctx.canvasState.styleGuide.selection.content.repeatId,
               onChange: _ctx.changeRepeatExpression
             }, null, 8 /* PROPS */, ["canvas-state", "expression", "expression-id", "onChange"]),
             _createVNode("input", {
@@ -1085,10 +1085,10 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
               style: {"width":"50px"}
             }, null, 40 /* PROPS, HYDRATE_EVENTS */, ["value"])
           ]),
-          (_ctx.canvasState.selection.content.kind === 'reference')
+          (_ctx.canvasState.styleGuide.selection.content.kind === 'reference')
             ? (_openBlock(), _createBlock("div", { key: 4 }, [
                 _createTextVNode(" props "),
-                _createVNode("span", { style: {"opacity":"0.5"} }, _toDisplayString(_ctx.canvasState.selection.content.props), 1 /* TEXT */),
+                _createVNode("span", { style: {"opacity":"0.5"} }, _toDisplayString(_ctx.canvasState.styleGuide.selection.content.props), 1 /* TEXT */),
                 (_ctx.parameters)
                   ? (_openBlock(), _createBlock("div", {
                       key: 0,
@@ -1109,7 +1109,7 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
                   : _createCommentVNode("v-if", true)
               ]))
             : _createCommentVNode("v-if", true),
-          (_ctx.canvasState.selection.content.kind === 'text' || _ctx.canvasState.selection.content.kind === 'image' || _ctx.canvasState.selection.content.kind === 'color')
+          (_ctx.canvasState.styleGuide.selection.content.kind === 'text' || _ctx.canvasState.styleGuide.selection.content.kind === 'image' || _ctx.canvasState.styleGuide.selection.content.kind === 'color')
             ? (_openBlock(), _createBlock("div", { key: 5 }, [
                 _createVNode("button", {
                   onClick: _cache[14] || (_cache[14] = $event => (_ctx.extractAsComponent()))
@@ -1118,13 +1118,13 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             : _createCommentVNode("v-if", true)
         ]))
       : _createCommentVNode("v-if", true),
-    (_ctx.canvasState.selection.kind === 'template')
+    (_ctx.canvasState.styleGuide.selection.kind === 'template')
       ? (_openBlock(), _createBlock("div", { key: 1 }, [
           _createVNode("div", null, [
             _createTextVNode(" name "),
             _createVNode("input", {
               type: "text",
-              value: _ctx.canvasState.selection.template.name,
+              value: _ctx.canvasState.styleGuide.selection.template.name,
               onChange: _cache[15] || (_cache[15] = (...args) => (_ctx.changeName(...args)))
             }, null, 40 /* PROPS, HYDRATE_EVENTS */, ["value"])
           ]),
@@ -1132,7 +1132,7 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             _createTextVNode(" x "),
             _createVNode("input", {
               type: "number",
-              value: _ctx.canvasState.selection.template.x,
+              value: _ctx.canvasState.styleGuide.selection.template.x,
               onChange: _cache[16] || (_cache[16] = $event => (_ctx.changePosition($event, 'x')))
             }, null, 40 /* PROPS, HYDRATE_EVENTS */, ["value"])
           ]),
@@ -1140,7 +1140,7 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             _createTextVNode(" y "),
             _createVNode("input", {
               type: "number",
-              value: _ctx.canvasState.selection.template.y,
+              value: _ctx.canvasState.styleGuide.selection.template.y,
               onChange: _cache[17] || (_cache[17] = $event => (_ctx.changePosition($event, 'y')))
             }, null, 40 /* PROPS, HYDRATE_EVENTS */, ["value"])
           ]),
@@ -1148,7 +1148,7 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             _createTextVNode(" z "),
             _createVNode("input", {
               type: "number",
-              value: _ctx.canvasState.selection.template.z,
+              value: _ctx.canvasState.styleGuide.selection.template.z,
               onChange: _cache[18] || (_cache[18] = $event => (_ctx.changePosition($event, 'z')))
             }, null, 40 /* PROPS, HYDRATE_EVENTS */, ["value"])
           ]),
@@ -1156,10 +1156,10 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             _createTextVNode(" width "),
             _createVNode(_component_expression_input, {
               "canvas-state": _ctx.canvasState,
-              literal: _ctx.canvasState.selection.template.width,
+              literal: _ctx.canvasState.styleGuide.selection.template.width,
               "literal-type": "number",
-              expression: _ctx.canvasState.selection.template.widthExpression,
-              "expression-id": _ctx.canvasState.selection.template.widthExpressionId,
+              expression: _ctx.canvasState.styleGuide.selection.template.widthExpression,
+              "expression-id": _ctx.canvasState.styleGuide.selection.template.widthExpressionId,
               onChange: _cache[19] || (_cache[19] = $event => (_ctx.changeSizeExpression($event, 'width')))
             }, null, 8 /* PROPS */, ["canvas-state", "literal", "expression", "expression-id"])
           ]),
@@ -1167,17 +1167,17 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
             _createTextVNode(" height "),
             _createVNode(_component_expression_input, {
               "canvas-state": _ctx.canvasState,
-              literal: _ctx.canvasState.selection.template.height,
+              literal: _ctx.canvasState.styleGuide.selection.template.height,
               "literal-type": "number",
-              expression: _ctx.canvasState.selection.template.heightExpression,
-              "expression-id": _ctx.canvasState.selection.template.heightExpressionId,
+              expression: _ctx.canvasState.styleGuide.selection.template.heightExpression,
+              "expression-id": _ctx.canvasState.styleGuide.selection.template.heightExpressionId,
               onChange: _cache[20] || (_cache[20] = $event => (_ctx.changeSizeExpression($event, 'height')))
             }, null, 8 /* PROPS */, ["canvas-state", "literal", "expression", "expression-id"])
           ]),
           _createVNode("div", null, [
             _createTextVNode(" display "),
             _createVNode("select", {
-              value: _ctx.canvasState.selection.template.display,
+              value: _ctx.canvasState.styleGuide.selection.template.display,
               onChange: _cache[21] || (_cache[21] = $event => (_ctx.changeFlexDisplay($event.target.value)))
             }, [
               _createVNode("option", { value: undefined }),
@@ -1187,7 +1187,7 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
           _createVNode("div", null, [
             _createTextVNode(" flex direction "),
             _createVNode("select", {
-              value: _ctx.canvasState.selection.template.flexDirection,
+              value: _ctx.canvasState.styleGuide.selection.template.flexDirection,
               onChange: _cache[22] || (_cache[22] = $event => (_ctx.changeFlexDirection($event.target.value)))
             }, [
               _createVNode("option", { value: "row" }, "row"),
@@ -1197,7 +1197,7 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
           _createVNode("div", null, [
             _createTextVNode(" justify content "),
             _createVNode("select", {
-              value: _ctx.canvasState.selection.template.justifyContent,
+              value: _ctx.canvasState.styleGuide.selection.template.justifyContent,
               onChange: _cache[23] || (_cache[23] = $event => (_ctx.changeFlexJustifyContent($event.target.value)))
             }, [
               _createVNode("option", { value: "start" }, "start"),
@@ -1209,7 +1209,7 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
           _createVNode("div", null, [
             _createTextVNode(" align items "),
             _createVNode("select", {
-              value: _ctx.canvasState.selection.template.alignItems,
+              value: _ctx.canvasState.styleGuide.selection.template.alignItems,
               onChange: _cache[24] || (_cache[24] = $event => (_ctx.changeFlexAlignItems($event.target.value)))
             }, [
               _createVNode("option", { value: "start" }, "start"),
@@ -1230,7 +1230,7 @@ export function templateEditorOperationPanelTemplateHtml(_ctx, _cache) {
               : _createCommentVNode("v-if", true)
           ]),
           _createVNode("div", null, [
-            (_openBlock(true), _createBlock(_Fragment, null, _renderList(_ctx.canvasState.selection.template.parameters || [], (parameter, i) => {
+            (_openBlock(true), _createBlock(_Fragment, null, _renderList(_ctx.canvasState.styleGuide.selection.template.parameters || [], (parameter, i) => {
               return (_openBlock(), _createBlock("div", null, [
                 _createTextVNode(" parameter " + _toDisplayString(i) + " ", 1 /* TEXT */),
                 _createVNode("input", {
@@ -1301,7 +1301,7 @@ export function templateEditorRenderLayerTemplateHtml(_ctx, _cache) {
 
   return (_openBlock(), _createBlock("div", { style: _ctx.canvasStyle }, [
     _createVNode("div", { style: _ctx.styleGuideStyle }, [
-      (_openBlock(true), _createBlock(_Fragment, null, _renderList(_ctx.canvasState.styleGuide.templates, (r) => {
+      (_openBlock(true), _createBlock(_Fragment, null, _renderList(_ctx.canvasState.styleGuide.data.templates, (r) => {
         return (_openBlock(), _createBlock("div", {
           style: _ctx.getTemplateStyle(r)
         }, [
@@ -1313,7 +1313,7 @@ export function templateEditorRenderLayerTemplateHtml(_ctx, _cache) {
             : _createCommentVNode("v-if", true),
           _createVNode(_component_template_renderer, {
             template: r,
-            "style-guide": _ctx.canvasState.styleGuide
+            "style-guide": _ctx.canvasState.styleGuide.data
           }, null, 8 /* PROPS */, ["template", "style-guide"])
         ], 4 /* STYLE */))
       }), 256 /* UNKEYED_FRAGMENT */))
@@ -1369,8 +1369,15 @@ export function templateEditorTemplateEditorTemplateHtml(_ctx, _cache) {
       _createVNode(_component_render_layer, { "canvas-state": _ctx.canvasState }, null, 8 /* PROPS */, ["canvas-state"]),
       _createVNode(_component_selection_layer, { "canvas-state": _ctx.canvasState }, null, 8 /* PROPS */, ["canvas-state"]),
       _createVNode(_component_hover_layer, { "canvas-state": _ctx.canvasState }, null, 8 /* PROPS */, ["canvas-state"]),
-      _createVNode(_component_dragging_for_selection_layer, { "canvas-state": _ctx.canvasState }, null, 8 /* PROPS */, ["canvas-state"]),
-      _createVNode(_component_alignment_layer, { "canvas-state": _ctx.canvasState }, null, 8 /* PROPS */, ["canvas-state"]),
+      _createVNode(_component_dragging_for_selection_layer, {
+        "canvas-state": _ctx.canvasState,
+        mask: _ctx.canvasState.mask
+      }, null, 8 /* PROPS */, ["canvas-state", "mask"]),
+      _createVNode(_component_alignment_layer, {
+        "style-guide": _ctx.canvasState.styleGuide,
+        viewport: _ctx.canvasState.viewport,
+        alignment: _ctx.canvasState.alignment
+      }, null, 8 /* PROPS */, ["style-guide", "viewport", "alignment"]),
       _createVNode(_component_mask_layer, { "canvas-state": _ctx.canvasState }, null, 8 /* PROPS */, ["canvas-state"]),
       _createVNode(_component_context_menu, { "canvas-state": _ctx.canvasState }, null, 8 /* PROPS */, ["canvas-state"])
     ], 4 /* STYLE */),

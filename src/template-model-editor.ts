@@ -99,12 +99,12 @@ export const TemplateModelEditor = defineComponent({
       }
     },
     addAsTestCase() {
-      if (this.appState.canvasState.selection.kind === 'template') {
-        if (!this.appState.canvasState.styleGuide.tests) {
-          this.appState.canvasState.styleGuide.tests = []
+      if (this.appState.canvasState.styleGuide.selection.kind === 'template') {
+        if (!this.appState.canvasState.styleGuide.data.tests) {
+          this.appState.canvasState.styleGuide.data.tests = []
         }
-        this.appState.canvasState.styleGuide.tests.push({
-          templateId: this.appState.canvasState.selection.template.id,
+        this.appState.canvasState.styleGuide.data.tests.push({
+          templateId: this.appState.canvasState.styleGuide.selection.template.id,
           case: JSON.parse(JSON.stringify(this.appState.templateModel)) as unknown
         })
       }

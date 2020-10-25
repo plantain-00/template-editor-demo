@@ -35,10 +35,10 @@ export const AppPanel = defineComponent({
   created() {
     setInterval(() => {
       if (this.ws && this.ws.readyState === this.ws.OPEN && this.lastStyleGuide) {
-        const operations = jsonpatch.compare(this.lastStyleGuide, this.appState.canvasState.styleGuide)
+        const operations = jsonpatch.compare(this.lastStyleGuide, this.appState.canvasState.styleGuide.data)
         if (operations.length > 0) {
           this.ws.send(JSON.stringify({ method: 'patch', operations }))
-          this.lastStyleGuide = jsonpatch.deepClone(this.appState.canvasState.styleGuide)
+          this.lastStyleGuide = jsonpatch.deepClone(this.appState.canvasState.styleGuide.data)
         }
       }
     }, 3000)
@@ -65,14 +65,14 @@ export const AppPanel = defineComponent({
                   operations: jsonpatch.Operation[]
                 }
                 if (json.method == 'patch') {
-                  jsonpatch.applyPatch(this.appState.canvasState.styleGuide, json.operations)
-                  this.lastStyleGuide = jsonpatch.deepClone(this.appState.canvasState.styleGuide)
+                  jsonpatch.applyPatch(this.appState.canvasState.styleGuide.data, json.operations)
+                  this.lastStyleGuide = jsonpatch.deepClone(this.appState.canvasState.styleGuide.data)
                 }
               }
             }
           }
           this.lastStyleGuide = jsonpatch.deepClone(json)
-          this.appState.canvasState.styleGuide = json
+          this.appState.canvasState.styleGuide.data = json
           this.appState.canvasState.applyCanvasSizeChange()
         } else {
           console.error(validateStyleGuide.errors)
@@ -87,8 +87,8 @@ export const AppPanel = defineComponent({
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            ...this.appState.canvasState.styleGuide,
-            templates: this.appState.canvasState.styleGuide.templates.map((r) => removeDefault<Template>(r, templateSchemaJson))
+            ...this.appState.canvasState.styleGuide.data,
+            templates: this.appState.canvasState.styleGuide.data.templates.map((r) => removeDefault<Template>(r, templateSchemaJson))
           })
         })
       }
@@ -119,13 +119,13 @@ export const AppPanel = defineComponent({
         this.appState.graphicCanvasState = null
         return
       }
-      if (this.appState.canvasState.selection.kind === 'template') {
-        const result = await this.generateByTemplate(this.appState.canvasState.selection.template)
+      if (this.appState.canvasState.styleGuide.selection.kind === 'template') {
+        const result = await this.generateByTemplate(this.appState.canvasState.styleGuide.selection.template)
         this.appState.loadGraphicCanvas(result)
       }
     },
     async generateByTemplate(template: Template) {
-      const styleGuide = this.appState.canvasState.styleGuide
+      const styleGuide = this.appState.canvasState.styleGuide.data
       const now = Date.now()
       const reasons: ExpressionErrorReason[] = []
       let result: Template[]
@@ -171,13 +171,13 @@ export const AppPanel = defineComponent({
       return result.map((r) => removeDefault<Template>(r, templateSchemaJson) as Template)
     },
     precompile() {
-      this.precompiledStyleGuide = new PrecompiledStyleGuide(this.appState.canvasState.styleGuide)
+      this.precompiledStyleGuide = new PrecompiledStyleGuide(this.appState.canvasState.styleGuide.data)
     },
     async runTests(update: boolean) {
-      const tests = this.appState.canvasState.styleGuide.tests
+      const tests = this.appState.canvasState.styleGuide.data.tests
       if (tests) {
         for (const test of tests) {
-          const template = this.appState.canvasState.styleGuide.templates.find((t) => t.id === test.templateId)
+          const template = this.appState.canvasState.styleGuide.data.templates.find((t) => t.id === test.templateId)
           if (template) {
             const result = await this.generateByTemplate(template)
             if (!test.result || update) {

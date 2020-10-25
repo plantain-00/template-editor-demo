@@ -6,8 +6,8 @@
     <render-layer :canvas-state="canvasState"></render-layer>
     <selection-layer :canvas-state="canvasState"></selection-layer>
     <hover-layer :canvas-state="canvasState"></hover-layer>
-    <dragging-for-selection-layer :canvas-state="canvasState"></dragging-for-selection-layer>
-    <alignment-layer :canvas-state="canvasState"></alignment-layer>
+    <dragging-for-selection-layer :canvas-state="canvasState" :mask="canvasState.mask"></dragging-for-selection-layer>
+    <alignment-layer :style-guide="canvasState.styleGuide" :viewport="canvasState.viewport" :alignment="canvasState.alignment"></alignment-layer>
     <mask-layer :canvas-state="canvasState"></mask-layer>
     <context-menu :canvas-state="canvasState"></context-menu>
   </div>
