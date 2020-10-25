@@ -5,6 +5,7 @@ import { iterateAllTemplateRegions, iterateAllContentRegions, iterateAllNameRegi
 import { presetExpressions } from '../preset-expressions'
 import { createViewport } from './viewport'
 import { createContextMenu } from './context-menu'
+import { createAlignment } from './alignment-layer'
 
 export function createCanvasState(styleGuide: StyleGuide, width: number, height: number) {
   const canvasState = reactive({
@@ -134,8 +135,7 @@ export function createCanvasState(styleGuide: StyleGuide, width: number, height:
     get targetNameRegions() {
       return sortByZ(Array.from(iterateAllNameRegions(undefined, this.styleGuide, this.viewport.scale)))
     },
-    xAlignment: null as number | null,
-    yAlignment: null as number | null,
+    alignment: createAlignment(),
     presetExpressions: presetExpressions,
 
     commonEditorVisible: false,

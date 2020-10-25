@@ -216,24 +216,24 @@ export const MaskLayer = defineComponent({
               if (e.shiftKey) {
                 template.x = formatPixel(x)
                 template.y = formatPixel(y)
-                this.canvasState.xAlignment = null
-                this.canvasState.yAlignment = null
+                this.canvasState.alignment.x = undefined
+                this.canvasState.alignment.y = undefined
                 return
               }
               const region = getTemplateAlignment(x, y, this.canvasState.viewport.scale, template, this.canvasState.targetTemplateRegions)
               if (region.x !== undefined) {
                 template.x = formatPixel(region.x.template)
-                this.canvasState.xAlignment = region.x.alignment
+                this.canvasState.alignment.x = region.x.alignment
               } else {
                 template.x = formatPixel(x)
-                this.canvasState.xAlignment = null
+                this.canvasState.alignment.x = undefined
               }
               if (region.y !== undefined) {
                 template.y = formatPixel(region.y.template)
-                this.canvasState.yAlignment = region.y.alignment
+                this.canvasState.alignment.y = region.y.alignment
               } else {
                 template.y = formatPixel(y)
-                this.canvasState.yAlignment = null
+                this.canvasState.alignment.y = undefined
               }
               return
             }
@@ -275,8 +275,8 @@ export const MaskLayer = defineComponent({
       }
     },
     mouseup(e: MouseEvent) {
-      this.canvasState.xAlignment = null
-      this.canvasState.yAlignment = null
+      this.canvasState.alignment.x = undefined
+      this.canvasState.alignment.y = undefined
 
       if (!this.mouseIsDown) {
         return

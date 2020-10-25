@@ -13,26 +13,26 @@ export const AlignmentLayer = defineComponent({
   },
   computed: {
     xStyle(): { [name: string]: unknown } {
-      if (this.canvasState.xAlignment === null) {
+      if (this.canvasState.alignment.x === undefined) {
         return {}
       }
       return {
         position: 'absolute',
         borderLeft: '1px dashed black',
-        left: this.canvasState.mapBackX(this.canvasState.xAlignment) + 'px',
+        left: this.canvasState.mapBackX(this.canvasState.alignment.x) + 'px',
         top: '0px',
         width: '1px',
         height: '100%',
       }
     },
     yStyle(): { [name: string]: unknown } {
-      if (this.canvasState.yAlignment === null) {
+      if (this.canvasState.alignment.y === undefined) {
         return {}
       }
       return {
         position: 'absolute',
         borderTop: '1px dashed black',
-        top: this.canvasState.mapBackY(this.canvasState.yAlignment) + 'px',
+        top: this.canvasState.mapBackY(this.canvasState.alignment.y) + 'px',
         left: '0px',
         width: '100%',
         height: '1px%',
@@ -40,3 +40,10 @@ export const AlignmentLayer = defineComponent({
     }
   }
 })
+
+export function createAlignment() {
+  return {
+    x: undefined as number | undefined,
+    y: undefined as number | undefined,
+  }
+}
