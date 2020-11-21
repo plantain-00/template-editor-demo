@@ -46,7 +46,7 @@ export function parseExpressionToAst(expression: string) {
 }
 
 export function evaluateSizeExpression(kind: 'width' | 'height', content: Size & SizeExpression, model: { [key: string]: unknown }, options?: ExpressionOptions) {
-  const expressionField = (kind + 'Expression') as 'widthExpression' | 'heightExpression'
+  const expressionField = (kind + 'Expression') as `${typeof kind}Expression`
   const expression = content[expressionField]
   if (expression) {
     const result = evaluate(expression, model, getExpressionOptions(options, expressionField))
@@ -58,7 +58,7 @@ export function evaluateSizeExpression(kind: 'width' | 'height', content: Size &
 }
 
 export function evaluatePositionExpression(kind: 'x' | 'y' | 'z', content: Position & PositionExpression, model: { [key: string]: unknown }, options?: ExpressionOptions) {
-  const expressionField = (kind + 'Expression') as 'xExpression' | 'yExpression' | 'zExpression'
+  const expressionField = (kind + 'Expression') as `${typeof kind}Expression`
   const expression = content[expressionField]
   if (expression) {
     const result = evaluate(expression, model, getExpressionOptions(options, expressionField))
