@@ -99,8 +99,8 @@ export const OperationPanel = defineComponent({
           }
           this.canvasState.styleGuide.selection.content[kind] = value
         }
-        this.canvasState.styleGuide.selection.content[kind + 'Expression' as 'xExpression'] = e.expression
-        this.canvasState.styleGuide.selection.content[kind + 'ExpressionId' as 'xExpression'] = e.expressionId
+        this.canvasState.styleGuide.selection.content[`${kind}Expression` as `${typeof kind}Expression`] = e.expression
+        this.canvasState.styleGuide.selection.content[`${kind}ExpressionId` as `${typeof kind}ExpressionId`] = e.expressionId
       }
     },
     changeSizeExpression(e: ExpressionInputChangeData, kind: 'width' | 'height') {
@@ -109,14 +109,14 @@ export const OperationPanel = defineComponent({
         if (e.literal !== undefined) {
           this.canvasState.styleGuide.selection.content[kind] = formatPixel(+e.literal)
         }
-        this.canvasState.styleGuide.selection.content[kind + 'Expression' as 'xExpression'] = e.expression
-        this.canvasState.styleGuide.selection.content[kind + 'ExpressionId' as 'xExpression'] = e.expressionId
+        this.canvasState.styleGuide.selection.content[`${kind}Expression` as `${typeof kind}Expression`] = e.expression
+        this.canvasState.styleGuide.selection.content[`${kind}ExpressionId` as `${typeof kind}ExpressionId`] = e.expressionId
       } else if (this.canvasState.styleGuide.selection.kind === 'template') {
         if (e.literal !== undefined) {
           this.canvasState.styleGuide.selection.template[kind] = formatPixel(+e.literal)
         }
-        this.canvasState.styleGuide.selection.template[kind + 'Expression' as 'widthExpression'] = e.expression
-        this.canvasState.styleGuide.selection.template[kind + 'ExpressionId' as 'widthExpression'] = e.expressionId
+        this.canvasState.styleGuide.selection.template[`${kind}Expression` as `${typeof kind}Expression`] = e.expression
+        this.canvasState.styleGuide.selection.template[`${kind}ExpressionId` as `${typeof kind}ExpressionId`] = e.expressionId
       }
     },
     changeRotateExpression(e: ExpressionInputChangeData) {
