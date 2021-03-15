@@ -1,3 +1,5 @@
+import * as webpack from 'webpack'
+
 export default {
   mode: process.env.NODE_ENV,
   entry: {
@@ -15,6 +17,11 @@ export default {
       { test: /\.tsx?$/, loader: 'ts-loader' }
     ]
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      __VUE_PROD_DEVTOOLS__: false,
+    }),
+  ],
   optimization: {
     splitChunks: {
       cacheGroups: {
@@ -26,4 +33,4 @@ export default {
       }
     }
   }
-}
+} as webpack.Configuration
