@@ -139,7 +139,7 @@ export const AppPanel = defineComponent({
           },
           {
             errorHandler: (reason) => reasons.push(reason),
-            precompiledStyleGuide: this.precompiledStyleGuide,
+            precompiledStyleGuide: this.precompiledStyleGuide as PrecompiledStyleGuide | undefined,
             stack: [template.name || template.id]
           }
         )))
@@ -157,7 +157,7 @@ export const AppPanel = defineComponent({
             this.appState.templateModel,
             {
               errorHandler: (reason) => reasons.push(reason),
-              precompiledStyleGuide: this.precompiledStyleGuide,
+              precompiledStyleGuide: this.precompiledStyleGuide as PrecompiledStyleGuide | undefined,
               stack: [template.name || template.id]
             }
           )
