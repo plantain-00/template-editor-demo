@@ -73,7 +73,7 @@ function collectTemplateImages(
       if (content.base64 && images[content.base64]) {
         continue
       }
-      if (images[content.url]) {
+      if (content.url in images) {
         continue
       }
       if (content.base64) {
