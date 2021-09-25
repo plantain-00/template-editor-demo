@@ -12,7 +12,7 @@ export function appPanelTemplateHtml(_ctx, _cache) {
     _withDirectives(_createElementVNode("input", {
       type: "text",
       style: {"width":"80px"},
-      "onUpdate:modelValue": _cache[0] || (_cache[0] = $event => (_ctx.styleGuideKey = $event))
+      "onUpdate:modelValue": _cache[0] || (_cache[0] = $event => ((_ctx.styleGuideKey) = $event))
     }, null, 512 /* NEED_PATCH */), [
       [_vModelText, _ctx.styleGuideKey]
     ]),
@@ -28,7 +28,7 @@ export function appPanelTemplateHtml(_ctx, _cache) {
     _withDirectives(_createElementVNode("input", {
       type: "text",
       style: {"width":"120px"},
-      "onUpdate:modelValue": _cache[3] || (_cache[3] = $event => (_ctx.templateModelKey = $event))
+      "onUpdate:modelValue": _cache[3] || (_cache[3] = $event => ((_ctx.templateModelKey) = $event))
     }, null, 512 /* NEED_PATCH */), [
       [_vModelText, _ctx.templateModelKey]
     ]),
