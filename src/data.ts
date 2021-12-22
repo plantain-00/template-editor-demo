@@ -26,7 +26,7 @@ export const styleGuide: StyleGuide = {
         },
         {
           kind: 'image',
-          url: 'https://arkie-amazon-test.oss-cn-hangzhou.aliyuncs.com/resources/8faa0634-84a6-43d8-8ae2-8a948192fab7.png',
+          url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg',
           width: 100,
           height: 100,
           x: 210,
